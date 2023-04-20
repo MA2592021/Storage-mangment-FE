@@ -18,7 +18,7 @@
     @update:options="options = $event"
   >
     <template v-slot:item="{ item }">
-      <tr @click="test = item.columns.code">
+      <tr @click="onClick(item.columns.code)">
         <td v-for="h in header" v-ripple :key="h.key">
           {{ item.columns[`${h.key}`] }}
         </td>
@@ -49,6 +49,7 @@
 export default {
   data() {
     return {
+      test: "",
       sortBy: [{ key: "", order: "asc" }],
       options: {
         pageCount: 5,
@@ -64,12 +65,18 @@ export default {
       return this.data.length / this.itemsPerPage + 0.4;
     },
   },
+  emits: ["tableClicked"],
   props: {
     data: {
       type: Array,
     },
     header: {
       type: Array,
+    },
+  },
+  methods: {
+    onClick(id) {
+      this.$emit("tableClicked", id);
     },
   },
 };

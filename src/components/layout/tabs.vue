@@ -6,7 +6,7 @@
       <v-tab :value="3" router :to="`${parentPath}add`">Add</v-tab>
     </v-tabs>
     <v-window v-model="tab">
-      <v-window-item v-for="n in 3" :key="n" :value="n">
+      <v-window-item v-for="n in 3" :key="n" :value="n" disabled>
         <v-container fluid>
           <v-row>
             <router-view />
@@ -26,7 +26,6 @@ export default {
     parentPath() {
       return this.$route.matched[0].path;
     },
-
   },
 };
 </script>

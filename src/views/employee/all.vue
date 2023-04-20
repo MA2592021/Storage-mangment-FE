@@ -11,7 +11,12 @@
       ></v-col
     >
 
-    <v-col cols="12"> <tt v-bind:data="data" v-bind:header="headers" /> </v-col
+    <v-col cols="12">
+      <tt
+        v-bind:data="data"
+        v-bind:header="headers"
+        @tableClicked="tableClicked"
+      /> </v-col
   ></v-row>
 </template>
 
@@ -67,6 +72,14 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    tableClicked(value) {
+      console.log(value); // someValue
+      this.$router.push({
+        path: `/employee/${value}`,
+      });
+    },
   },
 };
 </script>

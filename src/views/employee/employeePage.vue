@@ -68,66 +68,58 @@
           </v-col>
         </v-row> </v-col></v-row
     ><v-card-actions class="mx-auto">
-      <v-btn @click="dis = !dis"> Edit </v-btn>
-      <v-btn class="ml-auto" :disabled="dis === true"> Save </v-btn>
+      <v-btn @click="dis = !dis" prepend-icon="mdi-circle-edit-outline">
+        Edit
+      </v-btn>
+      <v-btn
+        class="ml-auto"
+        :disabled="dis === true"
+        prepend-icon="mdi-check-outline"
+        color="green"
+      >
+        Save
+      </v-btn>
     </v-card-actions></v-card
   >
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
-      <v-expansion-panel>
-        <v-expansion-panel-title>
-          <template v-slot:default="{ expanded }">
-            <v-row no-gutters>
-              <v-col cols="4" class="d-flex justify-start"> properties </v-col>
-              <v-col cols="8" class="text-grey">
-                <v-fade-transition leave-absolute>
-                  <span v-if="expanded" key="0">
-                    properties with {{ name }}
-                  </span>
-                  <span v-else key="1">
-                    {{ name }}
-                  </span>
-                </v-fade-transition>
-              </v-col>
-            </v-row>
-          </template>
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <tt v-bind:data="data" v-bind:header="headers" />
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
-      <v-expansion-panel>
-        <v-expansion-panel-title>
-          <template v-slot:default="{ expanded }">
-            <v-row no-gutters>
-              <v-col cols="4" class="d-flex justify-start"> materials </v-col>
-              <v-col cols="8" class="text-grey">
-                <v-fade-transition leave-absolute>
-                  <span v-if="expanded" key="0">
-                    materials with {{ name }}
-                  </span>
-                  <span v-else key="1">
-                    {{ name }}
-                  </span>
-                </v-fade-transition>
-              </v-col>
-            </v-row>
-          </template>
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <tt v-bind:data="data1" v-bind:header="headers1" />
-        </v-expansion-panel-text>
-      </v-expansion-panel> </v-expansion-panels
+      <paneltable
+        v-bind:data="data"
+        v-bind:header="headers"
+        v-bind:panelname="panelname"
+        v-bind:openedtitle="openedtitle"
+        v-bind:closedtitle="closedtitle"
+        v-bind:name="panelname"
+        v-bind:link="link"
+        @clicked="onClickChild"
+      />
+      <paneltable
+        v-bind:data="data1"
+        v-bind:header="headers1"
+        v-bind:panelname="panelname1"
+        v-bind:openedtitle="openedtitle1"
+        v-bind:closedtitle="closedtitle"
+        v-bind:link="link"
+        v-bind:name="panelname1"
+        @clicked="onClickChild"
+      /> </v-expansion-panels
   ></v-card>
 </template>
 
 <script>
 import tt from "../../components/table.vue";
+import paneltable from "../../components/paneltable.vue";
 export default {
-  components: { tt },
+  components: { tt, paneltable },
   data: () => ({
     name: "el gamal",
+    link: "",
+    isdisabled: true,
+    panelname: "properties",
+    panelname1: "materials",
+    closedtitle: "El gamal",
+    openedtitle: "properties with El gamal",
+    openedtitle1: "materials with El gamal",
     code: "2232",
     role: "supervisor",
     nid: "12141243523123",
@@ -190,5 +182,10 @@ export default {
       },
     ],
   }),
+  methods: {
+    onClickChild(value) {
+      console.log(value); // someValue
+    },
+  },
 };
 </script>
