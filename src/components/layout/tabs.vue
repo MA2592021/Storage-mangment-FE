@@ -1,12 +1,6 @@
 <template>
   <v-card>
-    <v-tabs
-      grow
-      v-model="tab"
-      show-arrows
-      color="deep-purple-accent-4"
-      align-tabs="center"
-    >
+    <v-tabs grow v-model="tab" show-arrows color="#770f30" align-tabs="center">
       <v-tab :value="1" router :to="`${parentPath}dashboard`">Dashboard</v-tab>
       <v-tab :value="2" router :to="`${parentPath}all`">All</v-tab>
       <v-tab :value="3" router :to="`${parentPath}add`">Add</v-tab>
