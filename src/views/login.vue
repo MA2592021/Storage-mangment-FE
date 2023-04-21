@@ -12,11 +12,12 @@
       <v-col cols="12" md="6">
         <h1 class="text-center text-h5">log in</h1>
 
-        <v-form @submit.prevent>
+        <v-form @submit.prevent="validate()" ref="form">
           <v-text-field
             variant="underlined"
             v-model="code"
             label="Code"
+            required
             :rules="codeRules"
           ></v-text-field>
 
@@ -25,6 +26,7 @@
             v-model="password"
             label="Password"
             type="password"
+            required
             :rules="passwordRules"
           ></v-text-field>
 
@@ -57,6 +59,20 @@ export default {
       },
     ],
   }),
+  methods: {
+    login: function () {
+      this.$router.push({
+        path: "/",
+      });
+    },
+    async validate() {
+      const { valid } = await this.$refs.form.validate();
+
+      if (valid) {
+        this.login();
+      }
+    },
+  },
 };
 </script>
 

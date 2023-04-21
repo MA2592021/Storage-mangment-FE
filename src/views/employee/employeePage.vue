@@ -111,9 +111,11 @@ import tt from "../../components/table.vue";
 import paneltable from "../../components/paneltable.vue";
 export default {
   components: { tt, paneltable },
+
   data: () => ({
     name: "el gamal",
     link: "",
+    test: { name: "amir", age: "12", testo: "besto", lesto: "festo" },
     isdisabled: true,
     panelname: "properties",
     panelname1: "materials",

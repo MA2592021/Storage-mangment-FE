@@ -7,7 +7,7 @@
       <v-spacer></v-spacer>
 
       <v-btn flat color="grey">
-        <span class="mr-2">sign out</span>
+        <span class="mr-2" @click="signout()">sign out</span>
         <v-icon right size="large" icon="mdi-logout"></v-icon>
       </v-btn>
     </v-toolbar>
@@ -111,6 +111,13 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    signout: function () {
+      this.$router.push({
+        path: "/login",
+      });
+    },
   },
 };
 </script>

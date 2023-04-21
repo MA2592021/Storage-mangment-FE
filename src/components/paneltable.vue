@@ -20,7 +20,6 @@
     <v-expansion-panel-text>
       <tt v-bind:data="data" v-bind:header="header" />
       <appendpop v-bind:link="link" v-bind:name="name" />
-      <v-btn @click="onClickButton">click</v-btn>
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
