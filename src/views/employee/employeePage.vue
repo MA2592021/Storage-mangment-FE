@@ -43,8 +43,23 @@
               required
               v-model="nid"
               label="National ID "
-              :readonly="dis === true"
+              :readonly="!isEditing"
               variant="underlined"
+              ><template v-slot:append>
+                <v-slide-x-reverse-transition mode="out-in">
+                  <v-btn
+                    size="x-small"
+                    :key="`icon-${isEditing}`"
+                    :color="isEditing ? 'success' : 'error'"
+                    :icon="
+                      isEditing
+                        ? 'mdi-check-outline'
+                        : 'mdi-circle-edit-outline'
+                    "
+                    :disabled="dis === true"
+                    @click="isEditing = !isEditing"
+                  ></v-btn>
+                </v-slide-x-reverse-transition> </template
             ></v-text-field>
           </v-col>
 
@@ -68,8 +83,11 @@
           </v-col>
         </v-row> </v-col></v-row
     ><v-card-actions class="mx-auto">
-      <v-btn @click="dis = !dis" prepend-icon="mdi-circle-edit-outline">
-        Edit
+      <v-btn
+        @click="dis = !dis"
+        :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
+      >
+        {{ dis ? "edit" : "cancel" }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -104,19 +122,23 @@
         @clicked="onClickChild"
       /> </v-expansion-panels
   ></v-card>
+  <popuptest v-model="dialog" @close="dialog = !dialog" />
 </template>
 
 <script>
 import tt from "../../components/table.vue";
 import paneltable from "../../components/paneltable.vue";
+import popuptest from "../../components/popuptest.vue";
+
 export default {
-  components: { tt, paneltable },
+  components: { tt, paneltable, popuptest },
 
   data: () => ({
     name: "el gamal",
     link: "",
     test: { name: "amir", age: "12", testo: "besto", lesto: "festo" },
     isdisabled: true,
+    dialog: false,
     panelname: "properties",
     panelname1: "materials",
     closedtitle: "El gamal",
@@ -128,6 +150,7 @@ export default {
     phone: "01110133639",
     img: "",
     dis: true,
+    isEditing: false,
     note: "lailo lailo lailo la la la ",
     headers: [
       {

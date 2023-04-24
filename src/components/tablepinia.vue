@@ -8,8 +8,8 @@
   ></v-text-field>
   <v-data-table
     v-model:page="page"
-    :headers="header"
-    :items="data"
+    :headers="employees.headers"
+    :items="employees.data"
     :search="search"
     :items-per-page="itemsPerPage"
     v-model:sort-by="sortBy"
@@ -19,7 +19,7 @@
   >
     <template v-slot:item="{ item }">
       <tr @click="onClick(item.columns.code)" v-ripple>
-        <td v-for="h in header" :key="h.key">
+        <td v-for="h in employees.headers" :key="h.key">
           {{ item.columns[`${h.key}`] }}
         </td>
       </tr>
@@ -29,7 +29,7 @@
         <v-pagination
           v-model="page"
           class="my-4"
-          :length="pages.toFixed()"
+          :length="pages"
         ></v-pagination>
         <v-text-field
           :model-value="itemsPerPage"
@@ -46,6 +46,7 @@
   </v-data-table>
 </template>
 <script>
+import { usestore } from "../stores/employees";
 export default {
   data() {
     return {
@@ -61,23 +62,19 @@ export default {
   },
   computed: {
     pages: function () {
-      return this.data.length / this.itemsPerPage + 0.4;
+      return this.employees.total / this.itemsPerPage + 0.4;
     },
+  },
+  setup() {
+    const employees = usestore();
+    return { employees };
   },
   emits: ["tableClicked"],
-  props: {
-    data: {
-      type: Array,
-    },
-    header: {
-      type: Array,
-    },
-  },
 
   methods: {
-    onClick(id) {
-      console.log(id);
-      this.$emit("tableClicked", id);
+    onClick(row) {
+      console.log(row);
+      this.$emit("tableClicked", row);
     },
   },
 };

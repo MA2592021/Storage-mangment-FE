@@ -18,7 +18,12 @@
       </template>
     </v-expansion-panel-title>
     <v-expansion-panel-text>
-      <tt v-bind:data="data" v-bind:header="header" />
+      <!-- <tt
+        v-bind:data="data"
+        v-bind:header="header"
+        @tableClicked="onClickButton"
+      /> -->
+      <tablepinia />
       <appendpop v-bind:link="link" v-bind:name="name" />
     </v-expansion-panel-text>
   </v-expansion-panel>
@@ -27,10 +32,12 @@
 <script>
 import tt from "./table.vue";
 import appendpop from "./appendpop.vue";
+import tablepinia from "./tablepinia.vue";
 export default {
   components: {
     tt,
     appendpop,
+    tablepinia,
   },
   props: {
     data: {
@@ -46,10 +53,12 @@ export default {
     link: String,
   },
   methods: {
-    onClickButton(event) {
-      this.$emit("clicked", "someValue");
+    onClickButton(value) {
+      console.log(value);
+      this.$emit("clicked", value);
     },
   },
+  emits: ["clicked"],
 };
 </script>
 
