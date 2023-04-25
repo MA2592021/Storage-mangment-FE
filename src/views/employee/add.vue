@@ -29,7 +29,14 @@
           </v-col>
 
           <v-col cols="12" sm="6">
-            <v-file-input clearable label="Employee image"></v-file-input>
+            <v-file-input
+              clearable
+              accept="image/png, image/jpeg, image/bmp"
+              label="Employee image"
+              prepend-icon="mdi-camera"
+              show-size
+              :rules="rules"
+            ></v-file-input>
           </v-col>
           <v-col cols="12" sm="6">
             <v-autocomplete
@@ -58,3 +65,22 @@
     </v-card-actions>
   </v-card>
 </template>
+
+<script>
+export default {
+  data: () => ({
+    rules: [
+      (value) => {
+        return (
+          !value ||
+          !value.length ||
+          value[0].size < 2000000 ||
+          "Avatar size should be less than 2 MB!"
+        );
+      },
+    ],
+    url: null,
+    image: null,
+  }),
+};
+</script>
