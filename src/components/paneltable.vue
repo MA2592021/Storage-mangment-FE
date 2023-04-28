@@ -9,47 +9,32 @@
               <span v-if="expanded" key="0">
                 {{ closedtitle }}
               </span>
-              <span v-else key="1">
-                {{ openedtitle }}
-              </span>
+              <span v-else key="1"> {{ openedtitle }} {{ closedtitle }} </span>
             </v-fade-transition>
           </v-col>
         </v-row>
       </template>
     </v-expansion-panel-title>
     <v-expansion-panel-text>
-      <!-- <tt
-        v-bind:data="data"
-        v-bind:header="header"
-        @tableClicked="onClickButton"
-      /> -->
-      <tablepinia />
-      <appendpop v-bind:link="link" v-bind:name="name" />
+      <tablepinia v-bind:type="this.type" />
+      <appendpop v-bind:link="link" v-bind:name="panelname" />
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
 
 <script>
-import tt from "./table.vue";
 import appendpop from "./appendpop.vue";
 import tablepinia from "./tablepinia.vue";
 export default {
   components: {
-    tt,
     appendpop,
     tablepinia,
   },
   props: {
-    data: {
-      type: Array,
-    },
-    header: {
-      type: Array,
-    },
+    type: String,
     panelname: String,
     closedtitle: String,
     openedtitle: String,
-    name: String,
     link: String,
   },
   methods: {

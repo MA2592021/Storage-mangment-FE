@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const usestore = defineStore("employees", {
+export const useemployee = defineStore("employees", {
   state: () => ({
     headers: [
       {
@@ -10,45 +10,72 @@ export const usestore = defineStore("employees", {
         title: "code",
       },
       { title: "name", key: "name" },
-      { title: "Role", key: "Role" },
-      { title: "number", key: "number" },
+      { title: "role", key: "role" },
+      { title: "phone number", key: "phone" },
     ],
     data: [
       {
+        note: "lailo lailo",
+        img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
+        nid: "12312312313",
         code: "254",
         name: "tomy",
-        Role: "Admin",
-        number: "01110133639",
+        role: "Supervisor",
+        phone: "01110133639",
       },
       {
+        note: "lailo lailo",
+        img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
+        nid: "12312312313",
         code: "1234",
         name: "sherif mohamed",
-        Role: "employee",
-        number: "01110133639",
+        role: "employee",
+        phone: "01110133639",
       },
       {
         code: "876",
         name: "el gamal",
-        Role: "Admin",
-        number: "01110133639",
+        role: "Admin",
+        phone: "01110133639",
+        note: "lailo lailo",
+        img: "",
+        nid: "12312312313",
       },
       {
         code: "655",
         name: "amir",
-        Role: "Admin",
-        number: "01110133639",
+        role: "Admin",
+        phone: "01110133639",
+        note: "lailo lailo",
+        img: "",
+        nid: "12312312313",
       },
       {
         code: "254",
         name: "gamalko",
-        Role: "Admin",
-        number: "01110133639",
+        role: "Admin",
+        phone: "01110133639",
+        note: "lailo lailo",
+        img: "",
+        nid: "12312312313",
       },
     ],
+    employee: {
+      name: "amir",
+      code: "2323",
+      phone: "01110133639",
+      role: "suprervisor",
+      note: "lailo lailo",
+      img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
+      nid: "12312312313",
+    },
   }),
   getters: {
     total: (state) => {
       return state.data.length;
+    },
+    empfind: (state) => {
+      return (empcode) => state.data.find((user) => user.code === empcode);
     },
   },
 });

@@ -6,7 +6,7 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+          :src="employee.img"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -16,7 +16,7 @@
               label="Name "
               required
               :readonly="dis === true"
-              v-model="name"
+              v-model="employee.name"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -25,7 +25,7 @@
               required
               label="Code "
               :readonly="dis === true"
-              v-model="code"
+              v-model="employee.code"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -34,14 +34,14 @@
               label="Phone number "
               variant="underlined"
               :readonly="dis === true"
-              v-model="phone"
+              v-model="employee.phone"
               required
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               required
-              v-model="nid"
+              v-model="employee.nid"
               label="National ID "
               :readonly="!isEditing"
               variant="underlined"
@@ -57,7 +57,7 @@
                         : 'mdi-circle-edit-outline'
                     "
                     :disabled="dis === true"
-                    @click="isEditing = !isEditing"
+                    @click="criticalchange()"
                   ></v-btn>
                 </v-slide-x-reverse-transition> </template
             ></v-text-field>
@@ -66,7 +66,7 @@
           <v-col cols="12" sm="6">
             <v-autocomplete
               label="Role "
-              v-model="role"
+              v-model="employee.role"
               variant="underlined"
               :readonly="dis === true"
               :items="['Supervisor', 'Employee']"
@@ -76,7 +76,7 @@
             ><v-textarea
               clearable
               label="Note"
-              v-model="note"
+              v-model="employee.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -84,132 +84,144 @@
         </v-row> </v-col></v-row
     ><v-card-actions class="mx-auto">
       <v-btn
-        @click="dis = !dis"
+        @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
         {{ dis ? "edit" : "cancel" }}
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true"
+        :disabled="dis === true || isEditing === true"
         prepend-icon="mdi-check-outline"
         color="green"
+        @click="dialog = !dialog"
       >
         Save
       </v-btn>
-    </v-card-actions></v-card
-  >
+    </v-card-actions>
+    {{ this.employees.data }} // {{ this.employees.employee }}
+  </v-card>
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="data"
-        v-bind:header="headers"
-        v-bind:panelname="panelname"
+        v-bind:type="'1'"
+        v-bind:panelname="'properties'"
         v-bind:openedtitle="openedtitle"
-        v-bind:closedtitle="closedtitle"
-        v-bind:name="panelname"
+        v-bind:closedtitle="this.employee.name"
         v-bind:link="link"
         @clicked="onClickChild"
       />
       <paneltable
-        v-bind:data="data1"
-        v-bind:header="headers1"
-        v-bind:panelname="panelname1"
+        v-bind:type="'2'"
+        v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle1"
-        v-bind:closedtitle="closedtitle"
+        v-bind:closedtitle="this.employee.name"
         v-bind:link="link"
-        v-bind:name="panelname1"
         @clicked="onClickChild"
-      /> </v-expansion-panels
-  ></v-card>
-  <popuptest v-model="dialog" @close="dialog = !dialog" />
+      />
+    </v-expansion-panels>
+  </v-card>
+  <popuptest
+    v-model="dialog"
+    v-bing:title="title"
+    v-bind:content="content"
+    @save="save()"
+    @close="cancel()"
+  />
 </template>
 
 <script>
-import tt from "../../components/table.vue";
 import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
+import { useemployee } from "../../stores/employees";
+import { usematerials } from "../../stores/materials";
+import { useproperties } from "../../stores/properties";
+import { usetable } from "../../stores/tabledata";
+import { storeToRefs } from "pinia";
 
 export default {
-  components: { tt, paneltable, popuptest },
+  components: { paneltable, popuptest },
 
   data: () => ({
-    name: "el gamal",
+    content:
+      "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
+    title: "are you sure ? ",
     link: "",
-    test: { name: "amir", age: "12", testo: "besto", lesto: "festo" },
     isdisabled: true,
     dialog: false,
-    panelname: "properties",
-    panelname1: "materials",
-    closedtitle: "El gamal",
-    openedtitle: "properties with El gamal",
-    openedtitle1: "materials with El gamal",
-    code: "2232",
-    role: "supervisor",
-    nid: "12141243523123",
-    phone: "01110133639",
-    img: "",
+    openedtitle: "properties with",
+    openedtitle1: "materials with",
     dis: true,
     isEditing: false,
-    note: "lailo lailo lailo la la la ",
-    headers: [
-      {
-        align: "start",
-        key: "ID",
-        sortable: false,
-        title: "ID",
-      },
-      { title: "property", key: "property" },
-      { title: "quantity", key: "quantity" },
-    ],
-    data: [
-      {
-        ID: "1",
-        property: "ma2s",
-        quantity: "14",
-      },
-      {
-        ID: "2",
-        property: "ma2sat",
-        quantity: "4",
-      },
-      {
-        ID: "12",
-        property: "mastra",
-        quantity: "2",
-      },
-    ],
-    headers1: [
-      {
-        align: "start",
-        key: "ID",
-        sortable: false,
-        title: "ID",
-      },
-      { title: "material", key: "material" },
-      { title: "quantity", key: "quantity" },
-    ],
-    data1: [
-      {
-        ID: "1",
-        material: "2omash white",
-        quantity: "14",
-      },
-      {
-        ID: "2",
-        material: "habwww",
-        quantity: "4",
-      },
-      {
-        ID: "12",
-        material: "2omash ezwd",
-        quantity: "2",
-      },
-    ],
+    employee: {},
   }),
+  created() {
+    this.clone();
+    // console.log(this.employee);
+    this.table.data = this.properties.data;
+    this.table.headers = this.properties.headers;
+    this.table.data1 = this.materials.data;
+    this.table.headers1 = this.materials.headers;
+    // console.log(this.table.data);
+    // console.log(this.table.data1);
+  },
+  setup() {
+    const employees = useemployee();
+    const properties = useproperties();
+    const materials = usematerials();
+    const table = usetable();
+    const { empfind } = storeToRefs(employees);
+    return { employees, empfind, properties, materials, table };
+  },
   methods: {
     onClickChild(value) {
       console.log(value); // someValue
+    },
+    criticalchange() {
+      if (this.isEditing === false) {
+        this.isEditing = !this.isEditing;
+      } else {
+        this.content =
+          "this change is critical and must double check it :  employee National id is : ( " +
+          this.employee.nid +
+          " )";
+        this.dialog = !this.dialog;
+      }
+    },
+    clone() {
+      this.employee.name = this.employees.employee.name;
+      this.employee.code = this.employees.employee.code;
+      this.employee.img = this.employees.employee.img;
+      this.employee.nid = this.employees.employee.nid;
+      this.employee.role = this.employees.employee.role;
+      this.employee.note = this.employees.employee.note;
+      this.employee.phone = this.employees.employee.phone;
+    },
+    cancel() {
+      this.dialog = false;
+      this.dis = !this.dis;
+      this.employee.name = this.employees.employee.name;
+      this.employee.code = this.employees.employee.code;
+      this.employee.img = this.employees.employee.img;
+      this.employee.nid = this.employees.employee.nid;
+      this.employee.role = this.employees.employee.role;
+      this.employee.note = this.employees.employee.note;
+      this.employee.phone = this.employees.employee.phone;
+      this.content =
+        "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
+    },
+    save() {
+      this.dis = !this.dis;
+      this.dialog = false;
+      this.employees.employee.name = this.employee.name;
+      this.employees.employee.code = this.employee.code;
+      this.employees.employee.img = this.employee.img;
+      this.employees.employee.nid = this.employee.nid;
+      this.employees.employee.role = this.employee.role;
+      this.employees.employee.note = this.employee.note;
+      this.employees.employee.phone = this.employee.phone;
+      this.content =
+        "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
   },
 };

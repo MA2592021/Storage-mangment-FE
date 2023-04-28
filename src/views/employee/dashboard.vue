@@ -9,9 +9,9 @@
         color="pink-darken-4
 "
       >
-        164
+        {{ employees.total }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have 164 employees</p>
+      <p class="text-h5">Arkan have {{ employees.total }} employees</p>
     </v-col>
     <v-col cols="12" md="4"> <barChart v-bind:chartData="chartData" /> </v-col
   ></v-row>
@@ -19,9 +19,14 @@
 
 <script>
 import barChart from "../../components/barChart.vue";
+import { useemployee } from "../../stores/employees";
 export default {
   components: {
     barChart,
+  },
+  setup() {
+    const employees = useemployee();
+    return { employees };
   },
   data() {
     return {
