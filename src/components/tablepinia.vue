@@ -8,8 +8,8 @@
   ></v-text-field>
   <v-data-table
     v-model:page="page"
-    :headers="employees.headers"
-    :items="employees.data"
+    :headers="properties.headers"
+    :items="properties.data"
     :search="search"
     :items-per-page="itemsPerPage"
     v-model:sort-by="sortBy"
@@ -18,8 +18,8 @@
     @update:options="options = $event"
   >
     <template v-slot:item="{ item }">
-      <tr @click="onClick(item.columns.code)" v-ripple>
-        <td v-for="h in employees.headers" :key="h.key">
+      <tr @click="onClick(item.columns)" v-ripple>
+        <td v-for="h in properties.headers" :key="h.key">
           {{ item.columns[`${h.key}`] }}
         </td>
       </tr>
@@ -44,9 +44,11 @@
       </div>
     </template>
   </v-data-table>
+  {{ pages }}
 </template>
 <script>
 import { usestore } from "../stores/employees";
+import { useproperties } from "../stores/properties";
 export default {
   data() {
     return {
@@ -55,19 +57,20 @@ export default {
         pageCount: 5,
       },
       search: "",
-
+      table: "properties",
       page: 1,
       itemsPerPage: 5,
     };
   },
   computed: {
     pages: function () {
-      return this.employees.total / this.itemsPerPage + 0.4;
+      return this[`${table}.total`] / this.itemsPerPage + 0.4;
     },
   },
   setup() {
     const employees = usestore();
-    return { employees };
+    const properties = useproperties();
+    return { employees, properties };
   },
   emits: ["tableClicked"],
 

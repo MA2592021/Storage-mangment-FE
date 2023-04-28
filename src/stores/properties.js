@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const usestore = defineStore("properties", {
+export const useproperties = defineStore("properties", {
   state: () => ({
     headers: [
       {
@@ -30,4 +30,9 @@ export const usestore = defineStore("properties", {
       },
     ],
   }),
+  getters: {
+    total: (state) => {
+      return state.data.length;
+    },
+  },
 });
