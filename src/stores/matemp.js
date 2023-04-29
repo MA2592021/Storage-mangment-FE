@@ -2,20 +2,10 @@ import { defineStore } from "pinia";
 
 export const usematemp = defineStore("matemp", {
   state: () => ({
-    headers: [
-      {
-        align: "start",
-        key: "material_id",
-        sortable: false,
-        title: "ID",
-      },
-      { title: "material", key: "material" },
-      { title: "quantity", key: "totalQuantity" },
-    ],
     data: [
       {
-        material_id: "1",
-        material: "white 2omash",
+        _id: "1",
+        name: "white 2omash",
         totalQuantity: "14",
         note: "teso tesotes testo tesot e",
         lastDate: "2023/4/22",
@@ -26,8 +16,8 @@ export const usematemp = defineStore("matemp", {
         ],
       },
       {
-        material_id: "2",
-        material: "black 2omash",
+        _id: "2",
+        name: "black 2omash",
         totalQuantity: "4",
         note: "teso tesotes testo tesot e",
         lastDate: "2023/4/22",
@@ -38,8 +28,8 @@ export const usematemp = defineStore("matemp", {
         ],
       },
       {
-        material_id: "12",
-        material: "zorar",
+        _id: "12",
+        name: "zorar",
         totalQuantity: "2",
         note: "teso tesotes testo tesot e",
         lastDate: "2023/4/22",
@@ -49,16 +39,6 @@ export const usematemp = defineStore("matemp", {
           { quantity: 4, date: "2023/4/27", op: "add" },
         ],
       },
-    ],
-    historyheaders: [
-      {
-        align: "start",
-        key: "quantity",
-        sortable: false,
-        title: "quantity",
-      },
-      { title: "operation", key: "op" },
-      { title: "date", key: "date" },
     ],
   }),
   getters: {

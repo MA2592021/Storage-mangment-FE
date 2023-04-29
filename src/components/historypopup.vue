@@ -1,27 +1,24 @@
 <template>
   <v-dialog scrollable @input="$emit('input', $event)" persistent>
     <v-card>
-      <v-card-title class="text-h5"> {{ title }} </v-card-title>
+      <v-card-title class="text-h5"> {{ viewobject.title }} </v-card-title>
       <v-card-text>
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <p>
               name :
-              {{
-                data.data2.property ? data.data2.property : data.data2.material
-              }}
+              {{ viewobject.name }}
             </p>
           </v-col>
           <v-col cols="12" sm="6" md="6">
-            <p>total quantity with employee : {{ data.data2.totalQuantity }}</p>
+            <p>total quantity with employee : {{ viewobject.qty }}</p>
           </v-col>
           <v-col cols="12" sm="6" md="6">
-            <p>last operation Date : {{ data.data2.lastDate }}</p>
+            <p>last operation Date : {{ viewobject.date }}</p>
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-textarea
-              required
-              v-model="data.data2.note"
+              v-model="viewobject.note"
               label="Note "
               :readonly="!isEditing"
               variant="underlined"
@@ -37,63 +34,37 @@
                         : 'mdi-circle-edit-outline'
                     "
                     :disabled="dis === true"
-                    @click="isEditing = !isEditing"
+                    @click="save()"
                   ></v-btn>
                 </v-slide-x-reverse-transition> </template
             ></v-textarea> </v-col
-        ></v-row>
-
-        {{ prop.data }}
-        <v-text-field
-          v-model="search"
-          label="Search"
-          single-line
-          hide-details
-          class="mt-5"
-        ></v-text-field>
-        <v-data-table
-          v-model:page="page"
-          :headers="data.headers2"
-          :items="data.data2.history"
-          :search="search"
-          :items-per-page="itemsPerPage"
-          v-model:sort-by="sortBy"
-          hover
-          hide-default-footer
-          @update:options="options = $event"
+          ><v-col cols="6" sm="6">
+            <v-autocomplete
+              v-model="selected"
+              :items="operation"
+              :label="name"
+              item-title="name"
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="3" sm="4" md="4">
+            <v-text-field
+              label="quantity*"
+              v-model="qty"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="3" sm="2" md="2">
+            <v-btn block class="mt-2">submit</v-btn>
+          </v-col></v-row
         >
-          <template v-slot:item="{ item }">
-            <tr @click="onClick(item.columns)">
-              <td v-ripple v-for="h in data.headers2" :key="h.key">
-                {{ item.columns[`${h.key}`] }}
-              </td>
-            </tr>
-          </template>
-          <template v-slot:bottom>
-            <div class="text-center pt-2">
-              <v-pagination
-                v-model="page"
-                class="my-4"
-                :length="pages.toFixed()"
-              ></v-pagination>
-              <v-text-field
-                :model-value="itemsPerPage"
-                class="pa-2"
-                label="Items per page"
-                type="number"
-                min="-1"
-                max="15"
-                hide-details
-                @update:model-value="itemsPerPage = parseInt($event, 10)"
-              ></v-text-field>
-            </div>
-          </template>
-        </v-data-table>
+
+        <!-- {{ pages }} // {{ data.total2 }} // {{ data.data2 }} -->
+        <tt v-bind:data="viewobject.data" v-bind:header="viewobject.header" />
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-          color="green-darken-1"
+          color="red-darken-1"
           variant="text"
           @click.native="$emit('close')"
         >
@@ -105,11 +76,10 @@
 </template>
 
 <script>
-import { usetable } from "../stores/tabledata";
-import { usepropemp } from "../stores/propemployee";
+import tt from "./table.vue";
 export default {
-  props: {
-    title: String,
+  components: {
+    tt,
   },
   data() {
     return {
@@ -122,6 +92,11 @@ export default {
       table: "properties",
       page: 1,
       itemsPerPage: 5,
+      selected: "",
+      qty: "",
+      operation: [{ name: "add" }, { name: "sub" }],
+      history: { note: "" },
+      elementtype: {},
     };
   },
   computed: {
@@ -130,26 +105,33 @@ export default {
     },
   },
   props: {
-    type: String,
+    viewobject: Object,
   },
-  setup() {
-    const data = usetable();
-    const prop = usepropemp();
-    return { data, prop };
+
+  created() {
+    this.history.note = this.viewobject.note;
   },
-  emits: ["tableClicked"],
+
+  emits: ["tableClicked", "saveclicked"],
 
   methods: {
     onClick(row) {
       this.$emit("tableClicked", row);
     },
-    edit() {
+
+    save() {
       if (this.isEditing === false) {
         this.isEditing = true;
       } else {
-        this.data.data2.note = this.note;
         this.isEditing = false;
+        // this.data.data2.note = this.history.note;
+        this.$emit("saveclicked", this.history.note);
       }
+    },
+    submit() {
+      this.elementtype.operation = this.selected;
+      this.elementtype.qty = this.qty;
+      this.$emit("submit", elementtype);
     },
   },
 };

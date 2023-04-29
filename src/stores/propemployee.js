@@ -2,32 +2,12 @@ import { defineStore } from "pinia";
 
 export const usepropemp = defineStore("propemp", {
   state: () => ({
-    headers: [
-      {
-        align: "start",
-        key: "custody_id",
-        sortable: false,
-        title: "ID",
-      },
-      { title: "property", key: "property" },
-      { title: "quantity", key: "totalQuantity" },
-    ],
-    historyheaders: [
-      {
-        align: "start",
-        key: "quantity",
-        sortable: false,
-        title: "quantity",
-      },
-      { title: "operation", key: "op" },
-      { title: "date", key: "date" },
-    ],
     data: [
       {
-        custody_id: "1",
-        property: "ma2s",
+        _id: "1",
+        name: "ma2s",
         totalQuantity: "14",
-        note: "teso tesotes testo tesot e",
+        note: "test 1",
         lastDate: "2023/4/22",
         history: [
           { quantity: 12, date: "2023/4/23", op: "add" },
@@ -36,10 +16,10 @@ export const usepropemp = defineStore("propemp", {
         ],
       },
       {
-        custody_id: "2",
-        property: "ma2sat",
+        _id: "2",
+        name: "ma2sat",
         totalQuantity: "4",
-        note: "teso tesotes testo tesot e",
+        note: "test 2",
         lastDate: "2023/4/22",
         history: [
           { quantity: 12, date: "2023/4/23", op: "add" },
@@ -48,10 +28,10 @@ export const usepropemp = defineStore("propemp", {
         ],
       },
       {
-        custody_id: "12",
-        property: "mastra",
+        _id: "12",
+        name: "mastra",
         totalQuantity: "2",
-        note: "teso tesotes testo tesot e",
+        note: "test 3 ",
         lastDate: "2023/4/22",
         history: [
           { quantity: 12, date: "2023/4/23", op: "add" },
@@ -65,6 +45,7 @@ export const usepropemp = defineStore("propemp", {
     total: (state) => {
       return state.data.length;
     },
+
     propfind: (state) => {
       return (id) => state.data.find((prop) => prop.custody_id === id);
     },

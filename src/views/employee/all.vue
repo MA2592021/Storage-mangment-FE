@@ -12,12 +12,16 @@
     >
 
     <v-col cols="12">
-      <tt v-bind:type="'1'" @tableClicked="tableClicked" /> </v-col
+      <tt
+        v-bind:data="employees.data"
+        v-bind:header="employees.headers"
+        @tableClicked="tableClicked"
+      /> </v-col
   ></v-row>
 </template>
 
 <script>
-import tt from "../../components/tablepinia.vue";
+import tt from "../../components/table.vue";
 import { useemployee } from "../../stores/employees";
 import { usetable } from "../../stores/tabledata";
 

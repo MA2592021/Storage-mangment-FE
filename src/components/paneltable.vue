@@ -16,7 +16,11 @@
       </template>
     </v-expansion-panel-title>
     <v-expansion-panel-text>
-      <tablepinia v-bind:type="this.type" @tableClicked="onClickButton" />
+      <tt
+        v-bind:data="data"
+        v-bind:header="header"
+        @tableClicked="onClickButton"
+      />
       <appendpop v-bind:link="link" v-bind:name="panelname" />
     </v-expansion-panel-text>
   </v-expansion-panel>
@@ -24,18 +28,19 @@
 
 <script>
 import appendpop from "./appendpop.vue";
-import tablepinia from "./tablepinia.vue";
+import tt from "./table.vue";
 export default {
   components: {
     appendpop,
-    tablepinia,
+    tt,
   },
   props: {
-    type: String,
     panelname: String,
     closedtitle: String,
     openedtitle: String,
     link: String,
+    data: Object,
+    header: Object,
   },
   methods: {
     onClickButton(value) {

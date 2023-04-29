@@ -108,7 +108,7 @@ export const usetable = defineStore("tabledata", {
       return state.data1.length;
     },
     total2: (state) => {
-      return state.data2.length;
+      return state.data2.history.length;
     },
   },
 });

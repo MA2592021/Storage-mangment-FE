@@ -2,31 +2,24 @@ import { defineStore } from "pinia";
 
 export const usematerials = defineStore("materials", {
   state: () => ({
-    headers: [
-      {
-        align: "start",
-        key: "ID",
-        sortable: false,
-        title: "ID",
-      },
-      { title: "property", key: "property" },
-      { title: "quantity", key: "quantity" },
-    ],
     data: [
       {
-        ID: "1",
-        property: "white 2omash",
+        _id: "1",
+        name: "white 2omash",
         quantity: "14",
+        available: "6",
       },
       {
-        ID: "2",
-        property: "black 2omash",
+        _id: "2",
+        name: "black 2omash",
         quantity: "4",
+        available: "3",
       },
       {
-        ID: "12",
-        property: "zorar",
+        _id: "12",
+        name: "zorar",
         quantity: "2",
+        available: "1",
       },
     ],
   }),

@@ -18,7 +18,7 @@
     @update:options="options = $event"
   >
     <template v-slot:item="{ item }">
-      <tr @click="onClick(item.columns.code)" v-ripple>
+      <tr @click="onClick(item.columns)" v-ripple>
         <td v-for="h in header" :key="h.key">
           {{ item.columns[`${h.key}`] }}
         </td>
@@ -75,9 +75,9 @@ export default {
   },
 
   methods: {
-    onClick(id) {
-      console.log(id);
-      this.$emit("tableClicked", id);
+    onClick(obj) {
+      console.log(obj);
+      this.$emit("tableClicked", obj);
     },
   },
 };
