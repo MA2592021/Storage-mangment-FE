@@ -20,7 +20,6 @@
 import tt from "../../components/tablepinia.vue";
 import { useemployee } from "../../stores/employees";
 import { usetable } from "../../stores/tabledata";
-import { storeToRefs } from "pinia";
 
 export default {
   components: {
@@ -36,13 +35,11 @@ export default {
   setup() {
     const employees = useemployee();
     const table = usetable();
-    const { empfind } = storeToRefs(employees);
-    return { table, employees, empfind };
+    return { table, employees };
   },
   methods: {
     tableClicked(value) {
       // console.log(value);
-      this.employees.employee = this.empfind(value.code);
       // console.log(this.employees.employee);
       this.$router.push({
         path: `/employee/${value.code}`,

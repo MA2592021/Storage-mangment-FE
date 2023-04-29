@@ -18,8 +18,9 @@
     @update:options="options = $event"
   >
     <template v-slot:item="{ item }">
-      <tr @click="onClick(item.columns)" v-ripple>
+      <tr @click="onClick(item.columns)">
         <td
+          v-ripple
           v-for="h in type === '1' ? data.headers : data.headers1"
           :key="h.key"
         >

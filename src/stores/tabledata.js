@@ -72,6 +72,33 @@ export const usetable = defineStore("tabledata", {
         quantity: "2",
       },
     ],
+    headers2: [
+      {
+        align: "start",
+        key: "ID",
+        sortable: false,
+        title: "ID",
+      },
+      { title: "property", key: "property" },
+      { title: "quantity", key: "quantity" },
+    ],
+    data2: [
+      {
+        ID: "1",
+        property: "ma2s",
+        quantity: "14",
+      },
+      {
+        ID: "2",
+        property: "ma2sat",
+        quantity: "4",
+      },
+      {
+        ID: "12",
+        property: "mastra",
+        quantity: "2",
+      },
+    ],
   }),
   getters: {
     total: (state) => {
@@ -79,6 +106,9 @@ export const usetable = defineStore("tabledata", {
     },
     total1: (state) => {
       return state.data1.length;
+    },
+    total2: (state) => {
+      return state.data2.length;
     },
   },
 });

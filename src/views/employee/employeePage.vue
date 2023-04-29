@@ -74,7 +74,7 @@
           </v-col>
           <v-col cols="12" sm="6"
             ><v-textarea
-              clearable
+              :clearable="dis === false"
               label="Note"
               v-model="employee.note"
               :readonly="dis === true"
@@ -99,7 +99,6 @@
         Save
       </v-btn>
     </v-card-actions>
-    {{ this.employees.data }} // {{ this.employees.employee }}
   </v-card>
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
@@ -125,22 +124,30 @@
     v-model="dialog"
     v-bing:title="title"
     v-bind:content="content"
-    @save="save()"
+    @save="check()"
     @close="cancel()"
+  />
+  <check v-model="dialog1" @checked="save()" @closed="cancel()" />
+  <history
+    v-model="dialog2"
+    v-bind:title="historytype"
+    @close="dialog2 = !dialog2"
   />
 </template>
 
 <script>
 import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
+import check from "../../components/checkpopup.vue";
+import history from "../../components/historypopup.vue";
+import { usematemp } from "../../stores/matemp";
+import { usepropemp } from "../../stores/propemployee";
 import { useemployee } from "../../stores/employees";
-import { usematerials } from "../../stores/materials";
-import { useproperties } from "../../stores/properties";
 import { usetable } from "../../stores/tabledata";
 import { storeToRefs } from "pinia";
 
 export default {
-  components: { paneltable, popuptest },
+  components: { paneltable, popuptest, check, history },
 
   data: () => ({
     content:
@@ -149,13 +156,17 @@ export default {
     link: "",
     isdisabled: true,
     dialog: false,
+    dialog1: false,
+    dialog2: false,
     openedtitle: "properties with",
     openedtitle1: "materials with",
     dis: true,
     isEditing: false,
     employee: {},
+    historytype: "",
   }),
   created() {
+    this.boot();
     this.clone();
     // console.log(this.employee);
     this.table.data = this.properties.data;
@@ -167,15 +178,43 @@ export default {
   },
   setup() {
     const employees = useemployee();
-    const properties = useproperties();
-    const materials = usematerials();
+    const properties = usepropemp();
+    const materials = usematemp();
     const table = usetable();
     const { empfind } = storeToRefs(employees);
-    return { employees, empfind, properties, materials, table };
+    const { matfind } = storeToRefs(materials);
+    const { propfind } = storeToRefs(properties);
+    return {
+      propfind,
+      matfind,
+      employees,
+      empfind,
+      properties,
+      materials,
+      table,
+    };
   },
   methods: {
     onClickChild(value) {
-      console.log(value); // someValue
+      value.property
+        ? (this.historytype = "property")
+        : (this.historytype = "material");
+      this.historyview(value.custody_id);
+    },
+    check() {
+      this.dialog = false;
+      this.dialog1 = true;
+    },
+    historyview(id) {
+      if (this.historytype === "property") {
+        this.table.data2 = this.propfind(id);
+        this.table.headers2 = this.properties.historyheaders;
+        // console.log(this.table.data2);
+      } else {
+        this.table.data2 = this.matfind(id);
+        this.table.headers2 = this.materials.historyheaders;
+      }
+      this.dialog2 = true;
     },
     criticalchange() {
       if (this.isEditing === false) {
@@ -199,7 +238,10 @@ export default {
     },
     cancel() {
       this.dialog = false;
+      this.dialog1 = false;
       this.dis = !this.dis;
+      this.isEditing = false;
+
       this.employee.name = this.employees.employee.name;
       this.employee.code = this.employees.employee.code;
       this.employee.img = this.employees.employee.img;
@@ -213,6 +255,8 @@ export default {
     save() {
       this.dis = !this.dis;
       this.dialog = false;
+      this.isEditing = false;
+      this.dialog1 = false;
       this.employees.employee.name = this.employee.name;
       this.employees.employee.code = this.employee.code;
       this.employees.employee.img = this.employee.img;
@@ -222,6 +266,9 @@ export default {
       this.employees.employee.phone = this.employee.phone;
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
+    },
+    boot() {
+      this.employees.employee = this.empfind(this.$route.params.id);
     },
   },
 };

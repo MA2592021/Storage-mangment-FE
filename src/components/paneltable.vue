@@ -16,7 +16,7 @@
       </template>
     </v-expansion-panel-title>
     <v-expansion-panel-text>
-      <tablepinia v-bind:type="this.type" />
+      <tablepinia v-bind:type="this.type" @tableClicked="onClickButton" />
       <appendpop v-bind:link="link" v-bind:name="panelname" />
     </v-expansion-panel-text>
   </v-expansion-panel>

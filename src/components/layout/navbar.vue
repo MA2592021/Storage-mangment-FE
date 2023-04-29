@@ -83,8 +83,13 @@ export default {
           text: "employees",
           route: "/employee/dashboard",
         },
+
         { icon: "mdi-hanger", text: "models", route: "/model/" },
-        { icon: "mdi-account-tie", text: "suppliers", route: "/supplier/" },
+        { icon: "mdi-cart", text: "Oreders", route: "/order/" },
+
+        { icon: "mdi-ticket-account", text: "suppliers", route: "/supplier/" },
+        { icon: "mdi-account-tie", text: "Clients", route: "/client/" },
+
         { icon: "mdi-truck", text: "shipment", route: "/shipment/" },
         {
           icon: "mdi-note-multiple",
