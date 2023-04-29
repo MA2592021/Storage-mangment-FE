@@ -103,7 +103,8 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:type="'1'"
+        v-bind:data="properties.data"
+        v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'properties'"
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.employee.name"
@@ -111,7 +112,8 @@
         @clicked="onClickChild"
       />
       <paneltable
-        v-bind:type="'2'"
+        v-bind:data="materials.data"
+        v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle1"
         v-bind:closedtitle="this.employee.name"
@@ -122,16 +124,25 @@
   </v-card>
   <popuptest
     v-model="dialog"
+    v-if="dialog"
     v-bing:title="title"
     v-bind:content="content"
     @save="check()"
     @close="cancel()"
   />
-  <check v-model="dialog1" @checked="save()" @closed="cancel()" />
+  <check
+    v-model="dialog1"
+    v-if="dialog1"
+    @checked="save()"
+    @closed="cancel()"
+  />
   <history
     v-model="dialog2"
-    v-bind:title="historytype"
+    v-if="dialog2"
+    v-bind:viewobject="historyobject"
     @close="dialog2 = !dialog2"
+    @saveclicked="savenote()"
+    @submit="submit()"
   />
 </template>
 
@@ -143,7 +154,7 @@ import history from "../../components/historypopup.vue";
 import { usematemp } from "../../stores/matemp";
 import { usepropemp } from "../../stores/propemployee";
 import { useemployee } from "../../stores/employees";
-import { usetable } from "../../stores/tabledata";
+import { useheaders } from "../../stores/headers";
 import { storeToRefs } from "pinia";
 
 export default {
@@ -164,23 +175,18 @@ export default {
     isEditing: false,
     employee: {},
     historytype: "",
+    obj: {},
+    historyobject: {},
   }),
   created() {
     this.boot();
     this.clone();
-    // console.log(this.employee);
-    this.table.data = this.properties.data;
-    this.table.headers = this.properties.headers;
-    this.table.data1 = this.materials.data;
-    this.table.headers1 = this.materials.headers;
-    // console.log(this.table.data);
-    // console.log(this.table.data1);
   },
   setup() {
     const employees = useemployee();
     const properties = usepropemp();
     const materials = usematemp();
-    const table = usetable();
+    const headers = useheaders();
     const { empfind } = storeToRefs(employees);
     const { matfind } = storeToRefs(materials);
     const { propfind } = storeToRefs(properties);
@@ -191,29 +197,52 @@ export default {
       empfind,
       properties,
       materials,
-      table,
+      headers,
     };
   },
   methods: {
     onClickChild(value) {
+      console.log(value);
       value.property
         ? (this.historytype = "property")
         : (this.historytype = "material");
       this.historyview(value.custody_id);
+    },
+    submit() {
+      if (this.data.data2.property) {
+        this.propfind(this.data.data2.custody_id).note = this.data.data2.note;
+      } else {
+        this.matfind(this.data.data2.material_id).note = this.data.data2.note;
+      }
+    },
+    savenote(value) {
+      if (this.historytype === "property") {
+        this.propfind(this.data.data2.custody_id).note = this.data.data2.note;
+      } else {
+        this.matfind(this.data.data2.material_id).note = this.data.data2.note;
+      }
     },
     check() {
       this.dialog = false;
       this.dialog1 = true;
     },
     historyview(id) {
+      // console.log(this.propfind(id));
+      this.historyobject.title = this.historytype + " history";
       if (this.historytype === "property") {
-        this.table.data2 = this.propfind(id);
-        this.table.headers2 = this.properties.historyheaders;
-        // console.log(this.table.data2);
+        this.obj = this.propfind(id);
       } else {
-        this.table.data2 = this.matfind(id);
-        this.table.headers2 = this.materials.historyheaders;
+        this.obj = this.matfind(id);
       }
+
+      // console.log(this.obj);
+      this.historyobject.name = this.obj.name;
+      this.historyobject.data = this.obj.history;
+      this.historyobject.qty = this.obj.totalQuantity;
+      this.historyobject.date = this.obj.lastDate;
+      this.historyobject.note = this.obj.note;
+      this.historyobject.header = this.headers.historyheader;
+      this.historyobject.data = this.obj.history;
       this.dialog2 = true;
     },
     criticalchange() {

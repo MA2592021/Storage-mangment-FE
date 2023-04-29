@@ -2,17 +2,6 @@ import { defineStore } from "pinia";
 
 export const useemployee = defineStore("employees", {
   state: () => ({
-    headers: [
-      {
-        align: "start",
-        key: "code",
-        sortable: false,
-        title: "code",
-      },
-      { title: "name", key: "name" },
-      { title: "role", key: "role" },
-      { title: "phone number", key: "phone" },
-    ],
     data: [
       {
         note: "lailo lailo",
