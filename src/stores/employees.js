@@ -68,8 +68,8 @@ export const useemployee = defineStore("employees", {
     },
   },
   actions: {
-    add(obj) {
-      this.data.push(obj);
+    addo() {
+      this.data.push(this.employee);
     },
   },
 });

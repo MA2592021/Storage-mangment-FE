@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" @input="$emit('input', $event)" persistent>
+  <v-dialog :value="value" persistent>
     <v-card>
       <v-card-title class="text-h5"> {{ title }} </v-card-title>
       <v-card-text>{{ content }}</v-card-text>

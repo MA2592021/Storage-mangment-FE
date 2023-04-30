@@ -84,7 +84,7 @@ export default {
           route: "/employee/dashboard",
         },
 
-        { icon: "mdi-hanger", text: "models", route: "/model/" },
+        { icon: "mdi-hanger", text: "models", route: "/model/dashboard" },
         { icon: "mdi-cart", text: "Oreders", route: "/order/" },
 
         { icon: "mdi-ticket-account", text: "suppliers", route: "/supplier/" },

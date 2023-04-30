@@ -46,7 +46,7 @@ export const usematemp = defineStore("matemp", {
       return state.data.length;
     },
     matfind: (state) => {
-      return (id) => state.data.find((prop) => prop.id === id);
+      return (id) => state.data.find((prop) => prop._id === id);
     },
   },
 });

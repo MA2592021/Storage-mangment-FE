@@ -41,17 +41,6 @@
           </v-col>
 
           <v-col cols="12" sm="6">
-            <v-file-input
-              clearable
-              v-model="employee.img"
-              accept="image/png, image/jpeg, image/bmp"
-              label="Employee image"
-              prepend-icon="mdi-camera"
-              show-size
-              :rules="rules"
-            ></v-file-input>
-          </v-col>
-          <v-col cols="12" sm="6">
             <v-autocomplete
               label="Role*"
               chips
@@ -61,13 +50,16 @@
               :items="['Supervisor', 'Employee']"
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12"
+          <v-col cols="12" sm="6"
             ><v-textarea
               clearable
               label="Note"
               v-model="employee.note"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
+          </v-col>
+          <v-col cols="12" sm="12">
+            <imageuploader @selected="imageup" />
           </v-col>
         </v-row>
       </v-container>
@@ -76,13 +68,16 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
-      <v-btn color="blue-darken-1" variant="text" @click="add"> Save </v-btn>
+      <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import imageuploader from "../../components/imageuploader.vue";
+
 export default {
+  components: { imageuploader },
   data: () => ({
     rules: [
       (value) => {
@@ -106,9 +101,14 @@ export default {
       note: "",
     },
   }),
+
   methods: {
     add() {
-      console.log(this.employee.img[0]);
+      this.url = URL.createObjectURL(this.employee.img);
+    },
+
+    imageup(image) {
+      this.employee.img = image[0];
     },
   },
 };

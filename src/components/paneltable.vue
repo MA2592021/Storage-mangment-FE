@@ -21,7 +21,18 @@
         v-bind:header="header"
         @tableClicked="onClickButton"
       />
-      <appendpop v-bind:link="link" v-bind:name="panelname" />
+      <appendpop
+        v-bind:link="link"
+        v-model="dialog"
+        v-if="dialog"
+        @close="dialog = !dialog"
+        @save="save"
+      />
+      <v-row justify="center" class="mt-4">
+        <v-btn color="primary " v-bind="props" @click="dialog = !dialog">
+          Append {{ panelname }}
+        </v-btn></v-row
+      >
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
@@ -33,6 +44,12 @@ export default {
   components: {
     appendpop,
     tt,
+  },
+
+  data() {
+    return {
+      dialog: false,
+    };
   },
   props: {
     panelname: String,
@@ -46,6 +63,10 @@ export default {
     onClickButton(value) {
       console.log(value);
       this.$emit("clicked", value);
+    },
+    save(value) {
+      console.log(value);
+      this.dialog = !this.dialog;
     },
   },
   emits: ["clicked"],

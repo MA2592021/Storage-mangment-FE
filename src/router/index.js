@@ -50,6 +50,40 @@ const router = createRouter({
         },
       ],
     },
+
+    // models routes
+    {
+      path: "/model/",
+      name: "model-land",
+
+      component: () => import("../views/models/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "model-dash",
+
+          component: () => import("../views/models/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "model-add",
+
+          component: () => import("../views/models/add.vue"),
+        },
+        {
+          path: "all",
+          name: "model-all",
+
+          component: () => import("../views/models/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "model-page",
+
+          component: () => import("../views/models/modelPage.vue"),
+        },
+      ],
+    },
   ],
 });
 

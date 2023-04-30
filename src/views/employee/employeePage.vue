@@ -125,7 +125,7 @@
   <popuptest
     v-model="dialog"
     v-if="dialog"
-    v-bing:title="title"
+    v-bind:title="title"
     v-bind:content="content"
     @save="check()"
     @close="cancel()"
@@ -174,6 +174,7 @@ export default {
     dis: true,
     isEditing: false,
     employee: {},
+    orgemployee: {},
     historytype: "",
     obj: {},
     historyobject: {},
@@ -233,13 +234,13 @@ export default {
     },
     historyview(id) {
       // console.log(this.propfind(id));
-      console.log(this.propfind(id));
       this.historyobject.title = this.historytype + " history";
       if (this.historytype === "property") {
         this.obj = this.propfind(id);
       } else {
         this.obj = this.matfind(id);
       }
+
       this.historyobject.id = this.obj._id;
       this.historyobject.name = this.obj.name;
       this.historyobject.data = this.obj.history;
@@ -262,13 +263,13 @@ export default {
       }
     },
     clone() {
-      this.employee.name = this.employees.employee.name;
-      this.employee.code = this.employees.employee.code;
-      this.employee.img = this.employees.employee.img;
-      this.employee.nid = this.employees.employee.nid;
-      this.employee.role = this.employees.employee.role;
-      this.employee.note = this.employees.employee.note;
-      this.employee.phone = this.employees.employee.phone;
+      this.employee.name = this.orgemployee.name;
+      this.employee.code = this.orgemployee.code;
+      this.employee.img = this.orgemployee.img;
+      this.employee.nid = this.orgemployee.nid;
+      this.employee.role = this.orgemployee.role;
+      this.employee.note = this.orgemployee.note;
+      this.employee.phone = this.orgemployee.phone;
     },
     cancel() {
       this.dialog = false;
@@ -276,13 +277,13 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.employee.name = this.employees.employee.name;
-      this.employee.code = this.employees.employee.code;
-      this.employee.img = this.employees.employee.img;
-      this.employee.nid = this.employees.employee.nid;
-      this.employee.role = this.employees.employee.role;
-      this.employee.note = this.employees.employee.note;
-      this.employee.phone = this.employees.employee.phone;
+      this.employee.name = this.orgemployee.name;
+      this.employee.code = this.orgemployee.code;
+      this.employee.img = this.orgemployee.img;
+      this.employee.nid = this.orgemployee.nid;
+      this.employee.role = this.orgemployee.role;
+      this.employee.note = this.orgemployee.note;
+      this.employee.phone = this.orgemployee.phone;
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
@@ -291,16 +292,19 @@ export default {
       this.dialog = false;
       this.isEditing = false;
       this.dialog1 = false;
-      this.employees.employee.name = this.employee.name;
-      this.employees.employee.code = this.employee.code;
-      this.employees.employee.img = this.employee.img;
-      this.employees.employee.nid = this.employee.nid;
-      this.employees.employee.role = this.employee.role;
-      this.employees.employee.note = this.employee.note;
-      this.employees.employee.phone = this.employee.phone;
+      // this.employees.employee.name = this.employee.name;
+      // this.employees.employee.code = this.employee.code;
+      // this.employees.employee.img = this.employee.img;
+      // this.employees.employee.nid = this.employee.nid;
+      // this.employees.employee.role = this.employee.role;
+      // this.employees.employee.note = this.employee.note;
+      // this.employees.employee.phone = this.employee.phone;
+
+      //save route here
     },
     boot() {
-      this.employees.employee = this.empfind(this.$route.params.id);
+      // Get route here
+      this.orgemployee = this.empfind(this.$route.params.id);
     },
   },
 };

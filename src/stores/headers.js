@@ -33,6 +33,16 @@ export const useheaders = defineStore("headers", {
       { title: "operation", key: "op" },
       { title: "date", key: "date" },
     ],
+    model_header: [
+      {
+        align: "start",
+        key: "_id",
+        sortable: false,
+        title: "ID",
+      },
+      { title: "name", key: "name" },
+      { title: "details", key: "details" },
+    ],
 
     employee_header: [
       {
