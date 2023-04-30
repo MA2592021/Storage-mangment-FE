@@ -70,12 +70,14 @@
       <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
       <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
+    {{ employee.role }}
   </v-card>
 </template>
 
 <script>
 import imageuploader from "../../components/imageuploader.vue";
-
+import axios from "axios";
+import sweetalert from "sweetalert";
 export default {
   components: { imageuploader },
   data: () => ({
@@ -98,13 +100,35 @@ export default {
       nid: "",
       img: "",
       role: null,
-      note: "",
+      note: "    ",
     },
   }),
 
   methods: {
     add() {
-      this.url = URL.createObjectURL(this.employee.img);
+      // this.url = URL.createObjectURL(this.employee.img);
+      console.log("im alive");
+      axios
+        .post("/api/employee", {
+          name: this.employee.name,
+          code: this.employee.code,
+          "role.title": this.employee.role,
+          "role.num": this.employee.role === "Supervisor" ? "1" : "0",
+          phoneNo: this.employee.phone,
+          NID: this.employee.nid,
+          note: this.employee.note,
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            console.log(response);
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "yay", "success");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
 
     imageup(image) {

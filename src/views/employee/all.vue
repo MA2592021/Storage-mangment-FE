@@ -23,7 +23,7 @@
 <script>
 import tt from "../../components/table.vue";
 import { useheaders } from "../../stores/headers";
-
+import axios from "axios";
 export default {
   components: {
     tt,
@@ -81,6 +81,10 @@ export default {
   },
   created() {
     //Get route
+    axios.get("/api/employee/").then((response) => {
+      console.log(response);
+      this.employees = response.data.date;
+    });
   },
   setup() {
     const headers = useheaders();
@@ -91,7 +95,7 @@ export default {
       // console.log(value);
       // console.log(this.employees.employee);
       this.$router.push({
-        path: `/employee/${value.code}`,
+        path: `/employee/${value._id}`,
       });
     },
   },

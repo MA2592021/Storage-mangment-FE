@@ -103,7 +103,7 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="properties"
+        v-bind:data="employee.properties"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'properties'"
         v-bind:openedtitle="openedtitle"
@@ -112,7 +112,7 @@
         @clicked="onClickChild_property"
       />
       <paneltable
-        v-bind:data="materials"
+        v-bind:data="employee.materials"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle1"
@@ -151,7 +151,9 @@ import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
 import history from "../../components/historypopup.vue";
+import axios from "axios";
 
+import sweetalert from "sweetalert";
 import { useheaders } from "../../stores/headers";
 
 export default {
@@ -171,15 +173,7 @@ export default {
     dis: true,
     isEditing: false,
     employee: {},
-    orgemployee: {
-      name: "amir",
-      code: "2323",
-      phone: "01110133639",
-      role: "suprervisor",
-      note: "lailo lailo",
-      img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
-      nid: "12312312313",
-    },
+    orgemployee: {},
     properties: [
       {
         _id: "1",
@@ -262,7 +256,21 @@ export default {
   }),
   created() {
     //GEtet route here
-    this.clone();
+    axios.get("/api/employee/" + this.$route.params.id).then((response) => {
+      console.log(response);
+      if (response.data.errors) {
+        swal("error", response.data.errors[0].msg, "error");
+      } else {
+        this.orgemployee = response.data.data;
+        console.log(this.orgemployee.name);
+        axios
+          .get("/api/materialEmployee/employee/" + this.$route.params.id)
+          .then((response) => {
+            this.orgemployee.materials = response.data.date;
+            this.clone();
+          });
+      }
+    });
   },
   setup() {
     const headers = useheaders();
@@ -330,13 +338,16 @@ export default {
       }
     },
     clone() {
+      this.employee.id = this.orgemployee._id;
       this.employee.name = this.orgemployee.name;
       this.employee.code = this.orgemployee.code;
       this.employee.img = this.orgemployee.img;
-      this.employee.nid = this.orgemployee.nid;
+      this.employee.nid = this.orgemployee.NID;
       this.employee.role = this.orgemployee.role;
       this.employee.note = this.orgemployee.note;
-      this.employee.phone = this.orgemployee.phone;
+      this.employee.phone = this.orgemployee.phoneNo;
+      this.employee.properties = this.orgemployee.currentCustodies;
+      this.employee.materials = this.orgemployee.materials;
     },
     cancel() {
       this.dialog = false;
@@ -347,10 +358,11 @@ export default {
       this.employee.name = this.orgemployee.name;
       this.employee.code = this.orgemployee.code;
       this.employee.img = this.orgemployee.img;
-      this.employee.nid = this.orgemployee.nid;
+      this.employee.nid = this.orgemployee.NID;
       this.employee.role = this.orgemployee.role;
       this.employee.note = this.orgemployee.note;
-      this.employee.phone = this.orgemployee.phone;
+      this.employee.phone = this.orgemployee.phoneNo;
+      this.employee.properties = this.orgemployee.currentCustodies;
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },

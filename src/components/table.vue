@@ -18,7 +18,7 @@
     @update:options="options = $event"
   >
     <template v-slot:item="{ item }">
-      <tr @click="onClick(item.columns)" v-ripple>
+      <tr @click="onClick(item.raw)" v-ripple>
         <td v-for="h in header" :key="h.key">
           {{ item.columns[`${h.key}`] }}
         </td>
