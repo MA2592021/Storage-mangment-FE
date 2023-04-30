@@ -67,4 +67,9 @@ export const useemployee = defineStore("employees", {
       return (empcode) => state.data.find((user) => user.code === empcode);
     },
   },
+  actions: {
+    add(obj) {
+      this.data.push(obj);
+    },
+  },
 });

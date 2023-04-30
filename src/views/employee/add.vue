@@ -8,14 +8,25 @@
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="6">
-            <v-text-field label="Name*" required hint="Required"></v-text-field>
+            <v-text-field
+              label="Name*"
+              v-model="employee.name"
+              required
+              hint="Required"
+            ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="6">
-            <v-text-field required label="Code*" hint="Required"></v-text-field>
+            <v-text-field
+              required
+              v-model="employee.code"
+              label="Code*"
+              hint="Required"
+            ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               label="Phone number*"
+              v-model="employee.phone"
               hint="Required"
               required
             ></v-text-field>
@@ -23,6 +34,7 @@
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               required
+              v-model="employee.nid"
               label="National ID*"
               hint="Required"
             ></v-text-field>
@@ -31,6 +43,7 @@
           <v-col cols="12" sm="6">
             <v-file-input
               clearable
+              v-model="employee.img"
               accept="image/png, image/jpeg, image/bmp"
               label="Employee image"
               prepend-icon="mdi-camera"
@@ -42,6 +55,7 @@
             <v-autocomplete
               label="Role*"
               chips
+              v-model="employee.role"
               persistent-hint
               hint="Required"
               :items="['Supervisor', 'Employee']"
@@ -51,6 +65,7 @@
             ><v-textarea
               clearable
               label="Note"
+              v-model="employee.note"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
@@ -61,7 +76,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
-      <v-btn color="blue-darken-1" variant="text"> Save </v-btn>
+      <v-btn color="blue-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -81,6 +96,20 @@ export default {
     ],
     url: null,
     image: null,
+    employee: {
+      name: "",
+      code: "",
+      phone: "",
+      nid: "",
+      img: "",
+      role: null,
+      note: "",
+    },
   }),
+  methods: {
+    add() {
+      console.log(this.employee.img[0]);
+    },
+  },
 };
 </script>

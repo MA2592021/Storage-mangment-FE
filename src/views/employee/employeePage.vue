@@ -190,7 +190,6 @@ export default {
     const { empfind } = storeToRefs(employees);
     const { matfind } = storeToRefs(materials);
     const { propfind } = storeToRefs(properties);
-    const { changenote } = storeToRefs(properties);
     return {
       propfind,
       matfind,
@@ -199,7 +198,6 @@ export default {
       properties,
       materials,
       headers,
-      changenote,
     };
   },
   methods: {
