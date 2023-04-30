@@ -14,7 +14,7 @@
     <v-col cols="12">
       <tt
         v-bind:data="employees.data"
-        v-bind:header="employees.headers"
+        v-bind:header="headers.employee_header"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>
@@ -23,6 +23,7 @@
 <script>
 import tt from "../../components/table.vue";
 import { useemployee } from "../../stores/employees";
+import { useheaders } from "../../stores/headers";
 import { usetable } from "../../stores/tabledata";
 
 export default {
@@ -39,7 +40,8 @@ export default {
   setup() {
     const employees = useemployee();
     const table = usetable();
-    return { table, employees };
+    const headers = useheaders();
+    return { table, employees, headers };
   },
   methods: {
     tableClicked(value) {

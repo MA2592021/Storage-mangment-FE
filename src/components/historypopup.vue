@@ -21,6 +21,8 @@
               v-model="viewobject.note"
               label="Note "
               :readonly="!isEditing"
+              rows="1"
+              auto-grow
               variant="underlined"
               ><template v-slot:append>
                 <v-slide-x-reverse-transition mode="out-in">
@@ -125,7 +127,12 @@ export default {
       } else {
         this.isEditing = false;
         // this.data.data2.note = this.history.note;
-        this.$emit("saveclicked", this.history.note);
+        let obj = {};
+        obj.note = this.history.note;
+        obj.id = this.viewobject.id;
+        console.log(obj);
+        console.log(this.viewobject);
+        this.$emit("saveclicked", obj);
       }
     },
     submit() {

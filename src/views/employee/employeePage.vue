@@ -109,7 +109,7 @@
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.employee.name"
         v-bind:link="link"
-        @clicked="onClickChild"
+        @clicked="onClickChild_property"
       />
       <paneltable
         v-bind:data="materials.data"
@@ -118,7 +118,7 @@
         v-bind:openedtitle="openedtitle1"
         v-bind:closedtitle="this.employee.name"
         v-bind:link="link"
-        @clicked="onClickChild"
+        @clicked="onClickChild_material"
       />
     </v-expansion-panels>
   </v-card>
@@ -141,7 +141,7 @@
     v-if="dialog2"
     v-bind:viewobject="historyobject"
     @close="dialog2 = !dialog2"
-    @saveclicked="savenote()"
+    @saveclicked="savenote"
     @submit="submit()"
   />
 </template>
@@ -190,6 +190,7 @@ export default {
     const { empfind } = storeToRefs(employees);
     const { matfind } = storeToRefs(materials);
     const { propfind } = storeToRefs(properties);
+    const { changenote } = storeToRefs(properties);
     return {
       propfind,
       matfind,
@@ -198,15 +199,19 @@ export default {
       properties,
       materials,
       headers,
+      changenote,
     };
   },
   methods: {
-    onClickChild(value) {
-      console.log(value);
-      value.property
-        ? (this.historytype = "property")
-        : (this.historytype = "material");
-      this.historyview(value.custody_id);
+    onClickChild_property(value) {
+      // console.log(value);
+      this.historytype = "property";
+      this.historyview(value._id);
+    },
+    onClickChild_material(value) {
+      this.historytype = "material";
+
+      this.historyview(value._id);
     },
     submit() {
       if (this.data.data2.property) {
@@ -216,10 +221,12 @@ export default {
       }
     },
     savenote(value) {
+      console.log(value);
       if (this.historytype === "property") {
-        this.propfind(this.data.data2.custody_id).note = this.data.data2.note;
+        this.propfind(value.id).note = value.note;
+        console.log(this.propfind(value.id).note);
       } else {
-        this.matfind(this.data.data2.material_id).note = this.data.data2.note;
+        this.matfind(value.id).note = value.note;
       }
     },
     check() {
@@ -228,14 +235,14 @@ export default {
     },
     historyview(id) {
       // console.log(this.propfind(id));
+      console.log(this.propfind(id));
       this.historyobject.title = this.historytype + " history";
       if (this.historytype === "property") {
         this.obj = this.propfind(id);
       } else {
         this.obj = this.matfind(id);
       }
-
-      // console.log(this.obj);
+      this.historyobject.id = this.obj._id;
       this.historyobject.name = this.obj.name;
       this.historyobject.data = this.obj.history;
       this.historyobject.qty = this.obj.totalQuantity;
@@ -293,8 +300,6 @@ export default {
       this.employees.employee.role = this.employee.role;
       this.employees.employee.note = this.employee.note;
       this.employees.employee.phone = this.employee.phone;
-      this.content =
-        "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
     boot() {
       this.employees.employee = this.empfind(this.$route.params.id);

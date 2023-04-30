@@ -47,7 +47,12 @@ export const usepropemp = defineStore("propemp", {
     },
 
     propfind: (state) => {
-      return (id) => state.data.find((prop) => prop.custody_id === id);
+      return (id) => state.data.find((prop) => prop._id === id);
+    },
+  },
+  actions: {
+    changenote: (state, id, note) => {
+      state.propfind(id).note = note;
     },
   },
 });
