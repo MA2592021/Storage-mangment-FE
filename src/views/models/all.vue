@@ -102,10 +102,10 @@ export default {
   },
   methods: {
     tableClicked(value) {
-      // console.log(value);
+      console.log(value);
       // console.log(this.employees.employee);
       this.$router.push({
-        path: `/employee/${value.code}`,
+        path: `/model/${value._id}`,
       });
     },
   },
