@@ -103,7 +103,7 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="properties.data"
+        v-bind:data="properties"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'properties'"
         v-bind:openedtitle="openedtitle"
@@ -112,7 +112,7 @@
         @clicked="onClickChild_property"
       />
       <paneltable
-        v-bind:data="materials.data"
+        v-bind:data="materials"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle1"
@@ -151,11 +151,8 @@ import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
 import history from "../../components/historypopup.vue";
-import { usematemp } from "../../stores/matemp";
-import { usepropemp } from "../../stores/propemployee";
-import { useemployee } from "../../stores/employees";
+
 import { useheaders } from "../../stores/headers";
-import { storeToRefs } from "pinia";
 
 export default {
   components: { paneltable, popuptest, check, history },
@@ -174,30 +171,103 @@ export default {
     dis: true,
     isEditing: false,
     employee: {},
-    orgemployee: {},
+    orgemployee: {
+      name: "amir",
+      code: "2323",
+      phone: "01110133639",
+      role: "suprervisor",
+      note: "lailo lailo",
+      img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
+      nid: "12312312313",
+    },
+    properties: [
+      {
+        _id: "1",
+        name: "ma2s",
+        totalQuantity: "14",
+        note: "test 1",
+        lastDate: "2023/4/22",
+        history: [
+          { quantity: 12, date: "2023/4/23", op: "add" },
+          { quantity: 2, date: "2023/4/25", op: "sub" },
+          { quantity: 4, date: "2023/4/27", op: "add" },
+        ],
+      },
+      {
+        _id: "2",
+        name: "ma2sat",
+        totalQuantity: "4",
+        note: "test 2",
+        lastDate: "2023/4/22",
+        history: [
+          { quantity: 12, date: "2023/4/23", op: "add" },
+          { quantity: 2, date: "2023/4/25", op: "sub" },
+          { quantity: 4, date: "2023/4/27", op: "add" },
+        ],
+      },
+      {
+        _id: "12",
+        name: "mastra",
+        totalQuantity: "2",
+        note: "test 3 ",
+        lastDate: "2023/4/22",
+        history: [
+          { quantity: 12, date: "2023/4/23", op: "add" },
+          { quantity: 2, date: "2023/4/25", op: "sub" },
+          { quantity: 4, date: "2023/4/27", op: "add" },
+        ],
+      },
+    ],
+    materials: [
+      {
+        _id: "1",
+        name: "white 2omash",
+        totalQuantity: "14",
+        note: "teso tesotes testo tesot e",
+        lastDate: "2023/4/22",
+        history: [
+          { quantity: 12, date: "2023/4/23", op: "add" },
+          { quantity: 2, date: "2023/4/25", op: "sub" },
+          { quantity: 4, date: "2023/4/27", op: "add" },
+        ],
+      },
+      {
+        _id: "2",
+        name: "black 2omash",
+        totalQuantity: "4",
+        note: "teso tesotes testo tesot e",
+        lastDate: "2023/4/22",
+        history: [
+          { quantity: 12, date: "2023/4/23", op: "add" },
+          { quantity: 2, date: "2023/4/25", op: "sub" },
+          { quantity: 4, date: "2023/4/27", op: "add" },
+        ],
+      },
+      {
+        _id: "12",
+        name: "zorar",
+        totalQuantity: "2",
+        note: "teso tesotes testo tesot e",
+        lastDate: "2023/4/22",
+        history: [
+          { quantity: 12, date: "2023/4/23", op: "add" },
+          { quantity: 2, date: "2023/4/25", op: "sub" },
+          { quantity: 4, date: "2023/4/27", op: "add" },
+        ],
+      },
+    ],
     historytype: "",
     obj: {},
     historyobject: {},
   }),
   created() {
-    this.boot();
+    //GEtet route here
     this.clone();
   },
   setup() {
-    const employees = useemployee();
-    const properties = usepropemp();
-    const materials = usematemp();
     const headers = useheaders();
-    const { empfind } = storeToRefs(employees);
-    const { matfind } = storeToRefs(materials);
-    const { propfind } = storeToRefs(properties);
+
     return {
-      propfind,
-      matfind,
-      employees,
-      empfind,
-      properties,
-      materials,
       headers,
     };
   },
@@ -213,19 +283,15 @@ export default {
       this.historyview(value._id);
     },
     submit() {
-      if (this.data.data2.property) {
-        this.propfind(this.data.data2.custody_id).note = this.data.data2.note;
-      } else {
-        this.matfind(this.data.data2.material_id).note = this.data.data2.note;
-      }
+      //Post route here
     },
     savenote(value) {
       console.log(value);
       if (this.historytype === "property") {
-        this.propfind(value.id).note = value.note;
-        console.log(this.propfind(value.id).note);
+        this.properties.find((m) => m._id === value.id).note = value.note;
+        console.log(this.properties.find((m) => m._id === value.id).note);
       } else {
-        this.matfind(value.id).note = value.note;
+        this.materials.find((m) => m._id === value.id).note = value.note;
       }
     },
     check() {
@@ -234,11 +300,12 @@ export default {
     },
     historyview(id) {
       // console.log(this.propfind(id));
+
       this.historyobject.title = this.historytype + " history";
       if (this.historytype === "property") {
-        this.obj = this.propfind(id);
+        this.obj = this.properties.find((m) => m._id === id);
       } else {
-        this.obj = this.matfind(id);
+        this.obj = this.materials.find((m) => m._id === id);
       }
 
       this.historyobject.id = this.obj._id;
@@ -301,10 +368,6 @@ export default {
       // this.employees.employee.phone = this.employee.phone;
 
       //save route here
-    },
-    boot() {
-      // Get route here
-      this.orgemployee = this.empfind(this.$route.params.id);
     },
   },
 };

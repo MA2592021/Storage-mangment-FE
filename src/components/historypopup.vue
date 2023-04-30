@@ -18,7 +18,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-textarea
-              v-model="viewobject.note"
+              v-model="history.note"
               label="Note "
               :readonly="!isEditing"
               rows="1"
