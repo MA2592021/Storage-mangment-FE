@@ -13,7 +13,7 @@
 
     <v-col cols="12">
       <tt
-        v-bind:data="employees"
+        v-bind:data="materials"
         v-bind:header="headers.mat_prop_header"
         @tableClicked="tableClicked"
       /> </v-col
@@ -30,61 +30,61 @@ export default {
   },
   data() {
     return {
-      employees: [
+      materials: [
         {
-          note: "lailo lailo",
-          img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
-          nid: "12312312313",
-          code: "254",
-          name: "tomy",
-          role: "Supervisor",
-          phone: "01110133639",
+          role: "aaa",
+          _id: "644f5e907b81fa9ea02ba947",
+          name: "material 1",
+          quantity: 1000,
+          available: 1000,
+          max: 1000,
+          min: 10,
+          unit: "a",
         },
         {
-          note: "lailo lailo",
-          img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
-          nid: "12312312313",
-          code: "1234",
-          name: "sherif mohamed",
+          role: "aaa",
+          _id: "644f5ec27b81fa9ea02ba949",
+          name: "material 2",
+          quantity: 0,
+          available: 0,
+          max: 1000,
+          min: 10,
+          details: "test",
+          unit: "a",
+          note: "test",
+        },
+        {
+          role: "aaa",
+          _id: "644f6c2810221101348d7a88",
+          name: "material 3",
+          quantity: 500,
+          available: 495,
+          max: 1000,
+          min: 10,
+          details: "test",
+          unit: "a",
+          note: "test",
+        },
+        {
           role: "employee",
-          phone: "01110133639",
-        },
-        {
-          code: "876",
-          name: "el gamal",
-          role: "Admin",
-          phone: "01110133639",
-          note: "lailo lailo",
-          img: "",
-          nid: "12312312313",
-        },
-        {
-          code: "655",
-          name: "amir",
-          role: "Admin",
-          phone: "01110133639",
-          note: "lailo lailo",
-          img: "",
-          nid: "12312312313",
-        },
-        {
-          code: "254",
-          name: "gamalko",
-          role: "Admin",
-          phone: "01110133639",
-          note: "lailo lailo",
-          img: "",
-          nid: "12312312313",
+          _id: "644f6eac10221101348d7aa1",
+          name: "testtt",
+          quantity: 1000,
+          available: 1000,
+          max: 1000,
+          min: 50,
+          unit: "ttt",
+          note: "    ",
         },
       ],
     };
   },
   created() {
     //Get route
-    axios.get("/api/material/").then((response) => {
-      console.log(response);
-      this.employees = response.data.data;
-    });
+    // axios.get("/api/material/").then((response) => {
+    //   console.log(response);
+    //   this.materials = response.data.data;
+    // });
   },
   setup() {
     const headers = useheaders();
@@ -93,7 +93,7 @@ export default {
   methods: {
     tableClicked(value) {
       // console.log(value);
-      // console.log(this.employees.employee);
+      // console.log(this.materials.employee);
       this.$router.push({
         path: `/storage/material/${value._id}`,
       });

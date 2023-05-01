@@ -22,7 +22,8 @@ export const useheaders = defineStore("headers", {
         title: "ID",
       },
       { title: "name", key: "name" },
-      { title: "quantity", key: "totalQuantity" },
+      { title: "total quantity", key: "totalQuantity" },
+      { title: "last date", key: "lastDate" },
     ],
     historyheader: [
       {

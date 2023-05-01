@@ -10,7 +10,7 @@
             ><v-col cols="12" sm="6">
               <v-autocomplete
                 v-model="selected"
-                :items="data"
+                :items="realdata"
                 :label="name"
                 item-title="name"
                 return-object
@@ -20,7 +20,7 @@
               <v-text-field
                 label="avilable"
                 variant="solo"
-                v-model="selected.avl"
+                v-model="selected.available"
                 readonly
                 required
               ></v-text-field>
@@ -44,17 +44,19 @@
         <v-btn
           color="blue-darken-1"
           variant="text"
-          @click="$emit('save', selected)"
+          @click="$emit('submit', selected)"
+          class="text-green"
         >
-          Save
+          submit
         </v-btn>
       </v-card-actions>
-      {{ selected }}
     </v-card>
   </v-dialog>
 </template>
 
 <script>
+import axios from "axios";
+import swal from "sweetalert";
 export default {
   data: () => ({
     selected: "",
@@ -64,10 +66,21 @@ export default {
       { name: "5ara", _id: "3", avl: "12" },
       { name: "el gamal", _id: "44", avl: "12" },
     ],
+    realdata: "",
   }),
   props: {
     value: "value",
     link: String,
+  },
+  created() {
+    axios.get(this.link).then((response) => {
+      console.log(response);
+      if (response.data.errors) {
+        swal("error", response.data.errors[0].msg, "error");
+      } else {
+        this.realdata = response.data.data;
+      }
+    });
   },
   methods: {},
 };

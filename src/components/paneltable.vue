@@ -26,7 +26,7 @@
         v-model="dialog"
         v-if="dialog"
         @close="dialog = !dialog"
-        @save="save"
+        @submit="submit"
       />
       <v-row justify="center" class="mt-4">
         <v-btn color="primary " v-bind="props" @click="dialog = !dialog">
@@ -64,9 +64,10 @@ export default {
       console.log(value);
       this.$emit("clicked", value);
     },
-    save(value) {
+    submit(value) {
       console.log(value);
       this.dialog = !this.dialog;
+      this.$emit("appended", value);
     },
   },
   emits: ["clicked"],

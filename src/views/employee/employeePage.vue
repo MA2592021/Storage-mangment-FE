@@ -103,22 +103,24 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="employee.properties"
+        v-bind:data="properties"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'properties'"
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.employee.name"
-        v-bind:link="link"
+        v-bind:link="link_property"
         @clicked="onClickChild_property"
+        @appended="property_append"
       />
       <paneltable
-        v-bind:data="employee.materials"
+        v-bind:data="materials"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle1"
         v-bind:closedtitle="this.employee.name"
-        v-bind:link="link"
+        v-bind:link="link_material"
         @clicked="onClickChild_material"
+        @appended="material_append"
       />
     </v-expansion-panels>
   </v-card>
@@ -163,7 +165,8 @@ export default {
     content:
       "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
     title: "are you sure ? ",
-    link: "",
+    link_material: "/api/material/",
+    link_property: "/api/custody/",
     isdisabled: true,
     dialog: false,
     dialog1: false,
@@ -172,7 +175,15 @@ export default {
     openedtitle1: "materials with",
     dis: true,
     isEditing: false,
-    employee: { img: "/arkan_logo-no-text.png" },
+    employee: {
+      note: "lailo lailo",
+      img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
+      nid: "12312312313",
+      code: "254",
+      name: "tomy",
+      role: "Supervisor",
+      phone: "01110133639",
+    },
     orgemployee: {},
     properties: [
       {
@@ -256,21 +267,21 @@ export default {
   }),
   created() {
     //GEtet route here
-    axios.get("/api/employee/" + this.$route.params.id).then((response) => {
-      console.log(response);
-      if (response.data.errors) {
-        swal("error", response.data.errors[0].msg, "error");
-      } else {
-        this.orgemployee = response.data.data;
-        console.log(this.orgemployee.name);
-        axios
-          .get("/api/materialEmployee/employee/" + this.$route.params.id)
-          .then((response) => {
-            this.orgemployee.materials = response.data.data;
-            this.clone();
-          });
-      }
-    });
+    // axios.get("/api/employee/" + this.$route.params.id).then((response) => {
+    //   console.log(response);
+    //   if (response.data.errors) {
+    //     swal("error", response.data.errors[0].msg, "error");
+    //   } else {
+    //     this.orgemployee = response.data.data;
+    //     console.log(this.orgemployee.name);
+    //     axios
+    //       .get("/api/materialEmployee/employee/" + this.$route.params.id)
+    //       .then((response) => {
+    //         this.orgemployee.materials = response.data.data;
+    //         this.clone();
+    //       });
+    //   }
+    // });
   },
   setup() {
     const headers = useheaders();
@@ -280,6 +291,22 @@ export default {
     };
   },
   methods: {
+    material_append(value) {
+      axios
+        .post("/api/materialEmployee/assign", {
+          material: value._id,
+          employee: this.orgemployee._id,
+          quantity: value.qty,
+          operation: "assign",
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "yayyy", "success");
+          }
+        });
+    },
     onClickChild_property(value) {
       // console.log(value);
       this.historytype = "property";

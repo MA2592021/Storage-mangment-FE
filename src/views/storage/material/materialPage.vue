@@ -131,7 +131,7 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="material.employees"
+        v-bind:data="employees"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'Employees'"
         v-bind:openedtitle="openedtitle"
@@ -190,83 +190,26 @@ export default {
     openedtitle: "Employees have",
     dis: true,
     isEditing: false,
-    material: { img: "/arkan_logo-no-text.png" },
+    material: {
+      img: "/arkan_logo-no-text.png",
+      role: {
+        title: "aaa",
+        num: 1,
+      },
+      _id: "644f5e907b81fa9ea02ba947",
+      name: "material 1",
+      quantity: 1000,
+      available: 1000,
+      max: 1000,
+      min: 10,
+      type: "type 2",
+      unit: "a",
+      createdAt: "2023-05-01T06:39:12.976Z",
+      updatedAt: "2023-05-01T06:39:12.976Z",
+    },
     orgmaterial: {},
-    properties: [
-      {
-        _id: "1",
-        name: "ma2s",
-        totalQuantity: "14",
-        note: "test 1",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "2",
-        name: "ma2sat",
-        totalQuantity: "4",
-        note: "test 2",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "12",
-        name: "mastra",
-        totalQuantity: "2",
-        note: "test 3 ",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-    ],
-    materials: [
-      {
-        _id: "1",
-        name: "white 2omash",
-        totalQuantity: "14",
-        note: "teso tesotes testo tesot e",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "2",
-        name: "black 2omash",
-        totalQuantity: "4",
-        note: "teso tesotes testo tesot e",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "12",
-        name: "zorar",
-        totalQuantity: "2",
-        note: "teso tesotes testo tesot e",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
+    employees: [
+      { name: "tomy", _id: "12", totalQuantity: "12", lastDate: "2023/4/4" },
     ],
     historytype: "",
     obj: {},
@@ -274,22 +217,21 @@ export default {
   }),
   created() {
     //GEtet route here
-    axios.get("/api/material/" + this.$route.params.id).then((response) => {
-      console.log(response);
-      if (response.data.errors) {
-        swal("error", response.data.errors[0].msg, "error");
-      } else {
-        this.orgmaterial = response.data.data;
-
-        axios
-          .get("/api/materialEmployee/material/" + this.$route.params.id)
-          .then((response) => {
-            this.orgmaterial.employees = response.data.data;
-            console.log(this.orgmaterial);
-            this.clone();
-          });
-      }
-    });
+    // axios.get("/api/material/" + this.$route.params.id).then((response) => {
+    //   console.log(response);
+    //   if (response.data.errors) {
+    //     swal("error", response.data.errors[0].msg, "error");
+    //   } else {
+    //     this.orgmaterial = response.data.data;
+    //     axios
+    //       .get("/api/materialEmployee/material/" + this.$route.params.id)
+    //       .then((response) => {
+    //         this.orgmaterial.employees = response.data.data;
+    //         console.log(this.orgmaterial);
+    //         this.clone();
+    //       });
+    //   }
+    // });
   },
   setup() {
     const headers = useheaders();
