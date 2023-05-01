@@ -19,7 +19,17 @@
   >
     <template v-slot:item="{ item }">
       <tr @click="onClick(item.raw)" v-ripple>
-        <td v-for="h in header" :key="h.key">
+        <td
+          v-for="h in header"
+          :key="h.key"
+          :class="
+            item.raw.available >= item.raw.max
+              ? 'bg-green'
+              : item.raw.available <= item.raw.min
+              ? 'bg-red'
+              : ''
+          "
+        >
           {{ item.columns[`${h.key}`] }}
         </td>
       </tr>

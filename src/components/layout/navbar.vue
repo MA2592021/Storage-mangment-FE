@@ -107,7 +107,7 @@ export default {
         {
           icon: "mdi-palette-swatch",
           text: "material",
-          route: "/material/",
+          route: "/storage/material/dashboard",
         },
         {
           icon: "mdi-package-variant-closed",

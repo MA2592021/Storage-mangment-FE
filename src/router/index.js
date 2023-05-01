@@ -84,6 +84,39 @@ const router = createRouter({
         },
       ],
     },
+    // material routes
+    {
+      path: "/storage/material/",
+      name: "material-land",
+
+      component: () => import("../views/storage/material/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "material-dash",
+
+          component: () => import("../views/storage/material/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "material-add",
+
+          component: () => import("../views/storage/material/add.vue"),
+        },
+        {
+          path: "all",
+          name: "material-all",
+
+          component: () => import("../views/storage/material/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "material-page",
+
+          component: () => import("../views/storage/material/materialPage.vue"),
+        },
+      ],
+    },
   ],
 });
 

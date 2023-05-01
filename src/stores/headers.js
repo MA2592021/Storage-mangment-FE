@@ -5,13 +5,14 @@ export const useheaders = defineStore("headers", {
     mat_prop_header: [
       {
         align: "start",
-        key: "_id",
+        key: "name",
         sortable: false,
-        title: "ID",
+        title: "name",
       },
-      { title: "name", key: "name" },
+
       { title: "quantity", key: "quantity" },
       { title: "available", key: "available" },
+      { title: "role", key: "role" },
     ],
     employee_hand_header: [
       {

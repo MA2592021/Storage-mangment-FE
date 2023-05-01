@@ -6,43 +6,35 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="employee.img"
+          :src="material.img"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
         <v-row>
-          <v-col cols="12" sm="6" md="6">
+          <v-col cols="12">
             <v-text-field
               label="Name "
               required
               :readonly="dis === true"
-              v-model="employee.name"
+              v-model="material.name"
               variant="underlined"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="6">
+          <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="Code "
+              label="available "
               :readonly="dis === true"
-              v-model="employee.code"
+              v-model="material.available"
               variant="underlined"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              label="Phone number "
-              variant="underlined"
-              :readonly="dis === true"
-              v-model="employee.phone"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6" md="6">
+
+          <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              v-model="employee.nid"
-              label="National ID "
+              v-model="material.quantity"
+              label="quantity "
               :readonly="!isEditing"
               variant="underlined"
               ><template v-slot:append>
@@ -62,21 +54,57 @@
                 </v-slide-x-reverse-transition> </template
             ></v-text-field>
           </v-col>
+          <v-col cols="12" md="6" lg="3">
+            <v-text-field
+              required
+              label="max "
+              :readonly="dis === true"
+              v-model="material.max"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6" lg="3">
+            <v-text-field
+              required
+              label="min "
+              :readonly="dis === true"
+              v-model="material.min"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
 
           <v-col cols="12" sm="6">
             <v-autocomplete
               label="Role "
-              v-model="employee.role"
+              v-model="material.role"
               variant="underlined"
               :readonly="dis === true"
-              :items="['Supervisor', 'Employee']"
+              :items="['Supervisor', 'material']"
             ></v-autocomplete>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field
+              required
+              label="Unit "
+              :readonly="dis === true"
+              v-model="material.unit"
+              variant="underlined"
+            ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
               label="Note"
-              v-model="employee.note"
+              v-model="material.note"
+              :readonly="dis === true"
+              prepend-icon="mdi-note-text-outline"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12" sm="6"
+            ><v-textarea
+              :clearable="dis === false"
+              label="details"
+              v-model="material.details"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -103,22 +131,13 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="employee.properties"
+        v-bind:data="material.employees"
         v-bind:header="headers.employee_hand_header"
-        v-bind:panelname="'properties'"
+        v-bind:panelname="'Employees'"
         v-bind:openedtitle="openedtitle"
-        v-bind:closedtitle="this.employee.name"
+        v-bind:closedtitle="this.material.name"
         v-bind:link="link"
         @clicked="onClickChild_property"
-      />
-      <paneltable
-        v-bind:data="employee.materials"
-        v-bind:header="headers.employee_hand_header"
-        v-bind:panelname="'materials'"
-        v-bind:openedtitle="openedtitle1"
-        v-bind:closedtitle="this.employee.name"
-        v-bind:link="link"
-        @clicked="onClickChild_material"
       />
     </v-expansion-panels>
   </v-card>
@@ -147,14 +166,14 @@
 </template>
 
 <script>
-import paneltable from "../../components/paneltable.vue";
-import popuptest from "../../components/popuptest.vue";
-import check from "../../components/checkpopup.vue";
-import history from "../../components/historypopup.vue";
+import paneltable from "../../../components/paneltable.vue";
+import popuptest from "../../../components/popuptest.vue";
+import check from "../../../components/checkpopup.vue";
+import history from "../../../components/historypopup.vue";
 import axios from "axios";
 
 import sweetalert from "sweetalert";
-import { useheaders } from "../../stores/headers";
+import { useheaders } from "../../../stores/headers";
 
 export default {
   components: { paneltable, popuptest, check, history },
@@ -168,12 +187,11 @@ export default {
     dialog: false,
     dialog1: false,
     dialog2: false,
-    openedtitle: "properties with",
-    openedtitle1: "materials with",
+    openedtitle: "Employees have",
     dis: true,
     isEditing: false,
-    employee: { img: "/arkan_logo-no-text.png" },
-    orgemployee: {},
+    material: { img: "/arkan_logo-no-text.png" },
+    orgmaterial: {},
     properties: [
       {
         _id: "1",
@@ -256,17 +274,18 @@ export default {
   }),
   created() {
     //GEtet route here
-    axios.get("/api/employee/" + this.$route.params.id).then((response) => {
+    axios.get("/api/material/" + this.$route.params.id).then((response) => {
       console.log(response);
       if (response.data.errors) {
         swal("error", response.data.errors[0].msg, "error");
       } else {
-        this.orgemployee = response.data.data;
-        console.log(this.orgemployee.name);
+        this.orgmaterial = response.data.data;
+
         axios
-          .get("/api/materialEmployee/employee/" + this.$route.params.id)
+          .get("/api/materialEmployee/material/" + this.$route.params.id)
           .then((response) => {
-            this.orgemployee.materials = response.data.data;
+            this.orgmaterial.employees = response.data.data;
+            console.log(this.orgmaterial);
             this.clone();
           });
       }
@@ -331,23 +350,25 @@ export default {
         this.isEditing = !this.isEditing;
       } else {
         this.content =
-          "this change is critical and must double check it :  employee National id is : ( " +
-          this.employee.nid +
+          "this change is critical and must double check it :  material quantity is : ( " +
+          this.material.quantity +
           " )";
         this.dialog = !this.dialog;
       }
     },
     clone() {
-      this.employee.id = this.orgemployee._id;
-      this.employee.name = this.orgemployee.name;
-      this.employee.code = this.orgemployee.code;
-      this.employee.img = this.orgemployee.img;
-      this.employee.nid = this.orgemployee.NID;
-      this.employee.role = this.orgemployee.role;
-      this.employee.note = this.orgemployee.note;
-      this.employee.phone = this.orgemployee.phoneNo;
-      this.employee.properties = this.orgemployee.currentCustodies;
-      this.employee.materials = this.orgemployee.materials;
+      this.material.id = this.orgmaterial._id;
+      this.material.name = this.orgmaterial.name;
+      this.material.quantity = this.orgmaterial.quantity;
+      //   this.material.img = this.orgmaterial.img;
+      this.material.available = this.orgmaterial.available;
+      this.material.role = this.orgmaterial.role;
+      this.material.note = this.orgmaterial.note;
+      this.material.unit = this.orgmaterial.unit;
+      this.material.details = this.orgmaterial.details;
+      this.material.employees = this.orgmaterial.employees;
+      this.material.max = this.orgmaterial.max;
+      this.material.min = this.orgmaterial.min;
     },
     cancel() {
       this.dialog = false;
@@ -355,14 +376,18 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.employee.name = this.orgemployee.name;
-      this.employee.code = this.orgemployee.code;
-      this.employee.img = this.orgemployee.img;
-      this.employee.nid = this.orgemployee.NID;
-      this.employee.role = this.orgemployee.role;
-      this.employee.note = this.orgemployee.note;
-      this.employee.phone = this.orgemployee.phoneNo;
-      this.employee.properties = this.orgemployee.currentCustodies;
+      this.material.id = this.orgmaterial._id;
+      this.material.name = this.orgmaterial.name;
+      this.material.quantity = this.orgmaterial.quantity;
+      //   this.material.img = this.orgmaterial.img;
+      this.material.available = this.orgmaterial.available;
+      this.material.role = this.orgmaterial.role;
+      this.material.note = this.orgmaterial.note;
+      this.material.unit = this.orgmaterial.unit;
+      this.material.details = this.orgmaterial.details;
+      this.material.employees = this.orgmaterial.employees;
+      this.material.max = this.orgmaterial.max;
+      this.material.min = this.orgmaterial.min;
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
@@ -371,15 +396,36 @@ export default {
       this.dialog = false;
       this.isEditing = false;
       this.dialog1 = false;
-      // this.employees.employee.name = this.employee.name;
-      // this.employees.employee.code = this.employee.code;
-      // this.employees.employee.img = this.employee.img;
-      // this.employees.employee.nid = this.employee.nid;
-      // this.employees.employee.role = this.employee.role;
-      // this.employees.employee.note = this.employee.note;
-      // this.employees.employee.phone = this.employee.phone;
+      // this.materials.material.name = this.material.name;
+      // this.materials.material.code = this.material.code;
+      // this.materials.material.img = this.material.img;
+      // this.materials.material.nid = this.material.nid;
+      // this.materials.material.role = this.material.role;
+      // this.materials.material.note = this.material.note;
+      // this.materials.material.phone = this.material.phone;
 
       //save route here
+      axios
+        .patch("/api/material/" + this.$route.params.id, {
+          name: this.material.name,
+          unit: this.material.unit,
+          "role.title": this.material.role.title,
+          "role.num": 1,
+          type: this.material.type,
+          max: this.material.max,
+          min: this.material.min,
+          note: this.material.note,
+          details: this.material.details,
+          available: this.material.available,
+          quantity: this.material.quantity,
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "yayy", "success");
+          }
+        });
     },
   },
 };

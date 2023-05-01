@@ -3,26 +3,26 @@
     <v-col cols="12" class="text-center mt-4"
       ><span
         ><v-icon
-          icon=" mdi-account-group"
+          icon=" mdi-palette-swatch"
           style="color: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="color: #fbc02d">All Employees</span></span
+        <span class="text-h5" style="color: #fbc02d">All Materials</span></span
       ></v-col
     >
 
     <v-col cols="12">
       <tt
         v-bind:data="employees"
-        v-bind:header="headers.employee_header"
+        v-bind:header="headers.mat_prop_header"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>
 </template>
 
 <script>
-import tt from "../../components/table.vue";
-import { useheaders } from "../../stores/headers";
+import tt from "../../../components/table.vue";
+import { useheaders } from "../../../stores/headers";
 import axios from "axios";
 export default {
   components: {
@@ -81,7 +81,7 @@ export default {
   },
   created() {
     //Get route
-    axios.get("/api/employee/").then((response) => {
+    axios.get("/api/material/").then((response) => {
       console.log(response);
       this.employees = response.data.data;
     });
@@ -95,7 +95,7 @@ export default {
       // console.log(value);
       // console.log(this.employees.employee);
       this.$router.push({
-        path: `/employee/${value._id}`,
+        path: `/storage/material/${value._id}`,
       });
     },
   },
