@@ -61,6 +61,24 @@
             :to="link.route"
           ></v-list-item>
         </v-list-group>
+        <v-list-group value="utils">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              title="Utils"
+              prepend-icon="mdi-toolbox"
+            ></v-list-item>
+          </template>
+
+          <v-list-item
+            v-for="link in Utils"
+            :key="link.text"
+            :title="link.text"
+            :prepend-icon="link.icon"
+            router
+            :to="link.route"
+          ></v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
   </nav>
@@ -113,6 +131,23 @@ export default {
           icon: "mdi-package-variant-closed",
           text: "cartons",
           route: "/carton/",
+        },
+      ],
+      Utils: [
+        {
+          icon: "mdi mdi-palette",
+          text: "colors",
+          route: "/utils/color/dashboard",
+        },
+        {
+          icon: "mdi-size-xl",
+          text: "sizes",
+          route: "/utils/size/dashboard",
+        },
+        {
+          icon: "mdi-script",
+          text: "roles",
+          route: "/utils/role/dashboard",
         },
       ],
     };

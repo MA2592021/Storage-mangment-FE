@@ -81,10 +81,10 @@ export default {
   },
   created() {
     //Get route
-    // axios.get("/api/material/").then((response) => {
-    //   console.log(response);
-    //   this.materials = response.data.data;
-    // });
+    axios.get("/api/material/").then((response) => {
+      console.log(response);
+      this.materials = response.data.data;
+    });
   },
   setup() {
     const headers = useheaders();

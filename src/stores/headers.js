@@ -21,8 +21,8 @@ export const useheaders = defineStore("headers", {
         sortable: false,
         title: "ID",
       },
-      { title: "name", key: "name" },
-      { title: "total quantity", key: "totalQuantity" },
+      { title: "name", value: "material.name" },
+      { title: "total quantity", value: "totalQuantity" },
       { title: "last date", key: "lastDate" },
     ],
     historyheader: [
@@ -34,6 +34,24 @@ export const useheaders = defineStore("headers", {
       },
       { title: "operation", key: "op" },
       { title: "date", key: "date" },
+    ],
+    color_size_header: [
+      {
+        align: "start",
+        key: "name",
+        sortable: false,
+        title: "name",
+      },
+      { title: "code", key: "code" },
+    ],
+    role_header: [
+      {
+        align: "start",
+        key: "title",
+        sortable: false,
+        title: "name",
+      },
+      { title: "priority", key: "number" },
     ],
     model_header: [
       {

@@ -113,7 +113,7 @@
         @appended="property_append"
       />
       <paneltable
-        v-bind:data="materials"
+        v-bind:data="orgemployee.materials"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle1"
@@ -165,7 +165,10 @@ export default {
     content:
       "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
     title: "are you sure ? ",
-    link_material: "/api/material/",
+    link_material: {
+      get: "/api/material/",
+      post: "/api/materialEmployee/assign",
+    },
     link_property: "/api/custody/",
     isdisabled: true,
     dialog: false,
@@ -267,21 +270,21 @@ export default {
   }),
   created() {
     //GEtet route here
-    // axios.get("/api/employee/" + this.$route.params.id).then((response) => {
-    //   console.log(response);
-    //   if (response.data.errors) {
-    //     swal("error", response.data.errors[0].msg, "error");
-    //   } else {
-    //     this.orgemployee = response.data.data;
-    //     console.log(this.orgemployee.name);
-    //     axios
-    //       .get("/api/materialEmployee/employee/" + this.$route.params.id)
-    //       .then((response) => {
-    //         this.orgemployee.materials = response.data.data;
-    //         this.clone();
-    //       });
-    //   }
-    // });
+    axios.get("/api/employee/" + this.$route.params.id).then((response) => {
+      console.log(response);
+      if (response.data.errors) {
+        swal("error", response.data.errors[0].msg, "error");
+      } else {
+        this.orgemployee = response.data.data;
+        console.log(this.orgemployee.name);
+        axios
+          .get("/api/materialEmployee/employee/" + this.$route.params.id)
+          .then((response) => {
+            this.orgemployee.materials = response.data.data;
+            this.clone();
+          });
+      }
+    });
   },
   setup() {
     const headers = useheaders();

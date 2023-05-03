@@ -82,10 +82,10 @@ export default {
   },
   created() {
     //Get route
-    // axios.get("/api/employee/").then((response) => {
-    //   console.log(response);
-    //   this.employees = response.data.data;
-    // });
+    axios.get("/api/employee/").then((response) => {
+      console.log(response);
+      this.employees = response.data.data;
+    });
   },
   setup() {
     const headers = useheaders();

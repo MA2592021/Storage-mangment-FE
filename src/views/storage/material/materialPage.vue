@@ -217,21 +217,21 @@ export default {
   }),
   created() {
     //GEtet route here
-    // axios.get("/api/material/" + this.$route.params.id).then((response) => {
-    //   console.log(response);
-    //   if (response.data.errors) {
-    //     swal("error", response.data.errors[0].msg, "error");
-    //   } else {
-    //     this.orgmaterial = response.data.data;
-    //     axios
-    //       .get("/api/materialEmployee/material/" + this.$route.params.id)
-    //       .then((response) => {
-    //         this.orgmaterial.employees = response.data.data;
-    //         console.log(this.orgmaterial);
-    //         this.clone();
-    //       });
-    //   }
-    // });
+    axios.get("/api/material/" + this.$route.params.id).then((response) => {
+      console.log(response);
+      if (response.data.errors) {
+        swal("error", response.data.errors[0].msg, "error");
+      } else {
+        this.orgmaterial = response.data.data;
+        axios
+          .get("/api/materialEmployee/material/" + this.$route.params.id)
+          .then((response) => {
+            this.orgmaterial.employees = response.data.data;
+            console.log(this.orgmaterial);
+            this.clone();
+          });
+      }
+    });
   },
   setup() {
     const headers = useheaders();

@@ -73,7 +73,7 @@ export default {
     link: String,
   },
   created() {
-    axios.get(this.link).then((response) => {
+    axios.get(this.link.get).then((response) => {
       console.log(response);
       if (response.data.errors) {
         swal("error", response.data.errors[0].msg, "error");

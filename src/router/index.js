@@ -117,6 +117,106 @@ const router = createRouter({
         },
       ],
     },
+    //color routes
+    {
+      path: "/utils/color/",
+      name: "color-land",
+
+      component: () => import("../views/utils/colors/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "color-dash",
+
+          component: () => import("../views/utils/colors/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "color-add",
+
+          component: () => import("../views/utils/colors/add.vue"),
+        },
+        {
+          path: "all",
+          name: "color-all",
+
+          component: () => import("../views/utils/colors/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "color-page",
+
+          component: () => import("../views/utils/colors/colorPage.vue"),
+        },
+      ],
+    },
+
+    //sizes routes
+    {
+      path: "/utils/size/",
+      name: "size-land",
+
+      component: () => import("../views/utils/sizes/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "size-dash",
+
+          component: () => import("../views/utils/sizes/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "size-add",
+
+          component: () => import("../views/utils/sizes/add.vue"),
+        },
+        {
+          path: "all",
+          name: "size-all",
+
+          component: () => import("../views/utils/sizes/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "size-page",
+
+          component: () => import("../views/utils/sizes/sizePage.vue"),
+        },
+      ],
+    },
+    //roles routes
+    {
+      path: "/utils/role/",
+      name: "role-land",
+
+      component: () => import("../views/utils/roles/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "role-dash",
+
+          component: () => import("../views/utils/roles/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "role-add",
+
+          component: () => import("../views/utils/roles/add.vue"),
+        },
+        {
+          path: "all",
+          name: "role-all",
+
+          component: () => import("../views/utils/roles/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "role-page",
+
+          component: () => import("../views/utils/roles/rolePage.vue"),
+        },
+      ],
+    },
   ],
 });
 
