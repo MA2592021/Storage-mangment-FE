@@ -47,7 +47,9 @@
               v-model="employee.role"
               persistent-hint
               hint="Required"
-              :items="['Supervisor', 'Employee']"
+              :items="roles"
+              item-title="title"
+              return-object
             ></v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6"
@@ -70,7 +72,6 @@
       <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
       <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
-    {{ employee.role }}
   </v-card>
 </template>
 
@@ -91,6 +92,7 @@ export default {
         );
       },
     ],
+    roles: "",
     url: null,
     image: null,
     employee: {
@@ -103,6 +105,11 @@ export default {
       note: "    ",
     },
   }),
+  created() {
+    axios.get("/api/role/").then((response) => {
+      this.roles = response.data.data;
+    });
+  },
 
   methods: {
     add() {
@@ -112,8 +119,8 @@ export default {
         .post("/api/employee", {
           name: this.employee.name,
           code: this.employee.code,
-          "role.title": this.employee.role,
-          "role.num": this.employee.role === "Supervisor" ? "1" : "0",
+          "role.title": this.employee.role.title,
+          "role.num": this.employee.role.number,
           phoneNo: this.employee.phone,
           NID: this.employee.nid,
           note: this.employee.note,

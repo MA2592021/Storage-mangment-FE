@@ -182,7 +182,7 @@ export default {
     content:
       "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
     title: "are you sure ? ",
-    link: "",
+    link: { get: "/api/employee/" },
     isdisabled: true,
     dialog: false,
     dialog1: false,

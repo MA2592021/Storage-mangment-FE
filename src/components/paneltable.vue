@@ -55,7 +55,7 @@ export default {
     panelname: String,
     closedtitle: String,
     openedtitle: String,
-    link: String,
+    link: Object,
     data: Object,
     header: Object,
   },

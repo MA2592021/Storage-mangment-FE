@@ -59,7 +59,7 @@ import axios from "axios";
 import swal from "sweetalert";
 export default {
   data: () => ({
-    selected: "",
+    selected: { available: "  ----", name: "", qty: "" },
     data: [
       { name: "ma2s", _id: "12", avl: "12" },
       { name: "2omash", _id: "2", avl: "12" },
@@ -70,7 +70,7 @@ export default {
   }),
   props: {
     value: "value",
-    link: String,
+    link: Object,
   },
   created() {
     axios.get(this.link.get).then((response) => {

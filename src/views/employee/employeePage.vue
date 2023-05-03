@@ -69,7 +69,9 @@
               v-model="employee.role"
               variant="underlined"
               :readonly="dis === true"
-              :items="['Supervisor', 'Employee']"
+              :items="roles"
+              item-title="title"
+              return-object
             ></v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6"
@@ -103,7 +105,7 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="properties"
+        v-bind:data="orgemployee.properties"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'properties'"
         v-bind:openedtitle="openedtitle"
@@ -143,7 +145,7 @@
     v-if="dialog2"
     v-bind:viewobject="historyobject"
     @close="dialog2 = !dialog2"
-    @saveclicked="savenote"
+    @saveclicked="save"
     @submit="submit()"
   />
 </template>
@@ -167,9 +169,8 @@ export default {
     title: "are you sure ? ",
     link_material: {
       get: "/api/material/",
-      post: "/api/materialEmployee/assign",
     },
-    link_property: "/api/custody/",
+    link_property: { get: "/api/custody/" },
     isdisabled: true,
     dialog: false,
     dialog1: false,
@@ -179,91 +180,10 @@ export default {
     dis: true,
     isEditing: false,
     employee: {
-      note: "lailo lailo",
       img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
-      nid: "12312312313",
-      code: "254",
-      name: "tomy",
-      role: "Supervisor",
-      phone: "01110133639",
     },
     orgemployee: {},
-    properties: [
-      {
-        _id: "1",
-        name: "ma2s",
-        totalQuantity: "14",
-        note: "test 1",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "2",
-        name: "ma2sat",
-        totalQuantity: "4",
-        note: "test 2",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "12",
-        name: "mastra",
-        totalQuantity: "2",
-        note: "test 3 ",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-    ],
-    materials: [
-      {
-        _id: "1",
-        name: "white 2omash",
-        totalQuantity: "14",
-        note: "teso tesotes testo tesot e",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "2",
-        name: "black 2omash",
-        totalQuantity: "4",
-        note: "teso tesotes testo tesot e",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-      {
-        _id: "12",
-        name: "zorar",
-        totalQuantity: "2",
-        note: "teso tesotes testo tesot e",
-        lastDate: "2023/4/22",
-        history: [
-          { quantity: 12, date: "2023/4/23", op: "add" },
-          { quantity: 2, date: "2023/4/25", op: "sub" },
-          { quantity: 4, date: "2023/4/27", op: "add" },
-        ],
-      },
-    ],
+    roles: [],
     historytype: "",
     obj: {},
     historyobject: {},
@@ -281,8 +201,16 @@ export default {
           .get("/api/materialEmployee/employee/" + this.$route.params.id)
           .then((response) => {
             this.orgemployee.materials = response.data.data;
-            this.clone();
           });
+        axios
+          .get("/api/custodyEmployee/employee/" + this.$route.params.id)
+          .then((response) => {
+            this.orgemployee.properties = response.data.data;
+          });
+        axios.get("/api/role/").then((response) => {
+          this.roles = response.data.data;
+        });
+        this.clone();
       }
     });
   },
@@ -310,6 +238,7 @@ export default {
           }
         });
     },
+    property_append(value) {},
     onClickChild_property(value) {
       // console.log(value);
       this.historytype = "property";
@@ -323,38 +252,28 @@ export default {
     submit() {
       //Post route here
     },
-    savenote(value) {
-      console.log(value);
-      if (this.historytype === "property") {
-        this.properties.find((m) => m._id === value.id).note = value.note;
-        console.log(this.properties.find((m) => m._id === value.id).note);
-      } else {
-        this.materials.find((m) => m._id === value.id).note = value.note;
-      }
-    },
+
     check() {
       this.dialog = false;
       this.dialog1 = true;
     },
     historyview(id) {
       // console.log(this.propfind(id));
-
-      this.historyobject.title = this.historytype + " history";
-      if (this.historytype === "property") {
-        this.obj = this.properties.find((m) => m._id === id);
-      } else {
-        this.obj = this.materials.find((m) => m._id === id);
-      }
-
-      this.historyobject.id = this.obj._id;
-      this.historyobject.name = this.obj.name;
-      this.historyobject.data = this.obj.history;
-      this.historyobject.qty = this.obj.totalQuantity;
-      this.historyobject.date = this.obj.lastDate;
-      this.historyobject.note = this.obj.note;
-      this.historyobject.header = this.headers.historyheader;
-      this.historyobject.data = this.obj.history;
-      this.dialog2 = true;
+      // this.historyobject.title = this.historytype + " history";
+      // if (this.historytype === "property") {
+      //   this.obj = this.properties.find((m) => m._id === id);
+      // } else {
+      //   this.obj = this.materials.find((m) => m._id === id);
+      // }
+      // this.historyobject.id = this.obj._id;
+      // this.historyobject.name = this.obj.name;
+      // this.historyobject.data = this.obj.history;
+      // this.historyobject.qty = this.obj.totalQuantity;
+      // this.historyobject.date = this.obj.lastDate;
+      // this.historyobject.note = this.obj.note;
+      // this.historyobject.header = this.headers.historyheader;
+      // this.historyobject.data = this.obj.history;
+      // this.dialog2 = true;
     },
     criticalchange() {
       if (this.isEditing === false) {
@@ -401,15 +320,32 @@ export default {
       this.dialog = false;
       this.isEditing = false;
       this.dialog1 = false;
-      // this.employees.employee.name = this.employee.name;
-      // this.employees.employee.code = this.employee.code;
-      // this.employees.employee.img = this.employee.img;
-      // this.employees.employee.nid = this.employee.nid;
-      // this.employees.employee.role = this.employee.role;
-      // this.employees.employee.note = this.employee.note;
-      // this.employees.employee.phone = this.employee.phone;
-
-      //save route here
+      axios
+        .patch("/api/employee/" + this.$route.params.id, {
+          name: this.employee.name,
+          code: this.employee.code,
+          "role.title": this.employee.role.title,
+          "role.num": this.employee.role.number,
+          phoneNo: this.employee.phone,
+          NID: this.employee.nid,
+          note: this.employee.note,
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            this.orgemployee.name = this.employee.name;
+            this.orgemployee.code = this.employee.code;
+            this.orgemployee.img = this.employee.img;
+            this.orgemployee.nid = this.employee.NID;
+            this.orgemployee.role = this.employee.role;
+            this.orgemployee.note = this.employee.note;
+            this.orgemployee.phone = this.employee.phoneNo;
+            this.orgemployee.properties = this.employee.currentCustodies;
+            this.content =
+              "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
+          }
+        });
     },
   },
 };
