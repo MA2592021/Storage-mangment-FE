@@ -29,7 +29,7 @@
         @submit="submit"
       />
       <v-row justify="center" class="mt-4">
-        <v-btn color="primary " v-bind="props" @click="dialog = !dialog">
+        <v-btn color="primary " @click="dialog = !dialog">
           Append {{ panelname }}
         </v-btn></v-row
       >
@@ -70,7 +70,7 @@ export default {
       this.$emit("appended", value);
     },
   },
-  emits: ["clicked"],
+  emits: ["clicked", "submit", "appended"],
 };
 </script>
 

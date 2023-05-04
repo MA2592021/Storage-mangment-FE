@@ -146,7 +146,7 @@
     v-bind:viewobject="historyobject"
     @close="dialog2 = !dialog2"
     @saveclicked="save"
-    @submit="submit()"
+    @submit="submit"
   />
 </template>
 
@@ -159,6 +159,7 @@ import axios from "axios";
 
 import sweetalert from "sweetalert";
 import { useheaders } from "../../stores/headers";
+import swal from "sweetalert";
 
 export default {
   components: { paneltable, popuptest, check, history },
@@ -222,8 +223,8 @@ export default {
       axios
         .get("/api/materialEmployee/employee/" + this.$route.params.id)
         .then((response) => {
-          // console.log(response.data.data);
-
+          console.log(response.data.data);
+          this.materials = [];
           response.data.data.forEach((element) => {
             const x = {};
             x._id = element._id;
@@ -231,6 +232,7 @@ export default {
             x.lastDate = element.lastDate;
             x.totalQuantity = element.totalQuantity;
             x.name = element.material.name;
+            x.material_id = element.material._id;
             // console.log(x);
             this.materials.push(x);
           });
@@ -240,6 +242,7 @@ export default {
       axios
         .get("/api/custodyEmployee/employee/" + this.$route.params.id)
         .then((response) => {
+          this.properties = [];
           response.data.data.forEach((element) => {
             const x = {};
             x._id = element._id;
@@ -247,6 +250,8 @@ export default {
             x.lastDate = element.lastDate;
             x.totalQuantity = element.totalQuantity;
             x.name = element.custody.name;
+            x.property_id = element.custody._id;
+
             // console.log(x);
             this.properties.push(x);
           });
@@ -265,6 +270,7 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "yayyy", "success");
+            this.materialsload();
           }
         });
     },
@@ -281,6 +287,7 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "yayyy", "success");
+            this.propertiesload();
           }
         });
     },
@@ -294,8 +301,51 @@ export default {
 
       this.historyview(value._id);
     },
-    submit() {
+    submit(value) {
       //Post route here
+      console.log(value);
+      const x = {};
+      x.employee = this.$route.params.id;
+      x.quantity = value.qty;
+      x.operation = value.operation;
+      if (this.historytype === "property") {
+        x.custody = value._id;
+        axios
+          .post("/api/custodyEmployee/assign", {
+            custody: x.custody,
+            employee: x.employee,
+            quantity: x.quantity,
+            operation: x.operation,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              swal("error", response.data.errors[0].msg, "errors");
+            } else {
+              swal("success", "yayyy", "success");
+              this.propertiesload();
+              this.dialog2 = false;
+            }
+          });
+      } else {
+        x.material = value._id;
+        axios
+          .post("/api/materialEmployee/assign", {
+            material: x.material,
+            employee: x.employee,
+            quantity: x.quantity,
+            operation: x.operation,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              swal("error", response.data.errors[0].msg, "errors");
+            } else {
+              swal("success", "yayyy", "success");
+              this.materialsload();
+              this.dialog2 = false;
+            }
+          });
+      }
+      console.log(x);
     },
 
     check() {
@@ -303,22 +353,24 @@ export default {
       this.dialog1 = true;
     },
     historyview(id) {
-      // console.log(this.historytype);
-      //  this.historyobject.title = this.historytype + " history";
-      //  if (this.historytype === "property") {
-      //    this.obj = this.properties.find((m) => m._id === id);
-      //  } else {
-      //    this.obj = this.materials.find((m) => m._id === id);
-      //  }
-      //  this.historyobject.id = this.obj._id;
-      // this.historyobject.name = this.obj.name;
-      // this.historyobject.data = this.obj.history;
-      // this.historyobject.qty = this.obj.totalQuantity;
-      // this.historyobject.date = this.obj.lastDate;
-      // this.historyobject.note = this.obj.note;
-      // this.historyobject.header = this.headers.historyheader;
-      // this.historyobject.data = this.obj.history;
-      // this.dialog2 = true;
+      console.log(id);
+      console.log(this.historytype);
+      this.historyobject.title = this.historytype + " history";
+      if (this.historytype === "property") {
+        this.obj = this.properties.find((m) => m._id === id);
+        this.historyobject._id = this.obj.property_id;
+      } else {
+        this.obj = this.materials.find((m) => m._id === id);
+        this.historyobject._id = this.obj.material_id;
+      }
+      this.historyobject.id = this.obj._id;
+      this.historyobject.name = this.obj.name;
+      this.historyobject.data = this.obj.history;
+      this.historyobject.qty = this.obj.totalQuantity;
+      this.historyobject.date = this.obj.lastDate;
+      this.historyobject.note = this.obj.note;
+      this.historyobject.header = this.headers.historyheader;
+      this.dialog2 = true;
     },
     criticalchange() {
       if (this.isEditing === false) {
@@ -379,14 +431,7 @@ export default {
           if (response.data.errors) {
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            this.orgemployee.name = this.employee.name;
-            this.orgemployee.code = this.employee.code;
-            this.orgemployee.img = this.employee.img;
-            this.orgemployee.nid = this.employee.NID;
-            this.orgemployee.role = this.employee.role;
-            this.orgemployee.note = this.employee.note;
-            this.orgemployee.phone = this.employee.phoneNo;
-            this.orgemployee.properties = this.employee.currentCustodies;
+            this.employeeload();
             this.content =
               "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
           }

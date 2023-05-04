@@ -137,7 +137,8 @@
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.material.name"
         v-bind:link="link"
-        @clicked="onClickChild_property"
+        @clicked="onClickChild_employee"
+        @appended="employee_append"
       />
     </v-expansion-panels>
   </v-card>
@@ -161,7 +162,7 @@
     v-bind:viewobject="historyobject"
     @close="dialog2 = !dialog2"
     @saveclicked="savenote"
-    @submit="submit()"
+    @submit="submit"
   />
 </template>
 
@@ -192,46 +193,17 @@ export default {
     isEditing: false,
     material: {
       img: "/arkan_logo-no-text.png",
-      role: {
-        title: "aaa",
-        num: 1,
-      },
-      _id: "644f5e907b81fa9ea02ba947",
-      name: "material 1",
-      quantity: 1000,
-      available: 1000,
-      max: 1000,
-      min: 10,
-      type: "type 2",
-      unit: "a",
-      createdAt: "2023-05-01T06:39:12.976Z",
-      updatedAt: "2023-05-01T06:39:12.976Z",
     },
     orgmaterial: {},
-    employees: [
-      { name: "tomy", _id: "12", totalQuantity: "12", lastDate: "2023/4/4" },
-    ],
+    employees: [],
     historytype: "",
     obj: {},
     historyobject: {},
   }),
   created() {
     //GEtet route here
-    axios.get("/api/material/" + this.$route.params.id).then((response) => {
-      console.log(response);
-      if (response.data.errors) {
-        swal("error", response.data.errors[0].msg, "error");
-      } else {
-        this.orgmaterial = response.data.data;
-        axios
-          .get("/api/materialEmployee/material/" + this.$route.params.id)
-          .then((response) => {
-            this.orgmaterial.employees = response.data.data;
-            console.log(this.orgmaterial);
-            this.clone();
-          });
-      }
-    });
+    this.material_load();
+    this.employees_material_load();
   },
   setup() {
     const headers = useheaders();
@@ -241,18 +213,84 @@ export default {
     };
   },
   methods: {
-    onClickChild_property(value) {
+    material_load() {
+      axios.get("/api/material/" + this.$route.params.id).then((response) => {
+        //console.log(response);
+        this.orgmaterial = [];
+        if (response.data.errors) {
+          swal("error", response.data.errors[0].msg, "error");
+        } else {
+          this.orgmaterial = response.data.data;
+          this.clone();
+        }
+      });
+    },
+    employees_material_load() {
+      axios
+        .get("/api/materialEmployee/material/" + this.$route.params.id)
+        .then((response) => {
+          this.employees = [];
+          response.data.data.forEach((element) => {
+            const x = {};
+            x.id = element._id;
+            x.totalQuantity = element.totalQuantity;
+            x.lastDate = element.lastDate;
+            x.history = element.history;
+            x.name = element.employee.name;
+            x.employee_id = element.employee._id;
+            this.employees.push(x);
+          });
+          // console.log(this.employees);
+        });
+    },
+    onClickChild_employee(value) {
       // console.log(value);
-      this.historytype = "property";
+      this.historytype = "employee";
       this.historyview(value._id);
     },
-    onClickChild_material(value) {
-      this.historytype = "material";
-
-      this.historyview(value._id);
+    employee_append(value) {
+      axios
+        .post("/api/materialEmployee/assign", {
+          material: this.orgmaterial._id,
+          employee: value._id,
+          quantity: value.qty,
+          operation: "assign",
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "yayyy", "success");
+            this.employees_material_load();
+          }
+        });
     },
-    submit() {
+    submit(value) {
       //Post route here
+      console.log(value);
+      const x = {};
+      x.material = this.$route.params.id;
+      x.quantity = value.qty;
+      x.operation = value.operation;
+      if (this.historytype === "employee") {
+        x.employee = value._id;
+        axios
+          .post("/api/materialEmployee/assign", {
+            material: x.material,
+            employee: x.employee,
+            quantity: x.quantity,
+            operation: x.operation,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              swal("error", response.data.errors[0].msg, "errors");
+            } else {
+              swal("success", "yayyy", "success");
+              this.employees_material_load();
+              this.dialog2 = false;
+            }
+          });
+      }
     },
     savenote(value) {
       console.log(value);
@@ -271,20 +309,19 @@ export default {
       // console.log(this.propfind(id));
 
       this.historyobject.title = this.historytype + " history";
-      if (this.historytype === "property") {
-        this.obj = this.properties.find((m) => m._id === id);
+      if (this.historytype === "employee") {
+        this.obj = this.employees.find((m) => m._id === id);
+        this.historyobject._id = this.obj.employee_id;
       } else {
         this.obj = this.materials.find((m) => m._id === id);
       }
-
-      this.historyobject.id = this.obj._id;
+      this.historyobject.id = this.obj.id;
       this.historyobject.name = this.obj.name;
       this.historyobject.data = this.obj.history;
       this.historyobject.qty = this.obj.totalQuantity;
       this.historyobject.date = this.obj.lastDate;
       this.historyobject.note = this.obj.note;
       this.historyobject.header = this.headers.historyheader;
-      this.historyobject.data = this.obj.history;
       this.dialog2 = true;
     },
     criticalchange() {

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog scrollable @input="$emit('input', $event)" persistent>
+  <v-dialog scrollable persistent>
     <v-card>
       <v-card-title class="text-h5"> {{ viewobject.title }} </v-card-title>
       <v-card-text>
@@ -35,7 +35,6 @@
                         ? 'mdi-check-outline'
                         : 'mdi-circle-edit-outline'
                     "
-                    :disabled="dis === true"
                     @click="save()"
                   ></v-btn>
                 </v-slide-x-reverse-transition> </template
@@ -44,7 +43,6 @@
             <v-autocomplete
               v-model="selected"
               :items="operation"
-              :label="name"
               item-title="name"
             ></v-autocomplete>
           </v-col>
@@ -56,7 +54,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="3" sm="2" md="2">
-            <v-btn block class="mt-2">submit</v-btn>
+            <v-btn block class="mt-2" @click="submit">submit</v-btn>
           </v-col></v-row
         >
 
@@ -96,7 +94,7 @@ export default {
       itemsPerPage: 5,
       selected: "",
       qty: "",
-      operation: [{ name: "add" }, { name: "sub" }],
+      operation: [{ name: "assign" }, { name: "sub" }],
       history: { note: "" },
       elementtype: {},
     };
@@ -114,7 +112,7 @@ export default {
     this.history.note = this.viewobject.note;
   },
 
-  emits: ["tableClicked", "saveclicked"],
+  emits: ["tableClicked", "saveclicked", "close", "submit"],
 
   methods: {
     onClick(row) {
@@ -138,7 +136,9 @@ export default {
     submit() {
       this.elementtype.operation = this.selected;
       this.elementtype.qty = this.qty;
-      this.$emit("submit", elementtype);
+      this.elementtype.id = this.viewobject.id;
+      this.elementtype._id = this.viewobject._id;
+      this.$emit("submit", this.elementtype);
     },
   },
 };

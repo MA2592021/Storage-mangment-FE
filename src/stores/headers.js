@@ -32,7 +32,7 @@ export const useheaders = defineStore("headers", {
         sortable: false,
         title: "quantity",
       },
-      { title: "operation", key: "op" },
+      { title: "operation", key: "operation" },
       { title: "date", key: "date" },
     ],
     color_size_header: [

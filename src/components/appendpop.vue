@@ -2,7 +2,7 @@
   <v-dialog :value="value" persistent width="1024">
     <v-card>
       <v-card-title>
-        <span class="text-h5">Append {{ name }}</span>
+        <span class="text-h5">Append </span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -11,7 +11,6 @@
               <v-autocomplete
                 v-model="selected"
                 :items="realdata"
-                :label="name"
                 item-title="name"
                 return-object
               ></v-autocomplete>
@@ -66,7 +65,7 @@ export default {
       { name: "5ara", _id: "3", avl: "12" },
       { name: "el gamal", _id: "44", avl: "12" },
     ],
-    realdata: "",
+    realdata: [],
   }),
   props: {
     value: "value",
@@ -82,6 +81,7 @@ export default {
       }
     });
   },
+  emits: ["submit", "close"],
   methods: {},
 };
 </script>
