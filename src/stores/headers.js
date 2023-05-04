@@ -17,12 +17,12 @@ export const useheaders = defineStore("headers", {
     employee_hand_header: [
       {
         align: "start",
-        key: "_id",
+        key: "name",
         sortable: false,
-        title: "ID",
+        title: "name",
       },
-      { title: "name", value: "material.name" },
-      { title: "total quantity", value: "totalQuantity" },
+
+      { title: "total quantity", key: "totalQuantity" },
       { title: "last date", key: "lastDate" },
     ],
     historyheader: [

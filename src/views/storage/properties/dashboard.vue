@@ -11,7 +11,7 @@
       >
         {{ datalength }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ datalength }} materials</p>
+      <p class="text-h5">Arkan have {{ datalength }} properties</p>
     </v-col>
     <v-col cols="12" md="4"> <barChart v-bind:chartData="chartData" /> </v-col
   ></v-row>
@@ -54,7 +54,7 @@ export default {
     };
   },
   created() {
-    axios.get("/api/material").then((response) => {
+    axios.get("/api/custody").then((response) => {
       this.data = response.data.data;
     });
   },

@@ -117,6 +117,40 @@ const router = createRouter({
         },
       ],
     },
+    // properties routes
+    {
+      path: "/storage/property/",
+      name: "property-land",
+
+      component: () => import("../views/storage/properties/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "property-dash",
+
+          component: () => import("../views/storage/properties/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "property-add",
+
+          component: () => import("../views/storage/properties/add.vue"),
+        },
+        {
+          path: "all",
+          name: "property-all",
+
+          component: () => import("../views/storage/properties/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "property-page",
+
+          component: () =>
+            import("../views/storage/properties/propertyPage.vue"),
+        },
+      ],
+    },
     //color routes
     {
       path: "/utils/color/",

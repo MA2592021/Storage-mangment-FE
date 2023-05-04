@@ -105,7 +105,7 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="orgemployee.properties"
+        v-bind:data="properties"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'properties'"
         v-bind:openedtitle="openedtitle"
@@ -115,7 +115,7 @@
         @appended="property_append"
       />
       <paneltable
-        v-bind:data="orgemployee.materials"
+        v-bind:data="materials"
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle1"
@@ -184,34 +184,19 @@ export default {
     },
     orgemployee: {},
     roles: [],
+    materials: [],
+    properties: [],
     historytype: "",
     obj: {},
     historyobject: {},
   }),
   created() {
     //GEtet route here
-    axios.get("/api/employee/" + this.$route.params.id).then((response) => {
-      console.log(response);
-      if (response.data.errors) {
-        swal("error", response.data.errors[0].msg, "error");
-      } else {
-        this.orgemployee = response.data.data;
-        console.log(this.orgemployee.name);
-        axios
-          .get("/api/materialEmployee/employee/" + this.$route.params.id)
-          .then((response) => {
-            this.orgemployee.materials = response.data.data;
-          });
-        axios
-          .get("/api/custodyEmployee/employee/" + this.$route.params.id)
-          .then((response) => {
-            this.orgemployee.properties = response.data.data;
-          });
-        axios.get("/api/role/").then((response) => {
-          this.roles = response.data.data;
-        });
-        this.clone();
-      }
+    this.employeeload();
+    this.materialsload();
+    this.propertiesload();
+    axios.get("/api/role/").then((response) => {
+      this.roles = response.data.data;
     });
   },
   setup() {
@@ -222,6 +207,51 @@ export default {
     };
   },
   methods: {
+    employeeload() {
+      axios.get("/api/employee/" + this.$route.params.id).then((response) => {
+        // console.log(response);
+        if (response.data.errors) {
+          swal("error", response.data.errors[0].msg, "error");
+        } else {
+          this.orgemployee = response.data.data;
+          this.clone();
+        }
+      });
+    },
+    materialsload() {
+      axios
+        .get("/api/materialEmployee/employee/" + this.$route.params.id)
+        .then((response) => {
+          // console.log(response.data.data);
+
+          response.data.data.forEach((element) => {
+            const x = {};
+            x._id = element._id;
+            x.history = element.history;
+            x.lastDate = element.lastDate;
+            x.totalQuantity = element.totalQuantity;
+            x.name = element.material.name;
+            // console.log(x);
+            this.materials.push(x);
+          });
+        });
+    },
+    propertiesload() {
+      axios
+        .get("/api/custodyEmployee/employee/" + this.$route.params.id)
+        .then((response) => {
+          response.data.data.forEach((element) => {
+            const x = {};
+            x._id = element._id;
+            x.history = element.history;
+            x.lastDate = element.lastDate;
+            x.totalQuantity = element.totalQuantity;
+            x.name = element.custody.name;
+            // console.log(x);
+            this.properties.push(x);
+          });
+        });
+    },
     material_append(value) {
       axios
         .post("/api/materialEmployee/assign", {
@@ -238,7 +268,22 @@ export default {
           }
         });
     },
-    property_append(value) {},
+    property_append(value) {
+      axios
+        .post("/api/custodyEmployee/assign", {
+          custody: value._id,
+          employee: this.orgemployee._id,
+          quantity: value.qty,
+          operation: "assign",
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "yayyy", "success");
+          }
+        });
+    },
     onClickChild_property(value) {
       // console.log(value);
       this.historytype = "property";
@@ -258,14 +303,14 @@ export default {
       this.dialog1 = true;
     },
     historyview(id) {
-      // console.log(this.propfind(id));
-      // this.historyobject.title = this.historytype + " history";
-      // if (this.historytype === "property") {
-      //   this.obj = this.properties.find((m) => m._id === id);
-      // } else {
-      //   this.obj = this.materials.find((m) => m._id === id);
-      // }
-      // this.historyobject.id = this.obj._id;
+      // console.log(this.historytype);
+      //  this.historyobject.title = this.historytype + " history";
+      //  if (this.historytype === "property") {
+      //    this.obj = this.properties.find((m) => m._id === id);
+      //  } else {
+      //    this.obj = this.materials.find((m) => m._id === id);
+      //  }
+      //  this.historyobject.id = this.obj._id;
       // this.historyobject.name = this.obj.name;
       // this.historyobject.data = this.obj.history;
       // this.historyobject.qty = this.obj.totalQuantity;

@@ -2,7 +2,7 @@
   <v-card elevation="0" style="width: 100%">
     <v-card-title class="text-center">
       <v-icon icon="mdi-plus" style="color: #fbc02d" class="mb-2"></v-icon>
-      <span class="text-h5" style="color: #fbc02d">Add material</span>
+      <span class="text-h5" style="color: #fbc02d">Add property</span>
     </v-card-title>
     <v-card-text>
       <v-container>
@@ -10,7 +10,7 @@
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               label="Name*"
-              v-model="material.name"
+              v-model="property.name"
               required
               hint="Required"
             ></v-text-field>
@@ -18,7 +18,7 @@
           <v-col cols="12" sm="3" md="3">
             <v-text-field
               required
-              v-model="material.unit"
+              v-model="property.unit"
               label="unit*"
               hint="Required"
             ></v-text-field>
@@ -26,7 +26,7 @@
           <v-col cols="12" sm="3" md="3">
             <v-text-field
               label="type*"
-              v-model="material.type"
+              v-model="property.type"
               hint="Required"
               required
             ></v-text-field>
@@ -36,7 +36,7 @@
             <v-autocomplete
               label="Role*"
               chips
-              v-model="material.role"
+              v-model="property.role"
               persistent-hint
               hint="Required"
               :items="roles"
@@ -47,7 +47,7 @@
           <v-col cols="12" sm="3" md="3">
             <v-text-field
               required
-              v-model="material.max"
+              v-model="property.max"
               label="max*"
               hint="Required"
             ></v-text-field>
@@ -55,7 +55,7 @@
           <v-col cols="12" sm="3" md="3">
             <v-text-field
               required
-              v-model="material.min"
+              v-model="property.min"
               label="min*"
               hint="Required"
             ></v-text-field>
@@ -64,7 +64,7 @@
             ><v-textarea
               clearable
               label="Note"
-              v-model="material.note"
+              v-model="property.note"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
@@ -73,7 +73,7 @@
             ><v-textarea
               clearable
               label="details"
-              v-model="material.details"
+              v-model="property.details"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
@@ -111,7 +111,7 @@ export default {
     ],
     url: null,
     image: null,
-    material: {
+    property: {
       name: "",
       unit: "",
       type: "",
@@ -131,19 +131,19 @@ export default {
   },
   methods: {
     add() {
-      // this.url = URL.createObjectURL(this.material.img);
+      // this.url = URL.createObjectURL(this.property.img);
       console.log("im alive");
       axios
-        .post("/api/material", {
-          name: this.material.name,
-          unit: this.material.unit,
-          "role.title": this.material.role.title,
-          "role.num": this.material.role.number,
-          type: this.material.type,
-          max: this.material.max,
-          min: this.material.min,
-          note: this.material.note,
-          details: this.material.details,
+        .post("/api/custody/", {
+          name: this.property.name,
+          unit: this.property.unit,
+          "role.title": this.property.role.title,
+          "role.num": this.property.role.number,
+          type: this.property.type,
+          max: this.property.max,
+          min: this.property.min,
+          note: this.property.note,
+          details: this.property.details,
         })
         .then((response) => {
           if (response.data.errors) {
@@ -159,7 +159,7 @@ export default {
     },
 
     imageup(image) {
-      this.material.img = image[0];
+      this.property.img = image[0];
     },
   },
 };

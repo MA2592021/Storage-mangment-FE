@@ -120,7 +120,7 @@ export default {
         {
           icon: "mdi-hammer-wrench",
           text: "properties",
-          route: "/propertie/",
+          route: "/storage/property/dashboard",
         },
         {
           icon: "mdi-palette-swatch",
