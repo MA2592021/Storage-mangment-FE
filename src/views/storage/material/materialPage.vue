@@ -1,6 +1,7 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
-    ><v-row
+    ><v-row>
+      <v-col cols="12" align="center" class="text-h4"> materials </v-col
       ><v-col cols="3" sm="2"
         ><v-img
           class="bg-white"

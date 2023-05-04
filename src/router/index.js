@@ -151,6 +151,39 @@ const router = createRouter({
         },
       ],
     },
+    // supplier routes
+    {
+      path: "/supplier/",
+      name: "supplier-land",
+
+      component: () => import("../views/suppliers/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "supplier-dash",
+
+          component: () => import("../views/suppliers/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "supplier-add",
+
+          component: () => import("../views/suppliers/add.vue"),
+        },
+        {
+          path: "all",
+          name: "supplier-all",
+
+          component: () => import("../views/suppliers/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "supplier-page",
+
+          component: () => import("../views/suppliers/supplierPage.vue"),
+        },
+      ],
+    },
     //color routes
     {
       path: "/utils/color/",

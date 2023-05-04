@@ -1,12 +1,13 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
-    ><v-row
+    ><v-row>
+      <v-col cols="12" align="center" class="text-h4"> Suppliers </v-col
       ><v-col cols="3" sm="2"
         ><v-img
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="material.img"
+          :src="supplier.img"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -16,16 +17,16 @@
               label="Name "
               required
               :readonly="dis === true"
-              v-model="material.name"
+              v-model="supplier.name"
               variant="underlined"
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="available "
+              label="state "
               :readonly="dis === true"
-              v-model="material.available"
+              v-model="supplier.state"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -33,8 +34,8 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              v-model="material.quantity"
-              label="quantity "
+              v-model="supplier.phoneNo"
+              label="phoneNo "
               :readonly="!isEditing"
               variant="underlined"
               ><template v-slot:append>
@@ -54,48 +55,12 @@
                 </v-slide-x-reverse-transition> </template
             ></v-text-field>
           </v-col>
-          <v-col cols="12" md="6" lg="3">
-            <v-text-field
-              required
-              label="max "
-              :readonly="dis === true"
-              v-model="material.max"
-              variant="underlined"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="6" lg="3">
-            <v-text-field
-              required
-              label="min "
-              :readonly="dis === true"
-              v-model="material.min"
-              variant="underlined"
-            ></v-text-field>
-          </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-autocomplete
-              label="Role "
-              v-model="material.role"
-              variant="underlined"
-              :readonly="dis === true"
-              :items="['Supervisor', 'material']"
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-text-field
-              required
-              label="Unit "
-              :readonly="dis === true"
-              v-model="material.unit"
-              variant="underlined"
-            ></v-text-field>
-          </v-col>
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
               label="Note"
-              v-model="material.note"
+              v-model="supplier.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -103,8 +68,8 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="details"
-              v-model="material.details"
+              label="address"
+              v-model="supplier.address"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -135,10 +100,10 @@
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'Employees'"
         v-bind:openedtitle="openedtitle"
-        v-bind:closedtitle="this.material.name"
+        v-bind:closedtitle="this.supplier.name"
         v-bind:link="link"
         @clicked="onClickChild_employee"
-        @appended="employee_appended"
+        @appended="employee_append"
       />
     </v-expansion-panels>
   </v-card>
@@ -167,14 +132,14 @@
 </template>
 
 <script>
-import paneltable from "../../../components/paneltable.vue";
-import popuptest from "../../../components/popuptest.vue";
-import check from "../../../components/checkpopup.vue";
-import history from "../../../components/historypopup.vue";
+import paneltable from "../../components/paneltable.vue";
+import popuptest from "../../components/popuptest.vue";
+import check from "../../components/checkpopup.vue";
+import history from "../../components/historypopup.vue";
 import axios from "axios";
 
 import sweetalert from "sweetalert";
-import { useheaders } from "../../../stores/headers";
+import { useheaders } from "../../stores/headers";
 
 export default {
   components: { paneltable, popuptest, check, history },
@@ -191,10 +156,10 @@ export default {
     openedtitle: "Employees have",
     dis: true,
     isEditing: false,
-    material: {
+    supplier: {
       img: "/arkan_logo-no-text.png",
     },
-    orgproperty: {},
+    orgsupplier: {},
     employees: [],
     historytype: "",
     obj: {},
@@ -202,8 +167,8 @@ export default {
   }),
   created() {
     //GEtet route here
-    this.propertyload();
-    this.property_employee_load();
+    this.supplier_load();
+    this.employees_supplier_load();
   },
   setup() {
     const headers = useheaders();
@@ -213,17 +178,47 @@ export default {
     };
   },
   methods: {
+    supplier_load() {
+      axios.get("/api/supplier/" + this.$route.params.id).then((response) => {
+        console.log(response);
+        this.orgsupplier = [];
+        if (response.data.errors) {
+          swal("error", response.data.errors[0].msg, "error");
+        } else {
+          this.orgsupplier = response.data.data;
+          this.clone();
+        }
+      });
+    },
+    employees_supplier_load() {
+      axios
+        .get("/api/supplierEmployee/supplier/" + this.$route.params.id)
+        .then((response) => {
+          this.employees = [];
+          response.data.data.forEach((element) => {
+            const x = {};
+            x.id = element._id;
+            x.totalphoneNo = element.totalphoneNo;
+            x.lastDate = element.lastDate;
+            x.history = element.history;
+            x.name = element.employee.name;
+            x.employee_id = element.employee._id;
+            this.employees.push(x);
+          });
+          // console.log(this.employees);
+        });
+    },
     onClickChild_employee(value) {
       // console.log(value);
       this.historytype = "employee";
       this.historyview(value._id);
     },
-    employee_appended(value) {
+    employee_append(value) {
       axios
-        .post("/api/custodyEmployee/assign", {
-          custody: this.orgproperty._id,
+        .post("/api/supplierEmployee/assign", {
+          supplier: this.orgsupplier._id,
           employee: value._id,
-          quantity: value.qty,
+          phoneNo: value.qty,
           operation: "assign",
         })
         .then((response) => {
@@ -231,54 +226,24 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "yayyy", "success");
-            this.property_employee_load();
+            this.employees_supplier_load();
           }
-        });
-    },
-    propertyload() {
-      axios.get("/api/custody/" + this.$route.params.id).then((response) => {
-        console.log(response);
-        this.orgproperty = [];
-        if (response.data.errors) {
-          swal("error", response.data.errors[0].msg, "error");
-        } else {
-          this.orgproperty = response.data.data;
-          this.clone();
-        }
-      });
-    },
-    property_employee_load() {
-      axios
-        .get("/api/custodyEmployee/custody/" + this.$route.params.id)
-        .then((response) => {
-          this.employees = [];
-          response.data.data.forEach((element) => {
-            const x = {};
-            x._id = element._id;
-            x.history = element.history;
-            x.lastDate = element.lastDate;
-            x.totalQuantity = element.totalQuantity;
-            x.name = element.employee.name;
-            x.employee_id = element.employee._id;
-            // console.log(x);
-            this.employees.push(x);
-          });
         });
     },
     submit(value) {
       //Post route here
       console.log(value);
       const x = {};
-      x.custody = this.$route.params.id;
-      x.quantity = value.qty;
+      x.supplier = this.$route.params.id;
+      x.phoneNo = value.qty;
       x.operation = value.operation;
       if (this.historytype === "employee") {
         x.employee = value._id;
         axios
-          .post("/api/custodyEmployee/assign", {
-            custody: x.custody,
+          .post("/api/supplierEmployee/assign", {
+            supplier: x.supplier,
             employee: x.employee,
-            quantity: x.quantity,
+            phoneNo: x.phoneNo,
             operation: x.operation,
           })
           .then((response) => {
@@ -286,7 +251,7 @@ export default {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
               swal("success", "yayyy", "success");
-              this.property_employee_load();
+              this.employees_supplier_load();
               this.dialog2 = false;
             }
           });
@@ -298,7 +263,7 @@ export default {
         this.properties.find((m) => m._id === value.id).note = value.note;
         console.log(this.properties.find((m) => m._id === value.id).note);
       } else {
-        this.materials.find((m) => m._id === value.id).note = value.note;
+        this.suppliers.find((m) => m._id === value.id).note = value.note;
       }
     },
     check() {
@@ -313,12 +278,12 @@ export default {
         this.obj = this.employees.find((m) => m._id === id);
         this.historyobject._id = this.obj.employee_id;
       } else {
-        this.obj = this.materials.find((m) => m._id === id);
+        this.obj = this.suppliers.find((m) => m._id === id);
       }
       this.historyobject.id = this.obj.id;
       this.historyobject.name = this.obj.name;
       this.historyobject.data = this.obj.history;
-      this.historyobject.qty = this.obj.totalQuantity;
+      this.historyobject.qty = this.obj.totalphoneNo;
       this.historyobject.date = this.obj.lastDate;
       this.historyobject.note = this.obj.note;
       this.historyobject.header = this.headers.historyheader;
@@ -329,25 +294,20 @@ export default {
         this.isEditing = !this.isEditing;
       } else {
         this.content =
-          "this change is critical and must double check it :  material quantity is : ( " +
-          this.material.quantity +
+          "this change is critical and must double check it :  supplier phoneNo is : ( " +
+          this.supplier.phoneNo +
           " )";
         this.dialog = !this.dialog;
       }
     },
     clone() {
-      this.material.id = this.orgproperty._id;
-      this.material.name = this.orgproperty.name;
-      this.material.quantity = this.orgproperty.quantity;
-      //   this.material.img = this.orgproperty.img;
-      this.material.available = this.orgproperty.available;
-      this.material.role = this.orgproperty.role;
-      this.material.note = this.orgproperty.note;
-      this.material.unit = this.orgproperty.unit;
-      this.material.details = this.orgproperty.details;
-      this.material.employees = this.orgproperty.employees;
-      this.material.max = this.orgproperty.max;
-      this.material.min = this.orgproperty.min;
+      this.supplier.id = this.orgsupplier._id;
+      this.supplier.name = this.orgsupplier.name;
+      this.supplier.state = this.orgsupplier.state;
+      //   this.supplier.img = this.orgsupplier.img;
+      this.supplier.phoneNo = this.orgsupplier.phoneNo;
+      this.supplier.note = this.orgsupplier.note;
+      this.supplier.address = this.orgsupplier.address;
     },
     cancel() {
       this.dialog = false;
@@ -355,18 +315,13 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.material.id = this.orgproperty._id;
-      this.material.name = this.orgproperty.name;
-      this.material.quantity = this.orgproperty.quantity;
-      //   this.material.img = this.orgproperty.img;
-      this.material.available = this.orgproperty.available;
-      this.material.role = this.orgproperty.role;
-      this.material.note = this.orgproperty.note;
-      this.material.unit = this.orgproperty.unit;
-      this.material.details = this.orgproperty.details;
-      this.material.employees = this.orgproperty.employees;
-      this.material.max = this.orgproperty.max;
-      this.material.min = this.orgproperty.min;
+      this.supplier.id = this.orgsupplier._id;
+      this.supplier.name = this.orgsupplier.name;
+      this.supplier.state = this.orgsupplier.state;
+      //   this.supplier.img = this.orgsupplier.img;
+      this.supplier.phoneNo = this.orgsupplier.phoneNo;
+      this.supplier.note = this.orgsupplier.note;
+      this.supplier.address = this.orgsupplier.address;
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
@@ -375,28 +330,22 @@ export default {
       this.dialog = false;
       this.isEditing = false;
       this.dialog1 = false;
-      // this.materials.material.name = this.material.name;
-      // this.materials.material.code = this.material.code;
-      // this.materials.material.img = this.material.img;
-      // this.materials.material.nid = this.material.nid;
-      // this.materials.material.role = this.material.role;
-      // this.materials.material.note = this.material.note;
-      // this.materials.material.phone = this.material.phone;
+      // this.suppliers.supplier.name = this.supplier.name;
+      // this.suppliers.supplier.code = this.supplier.code;
+      // this.suppliers.supplier.img = this.supplier.img;
+      // this.suppliers.supplier.nid = this.supplier.nid;
+      // this.suppliers.supplier.role = this.supplier.role;
+      // this.suppliers.supplier.note = this.supplier.note;
+      // this.suppliers.supplier.phone = this.supplier.phone;
 
       //save route here
       axios
-        .patch("/api/custody/" + this.$route.params.id, {
-          name: this.material.name,
-          unit: this.material.unit,
-          "role.title": this.material.role.title,
-          "role.num": 1,
-          type: this.material.type,
-          max: this.material.max,
-          min: this.material.min,
-          note: this.material.note,
-          details: this.material.details,
-          available: this.material.available,
-          quantity: this.material.quantity,
+        .patch("/api/supplier/" + this.$route.params.id, {
+          name: this.supplier.name,
+          note: this.supplier.note,
+          address: this.supplier.address,
+          phoneNo: this.supplier.phoneNo,
+          state: this.supplier.state,
         })
         .then((response) => {
           if (response.data.errors) {

@@ -105,7 +105,11 @@ export default {
         { icon: "mdi-hanger", text: "models", route: "/model/dashboard" },
         { icon: "mdi-cart", text: "Oreders", route: "/order/" },
 
-        { icon: "mdi-ticket-account", text: "suppliers", route: "/supplier/" },
+        {
+          icon: "mdi-ticket-account",
+          text: "suppliers",
+          route: "/supplier/dashboard",
+        },
         { icon: "mdi-account-tie", text: "Clients", route: "/client/" },
 
         { icon: "mdi-truck", text: "shipment", route: "/shipment/" },

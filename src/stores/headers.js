@@ -74,6 +74,16 @@ export const useheaders = defineStore("headers", {
       { title: "name", key: "name" },
       { title: "role", key: "role" },
     ],
+    supplier_header: [
+      {
+        align: "start",
+        key: "name",
+        sortable: false,
+        title: "name",
+      },
+      { title: "Phone", key: "phoneNo" },
+      { title: "state", key: "state" },
+    ],
   }),
   getters: {},
 });
