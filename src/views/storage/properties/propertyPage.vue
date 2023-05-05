@@ -118,6 +118,14 @@
         {{ dis ? "edit" : "cancel" }}
       </v-btn>
       <v-btn
+        class="ml-auto text-red"
+        @click="deletee()"
+        :disabled="dis === true"
+        prepend-icon="mdi-delete-forever"
+      >
+        Delete
+      </v-btn>
+      <v-btn
         class="ml-auto"
         :disabled="dis === true || isEditing === true"
         prepend-icon="mdi-check-outline"
@@ -274,12 +282,34 @@ export default {
       x.operation = value.operation;
       if (this.historytype === "employee") {
         x.employee = value._id;
+        this.employee_operations(x);
+      }
+    },
+    employee_operations(obj) {
+      if (obj.operation === "assign") {
         axios
           .post("/api/custodyEmployee/assign", {
-            custody: x.custody,
-            employee: x.employee,
-            quantity: x.quantity,
-            operation: x.operation,
+            custody: obj.custody,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              swal("error", response.data.errors[0].msg, "errors");
+            } else {
+              swal("success", "yayyy", "success");
+              this.property_employee_load();
+              this.dialog2 = false;
+            }
+          });
+      } else {
+        axios
+          .patch("/api/custodyEmployee/back", {
+            custody: obj.custody,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
           })
           .then((response) => {
             if (response.data.errors) {
@@ -405,6 +435,32 @@ export default {
             swal("success", "yayy", "success");
           }
         });
+    },
+    deletee() {
+      swal({
+        title: "Are you sure?",
+        text: "Are you sure that you want to delete this property?",
+        icon: "warning",
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          axios
+            .delete("/api/custody/" + this.$route.params.id)
+            .then((response) => {
+              if (response.data.errors) {
+                swal("error", response.data.errors[0].msg, "error");
+              } else {
+                swal(
+                  "success",
+                  "property deleted suuccessfully",
+                  "success"
+                ).then(() => {
+                  this.$router.push({ path: "/storage/property/all" });
+                });
+              }
+            });
+        }
+      });
     },
   },
 };

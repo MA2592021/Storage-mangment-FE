@@ -93,6 +93,14 @@
         {{ dis ? "edit" : "cancel" }}
       </v-btn>
       <v-btn
+        class="ml-auto text-red"
+        @click="deletee()"
+        :disabled="dis === true"
+        prepend-icon="mdi-delete-forever"
+      >
+        Delete
+      </v-btn>
+      <v-btn
         class="ml-auto"
         :disabled="dis === true || isEditing === true"
         prepend-icon="mdi-check-outline"
@@ -146,7 +154,7 @@
     v-if="dialog2"
     v-bind:viewobject="historyobject"
     @close="dialog2 = !dialog2"
-    @saveclicked="save"
+    @saveclicked="savenote"
     @submit="submit"
   />
 </template>
@@ -234,6 +242,8 @@ export default {
             x.totalQuantity = element.totalQuantity;
             x.name = element.material.name;
             x.material_id = element.material._id;
+            x.note = element.note;
+
             // console.log(x);
             this.materials.push(x);
           });
@@ -252,45 +262,27 @@ export default {
             x.totalQuantity = element.totalQuantity;
             x.name = element.custody.name;
             x.property_id = element.custody._id;
-
+            x.note = element.note;
             // console.log(x);
             this.properties.push(x);
           });
         });
     },
     material_append(value) {
-      axios
-        .post("/api/materialEmployee/assign", {
-          material: value._id,
-          employee: this.orgemployee._id,
-          quantity: value.qty,
-          operation: "assign",
-        })
-        .then((response) => {
-          if (response.data.errors) {
-            swal("error", response.data.errors[0].msg, "error");
-          } else {
-            swal("success", "yayyy", "success");
-            this.materialsload();
-          }
-        });
+      const x = {};
+      x.material = value._id;
+      x.employee = this.orgemployee._id;
+      x.quantity = value.qty;
+      x.operation = "assign";
+      this.material_operations(x);
     },
     property_append(value) {
-      axios
-        .post("/api/custodyEmployee/assign", {
-          custody: value._id,
-          employee: this.orgemployee._id,
-          quantity: value.qty,
-          operation: "assign",
-        })
-        .then((response) => {
-          if (response.data.errors) {
-            swal("error", response.data.errors[0].msg, "error");
-          } else {
-            swal("success", "yayyy", "success");
-            this.propertiesload();
-          }
-        });
+      const x = {};
+      x.custody = value._id;
+      x.employee = this.orgemployee._id;
+      x.quantity = value.qty;
+      x.operation = "assign";
+      this.property_operations(x);
     },
     onClickChild_property(value) {
       // console.log(value);
@@ -299,7 +291,6 @@ export default {
     },
     onClickChild_material(value) {
       this.historytype = "material";
-
       this.historyview(value._id);
     },
     submit(value) {
@@ -311,12 +302,21 @@ export default {
       x.operation = value.operation;
       if (this.historytype === "property") {
         x.custody = value._id;
+        this.property_operations(x);
+      } else {
+        x.material = value._id;
+        this.material_operations(x);
+      }
+      // console.log(x);
+    },
+    property_operations(obj) {
+      if (obj.operation === "assign") {
         axios
           .post("/api/custodyEmployee/assign", {
-            custody: x.custody,
-            employee: x.employee,
-            quantity: x.quantity,
-            operation: x.operation,
+            custody: obj.custody,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
           })
           .then((response) => {
             if (response.data.errors) {
@@ -328,13 +328,49 @@ export default {
             }
           });
       } else {
-        x.material = value._id;
+        axios
+          .patch("/api/custodyEmployee/back", {
+            custody: obj.custody,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              swal("error", response.data.errors[0].msg, "errors");
+            } else {
+              swal("success", "yayyy", "success");
+              this.propertiesload();
+              this.dialog2 = false;
+            }
+          });
+      }
+    },
+    material_operations(obj) {
+      if (obj.operation === "assign") {
         axios
           .post("/api/materialEmployee/assign", {
-            material: x.material,
-            employee: x.employee,
-            quantity: x.quantity,
-            operation: x.operation,
+            material: obj.material,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              swal("error", response.data.errors[0].msg, "errors");
+            } else {
+              swal("success", "yayyy", "success");
+              this.materialsload();
+              this.dialog2 = false;
+            }
+          });
+      } else {
+        axios
+          .patch("/api/materialEmployee/back", {
+            material: obj.material,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
           })
           .then((response) => {
             if (response.data.errors) {
@@ -346,9 +382,7 @@ export default {
             }
           });
       }
-      console.log(x);
     },
-
     check() {
       this.dialog = false;
       this.dialog1 = true;
@@ -372,6 +406,29 @@ export default {
       this.historyobject.note = this.obj.note;
       this.historyobject.header = this.headers.historyheader;
       this.dialog2 = true;
+    },
+    savenote(value) {
+      if (this.historytype === "material") {
+        axios
+          .patch("/api/materialEmployee/note/" + value.id, {
+            note: value.note,
+          })
+          .then(swal("success", "yayyy", "success"))
+          .then(() => {
+            this.dialog2 = false;
+            this.materialsload();
+          });
+      } else {
+        axios
+          .patch("/api/custodyEmployee/note/" + value.id, {
+            note: value.note,
+          })
+          .then(swal("success", "yayyy", "success"))
+          .then(() => {
+            this.dialog2 = false;
+            this.propertiesload();
+          });
+      }
     },
     criticalchange() {
       if (this.isEditing === false) {
@@ -437,6 +494,32 @@ export default {
               "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
           }
         });
+    },
+    deletee() {
+      swal({
+        title: "Are you sure?",
+        text: "Are you sure that you want to delete this employee?",
+        icon: "warning",
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          axios
+            .delete("/api/employee/" + this.$route.params.id)
+            .then((response) => {
+              if (response.data.errors) {
+                swal("error", response.data.errors[0].msg, "error");
+              } else {
+                swal(
+                  "success",
+                  "employee deleted suuccessfully",
+                  "success"
+                ).then(() => {
+                  this.$router.push({ path: "/employee/all" });
+                });
+              }
+            });
+        }
+      });
     },
   },
 };

@@ -83,6 +83,14 @@
         {{ dis ? "edit" : "cancel" }}
       </v-btn>
       <v-btn
+        class="ml-auto text-red"
+        @click="deletee()"
+        :disabled="dis === true"
+        prepend-icon="mdi-delete-forever"
+      >
+        Delete
+      </v-btn>
+      <v-btn
         class="ml-auto"
         :disabled="dis === true || isEditing === true"
         prepend-icon="mdi-check-outline"
@@ -96,14 +104,14 @@
   <v-card class="mt-3" style="width: 100%">
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
-        v-bind:data="employees"
-        v-bind:header="headers.employee_hand_header"
-        v-bind:panelname="'Employees'"
+        v-bind:data="materials"
+        v-bind:header="headers.material_hand_header"
+        v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.supplier.name"
         v-bind:link="link"
-        @clicked="onClickChild_employee"
-        @appended="employee_append"
+        @clicked="onClickChild_material"
+        @appended="material_append"
       />
     </v-expansion-panels>
   </v-card>
@@ -148,19 +156,19 @@ export default {
     content:
       "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
     title: "are you sure ? ",
-    link: { get: "/api/employee/" },
+    link: { get: "/api/material/" },
     isdisabled: true,
     dialog: false,
     dialog1: false,
     dialog2: false,
-    openedtitle: "Employees have",
+    openedtitle: "materials supplied by ",
     dis: true,
     isEditing: false,
     supplier: {
       img: "/arkan_logo-no-text.png",
     },
     orgsupplier: {},
-    employees: [],
+    materials: [],
     historytype: "",
     obj: {},
     historyobject: {},
@@ -168,7 +176,7 @@ export default {
   created() {
     //GEtet route here
     this.supplier_load();
-    this.employees_supplier_load();
+    // this.materials_supplier_load();
   },
   setup() {
     const headers = useheaders();
@@ -190,34 +198,34 @@ export default {
         }
       });
     },
-    employees_supplier_load() {
+    materials_supplier_load() {
       axios
-        .get("/api/supplierEmployee/supplier/" + this.$route.params.id)
+        .get("/api/suppliermaterial/supplier/" + this.$route.params.id)
         .then((response) => {
-          this.employees = [];
+          this.materials = [];
           response.data.data.forEach((element) => {
             const x = {};
             x.id = element._id;
             x.totalphoneNo = element.totalphoneNo;
             x.lastDate = element.lastDate;
             x.history = element.history;
-            x.name = element.employee.name;
-            x.employee_id = element.employee._id;
-            this.employees.push(x);
+            x.name = element.material.name;
+            x.material_id = element.material._id;
+            this.materials.push(x);
           });
-          // console.log(this.employees);
+          // console.log(this.materials);
         });
     },
-    onClickChild_employee(value) {
+    onClickChild_material(value) {
       // console.log(value);
-      this.historytype = "employee";
+      this.historytype = "material";
       this.historyview(value._id);
     },
-    employee_append(value) {
+    material_append(value) {
       axios
-        .post("/api/supplierEmployee/assign", {
+        .post("/api/suppliermaterial/assign", {
           supplier: this.orgsupplier._id,
-          employee: value._id,
+          material: value._id,
           phoneNo: value.qty,
           operation: "assign",
         })
@@ -226,7 +234,7 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "yayyy", "success");
-            this.employees_supplier_load();
+            this.materials_supplier_load();
           }
         });
     },
@@ -237,12 +245,12 @@ export default {
       x.supplier = this.$route.params.id;
       x.phoneNo = value.qty;
       x.operation = value.operation;
-      if (this.historytype === "employee") {
-        x.employee = value._id;
+      if (this.historytype === "material") {
+        x.material = value._id;
         axios
-          .post("/api/supplierEmployee/assign", {
+          .post("/api/suppliermaterial/assign", {
             supplier: x.supplier,
-            employee: x.employee,
+            material: x.material,
             phoneNo: x.phoneNo,
             operation: x.operation,
           })
@@ -251,7 +259,7 @@ export default {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
               swal("success", "yayyy", "success");
-              this.employees_supplier_load();
+              this.materials_supplier_load();
               this.dialog2 = false;
             }
           });
@@ -274,9 +282,9 @@ export default {
       // console.log(this.propfind(id));
 
       this.historyobject.title = this.historytype + " history";
-      if (this.historytype === "employee") {
-        this.obj = this.employees.find((m) => m._id === id);
-        this.historyobject._id = this.obj.employee_id;
+      if (this.historytype === "material") {
+        this.obj = this.materials.find((m) => m._id === id);
+        this.historyobject._id = this.obj.material_id;
       } else {
         this.obj = this.suppliers.find((m) => m._id === id);
       }
@@ -354,6 +362,32 @@ export default {
             swal("success", "yayy", "success");
           }
         });
+    },
+    deletee() {
+      swal({
+        title: "Are you sure?",
+        text: "Are you sure that you want to delete this supplier?",
+        icon: "warning",
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          axios
+            .delete("/api/supplier/" + this.$route.params.id)
+            .then((response) => {
+              if (response.data.errors) {
+                swal("error", response.data.errors[0].msg, "error");
+              } else {
+                swal(
+                  "success",
+                  "supplier deleted suuccessfully",
+                  "success"
+                ).then(() => {
+                  this.$router.push({ path: "/supplier/all" });
+                });
+              }
+            });
+        }
+      });
     },
   },
 };

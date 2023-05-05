@@ -32,13 +32,13 @@
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" sm="3" md="3">
-            <v-text-field
-              required
+          <v-col cols="12" sm="6">
+            <v-textarea
+              clearable
+              label="address"
               v-model="supplier.address"
-              label="address*"
-              hint="Required"
-            ></v-text-field>
+              prepend-inner-icon="mdi-note-text-outline"
+            ></v-textarea>
           </v-col>
 
           <v-col cols="12" sm="6"
@@ -116,7 +116,9 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "yay", "success").then(() =>
+              this.$router.push({ path: "/supplier/all" })
+            );
           }
         })
         .catch((err) => {

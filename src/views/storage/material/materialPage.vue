@@ -119,6 +119,14 @@
         {{ dis ? "edit" : "cancel" }}
       </v-btn>
       <v-btn
+        class="ml-auto text-red"
+        @click="deletee()"
+        :disabled="dis === true"
+        prepend-icon="mdi-delete-forever"
+      >
+        Delete
+      </v-btn>
+      <v-btn
         class="ml-auto"
         :disabled="dis === true || isEditing === true"
         prepend-icon="mdi-check-outline"
@@ -239,6 +247,7 @@ export default {
             x.history = element.history;
             x.name = element.employee.name;
             x.employee_id = element.employee._id;
+            x.note = element.note;
             this.employees.push(x);
           });
           // console.log(this.employees);
@@ -275,12 +284,34 @@ export default {
       x.operation = value.operation;
       if (this.historytype === "employee") {
         x.employee = value._id;
+        this.employee_operations(x);
+      }
+    },
+    employee_operations(obj) {
+      if (obj.operation === "assign") {
         axios
           .post("/api/materialEmployee/assign", {
-            material: x.material,
-            employee: x.employee,
-            quantity: x.quantity,
-            operation: x.operation,
+            material: obj.material,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              swal("error", response.data.errors[0].msg, "errors");
+            } else {
+              swal("success", "yayyy", "success");
+              this.employees_material_load();
+              this.dialog2 = false;
+            }
+          });
+      } else {
+        axios
+          .patch("/api/materialEmployee/back", {
+            material: obj.material,
+            employee: obj.employee,
+            quantity: obj.quantity,
+            operation: obj.operation,
           })
           .then((response) => {
             if (response.data.errors) {
@@ -294,13 +325,15 @@ export default {
       }
     },
     savenote(value) {
-      console.log(value);
-      if (this.historytype === "property") {
-        this.properties.find((m) => m._id === value.id).note = value.note;
-        console.log(this.properties.find((m) => m._id === value.id).note);
-      } else {
-        this.materials.find((m) => m._id === value.id).note = value.note;
-      }
+      axios
+        .patch("/api/materialEmployee/note/" + value.id, {
+          note: value.note,
+        })
+        .then(swal("success", "yayyy", "success"))
+        .then(() => {
+          this.dialog2 = false;
+          this.employees_material_load();
+        });
     },
     check() {
       this.dialog = false;
@@ -406,6 +439,32 @@ export default {
             swal("success", "yayy", "success");
           }
         });
+    },
+    deletee() {
+      swal({
+        title: "Are you sure?",
+        text: "Are you sure that you want to delete this material?",
+        icon: "warning",
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          axios
+            .delete("/api/material/" + this.$route.params.id)
+            .then((response) => {
+              if (response.data.errors) {
+                swal("error", response.data.errors[0].msg, "error");
+              } else {
+                swal(
+                  "success",
+                  "material deleted suuccessfully",
+                  "success"
+                ).then(() => {
+                  this.$router.push({ path: "/storage/material/all" });
+                });
+              }
+            });
+        }
+      });
     },
   },
 };

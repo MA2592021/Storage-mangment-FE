@@ -94,7 +94,7 @@ export default {
       itemsPerPage: 5,
       selected: "",
       qty: "",
-      operation: [{ name: "assign" }, { name: "sub" }],
+      operation: [{ name: "assign" }, { name: "back" }],
       history: { note: "" },
       elementtype: {},
     };
