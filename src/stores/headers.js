@@ -63,6 +63,19 @@ export const useheaders = defineStore("headers", {
       { title: "name", key: "name" },
       { title: "details", key: "details" },
     ],
+    type_header: [{ title: "name", key: "type" }],
+    stage_header: [
+      {
+        align: "start",
+        key: "name",
+        sortable: false,
+        title: "name",
+      },
+      { title: "code", key: "code" },
+      { title: "type", key: "type" },
+      { title: "rate/h", key: "rate" },
+      { title: "price/p", key: "price" },
+    ],
 
     employee_header: [
       {

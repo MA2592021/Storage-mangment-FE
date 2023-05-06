@@ -149,9 +149,19 @@ export default {
           route: "/utils/size/dashboard",
         },
         {
-          icon: "mdi-script",
+          icon: "mdi-account-cog-outline",
           text: "roles",
           route: "/utils/role/dashboard",
+        },
+        {
+          icon: "mdi-format-list-bulleted-type",
+          text: "types",
+          route: "/utils/type/dashboard",
+        },
+        {
+          icon: "mdi-sitemap",
+          text: "Stages",
+          route: "/utils/Stage/dashboard",
         },
       ],
     };

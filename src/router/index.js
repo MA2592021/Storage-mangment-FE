@@ -284,6 +284,72 @@ const router = createRouter({
         },
       ],
     },
+    //type routes
+    {
+      path: "/utils/type/",
+      name: "type-land",
+
+      component: () => import("../views/utils/types/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "type-dash",
+
+          component: () => import("../views/utils/types/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "type-add",
+
+          component: () => import("../views/utils/types/add.vue"),
+        },
+        {
+          path: "all",
+          name: "type-all",
+
+          component: () => import("../views/utils/types/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "type-page",
+
+          component: () => import("../views/utils/types/typePage.vue"),
+        },
+      ],
+    },
+    //stage routes
+    {
+      path: "/utils/stage/",
+      name: "stage-land",
+
+      component: () => import("../views/utils/stages/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "stage-dash",
+
+          component: () => import("../views/utils/stages/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "stage-add",
+
+          component: () => import("../views/utils/stages/add.vue"),
+        },
+        {
+          path: "all",
+          name: "stage-all",
+
+          component: () => import("../views/utils/stages/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "stage-page",
+
+          component: () => import("../views/utils/stages/stagePage.vue"),
+        },
+      ],
+    },
   ],
 });
 

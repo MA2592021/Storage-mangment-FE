@@ -360,6 +360,7 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "yayy", "success");
+            this.supplier_load();
           }
         });
     },
