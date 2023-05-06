@@ -34,25 +34,6 @@
         </td>
       </tr>
     </template>
-    <template v-slot:bottom>
-      <div class="text-center pt-2">
-        <v-pagination
-          v-model="page"
-          class="my-4"
-          :length="pages.toFixed()"
-        ></v-pagination>
-        <v-text-field
-          :model-value="itemsPerPage"
-          class="pa-2"
-          label="Items per page"
-          type="number"
-          min="-1"
-          max="15"
-          hide-details
-          @update:model-value="itemsPerPage = parseInt($event, 10)"
-        ></v-text-field>
-      </div>
-    </template>
   </v-data-table>
 </template>
 <script>
@@ -92,3 +73,20 @@ export default {
   },
 };
 </script>
+<style>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.8s;
+}
+.list-enter,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(100%);
+}
+.list-move {
+  transition: transform 0.5s;
+}
+.item-row {
+  display: table-row;
+}
+</style>
