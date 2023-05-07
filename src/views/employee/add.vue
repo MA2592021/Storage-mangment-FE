@@ -78,7 +78,7 @@
 <script>
 import imageuploader from "../../components/imageuploader.vue";
 import axios from "axios";
-import sweetalert from "sweetalert";
+import swal from "sweetalert";
 export default {
   components: { imageuploader },
   data: () => ({

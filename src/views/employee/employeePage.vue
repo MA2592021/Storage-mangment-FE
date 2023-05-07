@@ -84,6 +84,15 @@
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
+          <v-col cols="12">
+            <v-text-field
+              label="employeed from "
+              required
+              readonly
+              v-model="employee.time"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
         </v-row> </v-col></v-row
     ><v-card-actions class="mx-auto">
       <v-btn
@@ -165,8 +174,7 @@ import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
 import history from "../../components/historypopup.vue";
 import axios from "axios";
-
-import sweetalert from "sweetalert";
+import moment from "moment";
 import { useheaders } from "../../stores/headers";
 import swal from "sweetalert";
 
@@ -238,7 +246,7 @@ export default {
             const x = {};
             x._id = element._id;
             x.history = element.history;
-            x.lastDate = element.lastDate;
+            x.lastDate = moment(element.lastDate).fromNow();
             x.totalQuantity = element.totalQuantity;
             x.name = element.material.name;
             x.material_id = element.material._id;
@@ -258,7 +266,7 @@ export default {
             const x = {};
             x._id = element._id;
             x.history = element.history;
-            x.lastDate = element.lastDate;
+            x.lastDate = moment(element.lastDate).fromNow();
             x.totalQuantity = element.totalQuantity;
             x.name = element.custody.name;
             x.property_id = element.custody._id;
@@ -452,6 +460,7 @@ export default {
       this.employee.phone = this.orgemployee.phoneNo;
       this.employee.properties = this.orgemployee.currentCustodies;
       this.employee.materials = this.orgemployee.materials;
+      this.employee.time = moment(this.orgemployee.createdAt).fromNow();
     },
     cancel() {
       this.dialog = false;

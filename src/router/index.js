@@ -217,6 +217,39 @@ const router = createRouter({
         },
       ],
     },
+    // requests routes
+    {
+      path: "/request/",
+      name: "request-land",
+
+      component: () => import("../views/requests/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "request-dash",
+
+          component: () => import("../views/requests/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "request-add",
+
+          component: () => import("../views/requests/add.vue"),
+        },
+        {
+          path: "all",
+          name: "request-all",
+
+          component: () => import("../views/requests/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "request-page",
+
+          component: () => import("../views/requests/requestPage.vue"),
+        },
+      ],
+    },
     //color routes
     {
       path: "/utils/color/",

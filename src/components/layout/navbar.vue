@@ -110,13 +110,17 @@ export default {
           text: "suppliers",
           route: "/supplier/dashboard",
         },
-        { icon: "mdi-account-tie", text: "Clients", route: "/client/" },
+        {
+          icon: "mdi-account-tie",
+          text: "Clients",
+          route: "/client/dashboard",
+        },
 
         { icon: "mdi-truck", text: "shipment", route: "/shipment/" },
         {
           icon: "mdi-note-multiple",
           text: "Requests",
-          route: "/request/",
+          route: "/request/dashboard",
         },
       ],
 
