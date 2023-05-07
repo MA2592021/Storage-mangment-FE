@@ -1,13 +1,13 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row>
-      <v-col cols="12" align="center" class="text-h4"> Suppliers </v-col
+      <v-col cols="12" align="center" class="text-h4"> clients </v-col
       ><v-col cols="3" sm="2"
         ><v-img
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="supplier.img"
+          :src="client.img"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -17,7 +17,7 @@
               label="Name "
               required
               :readonly="dis === true"
-              v-model="supplier.name"
+              v-model="client.name"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -26,7 +26,7 @@
               required
               label="state "
               :readonly="dis === true"
-              v-model="supplier.state"
+              v-model="client.state"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -34,7 +34,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              v-model="supplier.phoneNo"
+              v-model="client.phoneNo"
               label="phoneNo "
               :readonly="!isEditing"
               variant="underlined"
@@ -60,7 +60,7 @@
             ><v-textarea
               :clearable="dis === false"
               label="Note"
-              v-model="supplier.note"
+              v-model="client.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -69,7 +69,7 @@
             ><v-textarea
               :clearable="dis === false"
               label="address"
-              v-model="supplier.address"
+              v-model="client.address"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -108,7 +108,7 @@
         v-bind:header="headers.material_hand_header"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle"
-        v-bind:closedtitle="this.supplier.name"
+        v-bind:closedtitle="this.client.name"
         v-bind:link="link"
         @clicked="onClickChild_material"
         @appended="material_append"
@@ -164,10 +164,10 @@ export default {
     openedtitle: "materials supplied by ",
     dis: true,
     isEditing: false,
-    supplier: {
+    client: {
       img: "/arkan_logo-no-text.png",
     },
-    orgsupplier: {},
+    orgclient: {},
     materials: [],
     historytype: "",
     obj: {},
@@ -175,8 +175,8 @@ export default {
   }),
   created() {
     //GEtet route here
-    this.supplier_load();
-    // this.materials_supplier_load();
+    this.client_load();
+    // this.materials_client_load();
   },
   setup() {
     const headers = useheaders();
@@ -186,21 +186,21 @@ export default {
     };
   },
   methods: {
-    supplier_load() {
-      axios.get("/api/supplier/" + this.$route.params.id).then((response) => {
+    client_load() {
+      axios.get("/api/client/" + this.$route.params.id).then((response) => {
         console.log(response);
-        this.orgsupplier = [];
+        this.orgclient = [];
         if (response.data.errors) {
           swal("error", response.data.errors[0].msg, "error");
         } else {
-          this.orgsupplier = response.data.data;
+          this.orgclient = response.data.data;
           this.clone();
         }
       });
     },
-    materials_supplier_load() {
+    materials_client_load() {
       axios
-        .get("/api/suppliermaterial/supplier/" + this.$route.params.id)
+        .get("/api/clientmaterial/client/" + this.$route.params.id)
         .then((response) => {
           this.materials = [];
           response.data.data.forEach((element) => {
@@ -223,8 +223,8 @@ export default {
     },
     material_append(value) {
       axios
-        .post("/api/suppliermaterial/assign", {
-          supplier: this.orgsupplier._id,
+        .post("/api/clientmaterial/assign", {
+          client: this.orgclient._id,
           material: value._id,
           phoneNo: value.qty,
           operation: "assign",
@@ -234,7 +234,7 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "yayyy", "success");
-            this.materials_supplier_load();
+            this.materials_client_load();
           }
         });
     },
@@ -242,14 +242,14 @@ export default {
       //Post route here
       console.log(value);
       const x = {};
-      x.supplier = this.$route.params.id;
+      x.client = this.$route.params.id;
       x.phoneNo = value.qty;
       x.operation = value.operation;
       if (this.historytype === "material") {
         x.material = value._id;
         axios
-          .post("/api/suppliermaterial/assign", {
-            supplier: x.supplier,
+          .post("/api/clientmaterial/assign", {
+            client: x.client,
             material: x.material,
             phoneNo: x.phoneNo,
             operation: x.operation,
@@ -259,7 +259,7 @@ export default {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
               swal("success", "yayyy", "success");
-              this.materials_supplier_load();
+              this.materials_client_load();
               this.dialog2 = false;
             }
           });
@@ -271,7 +271,7 @@ export default {
         this.properties.find((m) => m._id === value.id).note = value.note;
         console.log(this.properties.find((m) => m._id === value.id).note);
       } else {
-        this.suppliers.find((m) => m._id === value.id).note = value.note;
+        this.clients.find((m) => m._id === value.id).note = value.note;
       }
     },
     check() {
@@ -286,7 +286,7 @@ export default {
         this.obj = this.materials.find((m) => m._id === id);
         this.historyobject._id = this.obj.material_id;
       } else {
-        this.obj = this.suppliers.find((m) => m._id === id);
+        this.obj = this.clients.find((m) => m._id === id);
       }
       this.historyobject.id = this.obj.id;
       this.historyobject.name = this.obj.name;
@@ -302,20 +302,20 @@ export default {
         this.isEditing = !this.isEditing;
       } else {
         this.content =
-          "this change is critical and must double check it :  supplier phoneNo is : ( " +
-          this.supplier.phoneNo +
+          "this change is critical and must double check it :  client phoneNo is : ( " +
+          this.client.phoneNo +
           " )";
         this.dialog = !this.dialog;
       }
     },
     clone() {
-      this.supplier.id = this.orgsupplier._id;
-      this.supplier.name = this.orgsupplier.name;
-      this.supplier.state = this.orgsupplier.state;
-      //   this.supplier.img = this.orgsupplier.img;
-      this.supplier.phoneNo = this.orgsupplier.phoneNo;
-      this.supplier.note = this.orgsupplier.note;
-      this.supplier.address = this.orgsupplier.address;
+      this.client.id = this.orgclient._id;
+      this.client.name = this.orgclient.name;
+      this.client.state = this.orgclient.state;
+      //   this.client.img = this.orgclient.img;
+      this.client.phoneNo = this.orgclient.phoneNo;
+      this.client.note = this.orgclient.note;
+      this.client.address = this.orgclient.address;
     },
     cancel() {
       this.dialog = false;
@@ -323,13 +323,13 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.supplier.id = this.orgsupplier._id;
-      this.supplier.name = this.orgsupplier.name;
-      this.supplier.state = this.orgsupplier.state;
-      //   this.supplier.img = this.orgsupplier.img;
-      this.supplier.phoneNo = this.orgsupplier.phoneNo;
-      this.supplier.note = this.orgsupplier.note;
-      this.supplier.address = this.orgsupplier.address;
+      this.client.id = this.orgclient._id;
+      this.client.name = this.orgclient.name;
+      this.client.state = this.orgclient.state;
+      //   this.client.img = this.orgclient.img;
+      this.client.phoneNo = this.orgclient.phoneNo;
+      this.client.note = this.orgclient.note;
+      this.client.address = this.orgclient.address;
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
@@ -338,53 +338,51 @@ export default {
       this.dialog = false;
       this.isEditing = false;
       this.dialog1 = false;
-      // this.suppliers.supplier.name = this.supplier.name;
-      // this.suppliers.supplier.code = this.supplier.code;
-      // this.suppliers.supplier.img = this.supplier.img;
-      // this.suppliers.supplier.nid = this.supplier.nid;
-      // this.suppliers.supplier.role = this.supplier.role;
-      // this.suppliers.supplier.note = this.supplier.note;
-      // this.suppliers.supplier.phone = this.supplier.phone;
+      // this.clients.client.name = this.client.name;
+      // this.clients.client.code = this.client.code;
+      // this.clients.client.img = this.client.img;
+      // this.clients.client.nid = this.client.nid;
+      // this.clients.client.role = this.client.role;
+      // this.clients.client.note = this.client.note;
+      // this.clients.client.phone = this.client.phone;
 
       //save route here
       axios
-        .patch("/api/supplier/" + this.$route.params.id, {
-          name: this.supplier.name,
-          note: this.supplier.note,
-          address: this.supplier.address,
-          phoneNo: this.supplier.phoneNo,
-          state: this.supplier.state,
+        .patch("/api/client/" + this.$route.params.id, {
+          name: this.client.name,
+          note: this.client.note,
+          address: this.client.address,
+          phoneNo: this.client.phoneNo,
+          state: this.client.state,
         })
         .then((response) => {
           if (response.data.errors) {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "yayy", "success");
-            this.supplier_load();
+            this.client_load();
           }
         });
     },
     deletee() {
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to delete this supplier?",
+        text: "Are you sure that you want to delete this client?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
           axios
-            .delete("/api/supplier/" + this.$route.params.id)
+            .delete("/api/client/" + this.$route.params.id)
             .then((response) => {
               if (response.data.errors) {
                 swal("error", response.data.errors[0].msg, "error");
               } else {
-                swal(
-                  "success",
-                  "supplier deleted suuccessfully",
-                  "success"
-                ).then(() => {
-                  this.$router.push({ path: "/supplier/all" });
-                });
+                swal("success", "client deleted suuccessfully", "success").then(
+                  () => {
+                    this.$router.push({ path: "/client/all" });
+                  }
+                );
               }
             });
         }

@@ -117,23 +117,33 @@ export default {
       });
     },
     save() {
-      axios
-        .patch("/api/materialType" + this.$route.params.id, {
-          name: this.stage.name,
-          code: this.stage.code,
-          price: this.stage.price,
-          rate: this.stage.rate,
-          type: this.stage.type,
-          note: this.stage.note,
-        })
-        .then((response) => {
-          if (response.data.errors) {
-            swal("error", response.data.errors[0].msg, "error");
-          } else {
-            swal("success", "stage updated successfully", "error");
-            this.stageload();
-          }
-        });
+      this.dis = !this.dis;
+      swal({
+        title: "Are you sure?",
+        text: "Are you sure that you want to edit this stage?",
+        icon: "warning",
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          axios
+            .patch("/api/stage/" + this.$route.params.id, {
+              name: this.stage.name,
+              code: this.stage.code,
+              price: this.stage.price,
+              rate: this.stage.rate,
+              type: this.stage.type,
+              note: this.stage.note,
+            })
+            .then((response) => {
+              if (response.data.errors) {
+                swal("error", response.data.errors[0].msg, "error");
+              } else {
+                swal("success", "stage updated successfully", "success");
+                this.stageload();
+              }
+            });
+        }
+      });
     },
     clone() {
       this.stage.id = this.orgstage._id;

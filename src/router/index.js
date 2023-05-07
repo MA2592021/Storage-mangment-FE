@@ -184,6 +184,39 @@ const router = createRouter({
         },
       ],
     },
+    // client routes
+    {
+      path: "/client/",
+      name: "client-land",
+
+      component: () => import("../views/clients/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "client-dash",
+
+          component: () => import("../views/clients/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "client-add",
+
+          component: () => import("../views/clients/add.vue"),
+        },
+        {
+          path: "all",
+          name: "client-all",
+
+          component: () => import("../views/clients/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "client-page",
+
+          component: () => import("../views/clients/clientPage.vue"),
+        },
+      ],
+    },
     //color routes
     {
       path: "/utils/color/",
