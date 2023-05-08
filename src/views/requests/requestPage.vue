@@ -116,28 +116,15 @@
     </v-card-actions>
   </v-card>
   <v-card class="mt-3" style="width: 100%">
-    <v-expansion-panels variant="popout" class="my-4">
-      <paneltable
-        v-bind:data="request.properties"
-        v-bind:header="headers.request_hand_header"
-        v-bind:panelname="'properties'"
-        v-bind:openedtitle="openedtitle"
-        v-bind:closedtitle="this.request.name"
-        v-bind:link="link_property"
-        @clicked="onClickChild_property"
-        @appended="property_append"
-      />
-      <paneltable
-        v-bind:data="request.materials"
-        v-bind:header="headers.request_hand_header"
-        v-bind:panelname="'materials'"
-        v-bind:openedtitle="openedtitle1"
-        v-bind:closedtitle="this.request.name"
-        v-bind:link="link_material"
-        @clicked="onClickChild_material"
-        @appended="material_append"
-      />
-    </v-expansion-panels>
+    <requestpanel
+      v-bind:reqmaterial="request.materials"
+      v-bind:reqproperty="request.properties"
+      v-bind:closedtitle="closedtitle"
+      v-bind:panelname="'inclusions'"
+      v-bind:name="request.name"
+      @material="appendmaterial"
+      @property="appendproperty"
+    />
   </v-card>
   <popuptest
     v-model="dialog"
@@ -153,28 +140,20 @@
     @checked="save()"
     @closed="cancel()"
   />
-  <history
-    v-model="dialog2"
-    v-if="dialog2"
-    v-bind:viewobject="historyobject"
-    @close="dialog2 = !dialog2"
-    @saveclicked="savenote"
-    @submit="submit"
-  />
 </template>
 
 <script>
 import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
-import history from "../../components/historypopup.vue";
+import requestpanel from "../../components/requestpanel.vue";
 import axios from "axios";
 import moment from "moment";
 import { useheaders } from "../../stores/headers";
 import swal from "sweetalert";
 
 export default {
-  components: { paneltable, popuptest, check, history },
+  components: { paneltable, popuptest, check, requestpanel },
   //test
   data: () => ({
     content:
@@ -187,9 +166,7 @@ export default {
     isdisabled: true,
     dialog: false,
     dialog1: false,
-    dialog2: false,
-    openedtitle: "properties in",
-    openedtitle1: "materials in",
+    closedtitle: "properties and material in",
     dis: true,
     isEditing: false,
     request: {},
@@ -239,7 +216,22 @@ export default {
         }
       });
     },
+    appendproperty(value) {
+      // axios.patch('/api/buyRequest/materials/add/'+this.$route.params.id,{
+      //   materials:[
 
+      //   ]
+      // })
+      console.log("material", value);
+    },
+    appendmaterial(value) {
+      // axios.patch('/api/buyRequest/materials/add/'+this.$route.params.id,{
+      //   materials:[
+
+      //   ]
+      // })
+      console.log("property", value);
+    },
     material_append(value) {
       const x = {};
       x.material = value._id;
