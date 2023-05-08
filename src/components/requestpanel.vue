@@ -108,8 +108,19 @@
         </v-row>
 
         <v-row justify="center" class="mt-4">
-          <v-btn color="red " @click="dis = !dis"> Edit {{ panelname }} </v-btn>
-          <v-btn color="green " class="ml-auto" @click="appendreq">
+          <v-btn
+            color="red "
+            @click="dis = !dis"
+            :disabled="status === 'Delivered'"
+          >
+            Edit {{ panelname }}
+          </v-btn>
+          <v-btn
+            color="green "
+            :disabled="dis"
+            class="ml-auto"
+            @click="appendreq"
+          >
             Append {{ panelname }}
           </v-btn></v-row
         >
@@ -233,6 +244,7 @@ export default {
     reqmaterial: Array,
     reqproperty: Array,
     panelname: String,
+    status: String,
   },
 };
 </script>

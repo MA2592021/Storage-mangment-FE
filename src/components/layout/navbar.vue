@@ -116,7 +116,7 @@ export default {
           route: "/client/dashboard",
         },
 
-        { icon: "mdi-truck", text: "shipment", route: "/shipment/" },
+        { icon: "mdi-truck", text: "shipment", route: "/shipment/dashboard" },
         {
           icon: "mdi-note-multiple",
           text: "Requests",
@@ -138,7 +138,7 @@ export default {
         {
           icon: "mdi-package-variant-closed",
           text: "cartons",
-          route: "/carton/",
+          route: "/storage/carton/dashboard",
         },
       ],
       Utils: [

@@ -73,6 +73,26 @@ export const useheaders = defineStore("headers", {
       { title: "status", key: "status" },
       { title: "created at", key: "time" },
     ],
+    shipment_header: [
+      {
+        align: "start",
+        key: "name",
+        sortable: false,
+        title: "name",
+      },
+      { title: "client", key: "client" },
+      { title: "created at", key: "time" },
+    ],
+    carton_header: [
+      {
+        align: "start",
+        key: "name",
+        sortable: false,
+        title: "name",
+      },
+      { title: "quantity", key: "quantity" },
+      { title: "model", key: "model" },
+    ],
     type_header: [{ title: "name", key: "type" }],
     stage_header: [
       {

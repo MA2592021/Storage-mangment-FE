@@ -1,13 +1,13 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row class="ma-3"
-      ><v-col cols="12" align="center" class="text-h4"> requests </v-col>
+      ><v-col cols="12" align="center" class="text-h4"> shipments </v-col>
       <v-col cols="12" sm="6" md="6">
         <v-text-field
           label="Name "
           required
           :readonly="dis === true"
-          v-model="request.name"
+          v-model="shipment.name"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -16,7 +16,7 @@
           label="status "
           required
           readonly
-          v-model="request.status"
+          v-model="shipment.status"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -25,7 +25,7 @@
           label="created at "
           required
           readonly
-          v-model="request.time"
+          v-model="shipment.time"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -33,7 +33,7 @@
         ><v-textarea
           :clearable="dis === false"
           label="details"
-          v-model="request.details"
+          v-model="shipment.details"
           :readonly="dis === true"
           prepend-icon="mdi-note-text-outline"
         ></v-textarea>
@@ -42,7 +42,7 @@
         ><v-textarea
           :clearable="dis === false"
           label="Note"
-          v-model="request.note"
+          v-model="shipment.note"
           :readonly="dis === true"
           prepend-icon="mdi-note-text-outline"
         ></v-textarea>
@@ -53,12 +53,12 @@
             :dot-color="
               h.state === 'Approved'
                 ? 'teal-lighten-3'
-                : h.state === 'Delivered'
+                : h.state === 'shipped'
                 ? 'green'
                 : 'pink'
             "
             size="small"
-            v-for="h in request.history"
+            v-for="h in shipment.history"
             :key="h"
           >
             <div class="d-flex">
@@ -74,7 +74,7 @@
     <v-card-actions class="mx-auto">
       <v-btn
         @click="cancel()"
-        :disabled="request.status === 'Delivered'"
+        :disabled="shipment.status === 'Delivered'"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
         {{ dis ? "edit" : "cancel" }}
@@ -117,13 +117,13 @@
     </v-card-actions>
   </v-card>
   <v-card class="mt-3" style="width: 100%">
-    <requestpanel
-      v-bind:reqmaterial="request.materials"
-      v-bind:reqproperty="request.properties"
-      v-bind:status="request.status"
+    <shipmentpanel
+      v-bind:reqmaterial="shipment.materials"
+      v-bind:reqproperty="shipment.properties"
+      v-bind:status="shipment.status"
       v-bind:closedtitle="closedtitle"
       v-bind:panelname="'inclusions'"
-      v-bind:name="request.name"
+      v-bind:name="shipment.name"
       @material="appendmaterial"
       @property="appendproperty"
     />
@@ -148,14 +148,14 @@
 import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
-import requestpanel from "../../components/requestpanel.vue";
+import shipmentpanel from "../../components/shipmentpanel.vue";
 import axios from "axios";
 import moment from "moment";
 import { useheaders } from "../../stores/headers";
 import swal from "sweetalert";
 
 export default {
-  components: { paneltable, popuptest, check, requestpanel },
+  components: { paneltable, popuptest, check, shipmentpanel },
   //test
   data: () => ({
     content:
@@ -171,8 +171,8 @@ export default {
     closedtitle: "properties and material in",
     dis: true,
     isEditing: false,
-    request: {},
-    orgrequest: {},
+    shipment: {},
+    orgshipment: {},
     roles: [],
     materials: [],
     properties: [],
@@ -182,7 +182,7 @@ export default {
   }),
   created() {
     //GEtet route here
-    this.requestload();
+    this.shipmentload();
   },
   setup() {
     const headers = useheaders();
@@ -195,8 +195,8 @@ export default {
     moment(date) {
       return moment(date).calendar();
     },
-    requestload() {
-      axios.get("/api/buyrequest/" + this.$route.params.id).then((response) => {
+    shipmentload() {
+      axios.get("/api/shipment/" + this.$route.params.id).then((response) => {
         // console.log(response);
         if (response.data.errors) {
           swal("error", response.data.errors[0].msg, "error");
@@ -212,20 +212,20 @@ export default {
           x.history = response.data.data.history;
           x.materials = response.data.data.materials;
           x.properties = response.data.data.custodies;
-          this.orgrequest = x;
+          this.orgshipment = x;
 
           this.clone();
         }
       });
     },
     appendproperty(value) {
-      // axios.patch('/api/buyRequest/materials/add/'+this.$route.params.id,{
+      // axios.patch('/api/buyshipment/materials/add/'+this.$route.params.id,{
       // materials: [value];
       // })
       console.log("material", value);
     },
     appendmaterial(value) {
-      // axios.patch('/api/buyRequest/custodies/add/'+this.$route.params.id,{
+      // axios.patch('/api/buyshipment/custodies/add/'+this.$route.params.id,{
       //   custodies:[
       // value
       //   ]
@@ -235,7 +235,7 @@ export default {
     approve() {
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to Approve this request?",
+        text: "Are you sure that you want to Approve this shipment?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
@@ -248,13 +248,17 @@ export default {
             })
             .then(() => {
               axios
-                .patch("/api/buyRequest/approve/" + this.$route.params.id)
+                .patch("/api/buyshipment/approve/" + this.$route.params.id)
                 .then((response) => {
                   if (response.data.errors) {
                     swal("error", response.data.errors[0].msg, "error");
                   } else {
-                    swal("success", "request Approved successfully", "success");
-                    this.requestload();
+                    swal(
+                      "success",
+                      "shipment Approved successfully",
+                      "success"
+                    );
+                    this.shipmentload();
                   }
                 });
             });
@@ -264,7 +268,7 @@ export default {
     deliver() {
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to deliver this request?",
+        text: "Are you sure that you want to deliver this shipment?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
@@ -277,17 +281,17 @@ export default {
             })
             .then(() => {
               axios
-                .patch("/api/buyRequest/delivered/" + this.$route.params.id)
+                .patch("/api/buyshipment/delivered/" + this.$route.params.id)
                 .then((response) => {
                   if (response.data.errors) {
                     swal("error", response.data.errors[0].msg, "error");
                   } else {
                     swal(
                       "success",
-                      "request delivered successfully",
+                      "shipment delivered successfully",
                       "success"
                     );
-                    this.requestload();
+                    this.shipmentload();
                   }
                 });
             });
@@ -297,7 +301,7 @@ export default {
     material_append(value) {
       const x = {};
       x.material = value._id;
-      x.request = this.orgrequest._id;
+      x.shipment = this.orgshipment._id;
       x.quantity = value.qty;
       x.operation = "assign";
       this.material_operations(x);
@@ -305,7 +309,7 @@ export default {
     property_append(value) {
       const x = {};
       x.custody = value._id;
-      x.request = this.orgrequest._id;
+      x.shipment = this.orgshipment._id;
       x.quantity = value.qty;
       x.operation = "assign";
       this.property_operations(x);
@@ -323,7 +327,7 @@ export default {
       //Post route here
       console.log(value);
       const x = {};
-      x.request = this.$route.params.id;
+      x.shipment = this.$route.params.id;
       x.quantity = value.qty;
       x.operation = value.operation;
       if (this.historytype === "property") {
@@ -338,9 +342,9 @@ export default {
     property_operations(obj) {
       if (obj.operation === "assign") {
         axios
-          .post("/api/custodyrequest/assign", {
+          .post("/api/custodyshipment/assign", {
             custody: obj.custody,
-            request: obj.request,
+            shipment: obj.shipment,
             quantity: obj.quantity,
             operation: obj.operation,
           })
@@ -355,9 +359,9 @@ export default {
           });
       } else {
         axios
-          .patch("/api/custodyrequest/back", {
+          .patch("/api/custodyshipment/back", {
             custody: obj.custody,
-            request: obj.request,
+            shipment: obj.shipment,
             quantity: obj.quantity,
             operation: obj.operation,
           })
@@ -375,9 +379,9 @@ export default {
     material_operations(obj) {
       if (obj.operation === "assign") {
         axios
-          .post("/api/materialrequest/assign", {
+          .post("/api/materialshipment/assign", {
             material: obj.material,
-            request: obj.request,
+            shipment: obj.shipment,
             quantity: obj.quantity,
             operation: obj.operation,
           })
@@ -392,9 +396,9 @@ export default {
           });
       } else {
         axios
-          .patch("/api/materialrequest/back", {
+          .patch("/api/materialshipment/back", {
             material: obj.material,
-            request: obj.request,
+            shipment: obj.shipment,
             quantity: obj.quantity,
             operation: obj.operation,
           })
@@ -436,7 +440,7 @@ export default {
     savenote(value) {
       if (this.historytype === "material") {
         axios
-          .patch("/api/materialrequest/note/" + value.id, {
+          .patch("/api/materialshipment/note/" + value.id, {
             note: value.note,
           })
           .then(swal("success", "yayyy", "success"))
@@ -446,7 +450,7 @@ export default {
           });
       } else {
         axios
-          .patch("/api/custodyrequest/note/" + value.id, {
+          .patch("/api/custodyshipment/note/" + value.id, {
             note: value.note,
           })
           .then(swal("success", "yayyy", "success"))
@@ -461,22 +465,22 @@ export default {
         this.isEditing = !this.isEditing;
       } else {
         this.content =
-          "this change is critical and must double check it :  request National id is : ( " +
-          this.request.nid +
+          "this change is critical and must double check it :  shipment National id is : ( " +
+          this.shipment.nid +
           " )";
         this.dialog = !this.dialog;
       }
     },
     clone() {
-      this.request.id = this.orgrequest._id;
-      this.request.name = this.orgrequest.name;
-      this.request.details = this.orgrequest.code;
-      this.request.history = this.orgrequest.history;
-      this.request.materials = this.orgrequest.materials;
-      this.request.properties = this.orgrequest.properties;
-      this.request.note = this.orgrequest.note;
-      this.request.status = this.orgrequest.status;
-      this.request.time = this.orgrequest.time;
+      this.shipment.id = this.orgshipment._id;
+      this.shipment.name = this.orgshipment.name;
+      this.shipment.details = this.orgshipment.code;
+      this.shipment.history = this.orgshipment.history;
+      this.shipment.materials = this.orgshipment.materials;
+      this.shipment.properties = this.orgshipment.properties;
+      this.shipment.note = this.orgshipment.note;
+      this.shipment.status = this.orgshipment.status;
+      this.shipment.time = this.orgshipment.time;
     },
     cancel() {
       this.dialog = false;
@@ -484,14 +488,14 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.request.name = this.orgrequest.name;
-      this.request.code = this.orgrequest.code;
-      this.request.img = this.orgrequest.img;
-      this.request.nid = this.orgrequest.NID;
-      this.request.role = this.orgrequest.role;
-      this.request.note = this.orgrequest.note;
-      this.request.phone = this.orgrequest.phoneNo;
-      this.request.properties = this.orgrequest.currentCustodies;
+      this.shipment.name = this.orgshipment.name;
+      this.shipment.code = this.orgshipment.code;
+      this.shipment.img = this.orgshipment.img;
+      this.shipment.nid = this.orgshipment.NID;
+      this.shipment.role = this.orgshipment.role;
+      this.shipment.note = this.orgshipment.note;
+      this.shipment.phone = this.orgshipment.phoneNo;
+      this.shipment.properties = this.orgshipment.currentCustodies;
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
@@ -501,17 +505,17 @@ export default {
       this.isEditing = false;
       this.dialog1 = false;
       axios
-        .patch("/api/buyRequest/" + this.$route.params.id, {
-          name: this.request.name,
-          details: this.request.details,
+        .patch("/api/buyshipment/" + this.$route.params.id, {
+          name: this.shipment.name,
+          details: this.shipment.details,
 
-          note: this.request.note,
+          note: this.shipment.note,
         })
         .then((response) => {
           if (response.data.errors) {
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            this.requestload();
+            this.shipmentload();
             this.content =
               "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
           }
@@ -520,7 +524,7 @@ export default {
     deletee() {
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to delete this request?",
+        text: "Are you sure that you want to delete this shipment?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
@@ -533,17 +537,17 @@ export default {
             })
             .then(() => {
               axios
-                .delete("/api/buyRequest/" + this.$route.params.id)
+                .delete("/api/buyshipment/" + this.$route.params.id)
                 .then((response) => {
                   if (response.data.errors) {
                     swal("error", response.data.errors[0].msg, "error");
                   } else {
                     swal(
                       "success",
-                      "request deleted suuccessfully",
+                      "shipment deleted suuccessfully",
                       "success"
                     ).then(() => {
-                      this.$router.push({ path: "/request/all" });
+                      this.$router.push({ path: "/shipment/all" });
                     });
                   }
                 });

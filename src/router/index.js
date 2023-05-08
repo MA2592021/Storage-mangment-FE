@@ -151,6 +151,39 @@ const router = createRouter({
         },
       ],
     },
+    // cartons routes
+    {
+      path: "/storage/carton/",
+      name: "carton-land",
+
+      component: () => import("../views/storage/cartons/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "carton-dash",
+
+          component: () => import("../views/storage/cartons/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "carton-add",
+
+          component: () => import("../views/storage/cartons/add.vue"),
+        },
+        {
+          path: "all",
+          name: "carton-all",
+
+          component: () => import("../views/storage/cartons/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "carton-page",
+
+          component: () => import("../views/storage/cartons/cartonPage.vue"),
+        },
+      ],
+    },
     // supplier routes
     {
       path: "/supplier/",
@@ -247,6 +280,39 @@ const router = createRouter({
           name: "request-page",
 
           component: () => import("../views/requests/requestPage.vue"),
+        },
+      ],
+    },
+    // shipment routes
+    {
+      path: "/shipment/",
+      name: "shipment-land",
+
+      component: () => import("../views/shipment/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "shipment-dash",
+
+          component: () => import("../views/shipment/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "shipment-add",
+
+          component: () => import("../views/shipment/add.vue"),
+        },
+        {
+          path: "all",
+          name: "shipment-all",
+
+          component: () => import("../views/shipment/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "shipment-page",
+
+          component: () => import("../views/shipment/shipmentPage.vue"),
         },
       ],
     },
