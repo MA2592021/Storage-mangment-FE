@@ -89,7 +89,7 @@
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true || isEditing === true"
+        :disabled="dis === true"
         prepend-icon="mdi-check-decagram"
         color="teal-lighten-3"
         @click="approve()"
@@ -98,7 +98,7 @@
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true || isEditing === true"
+        :disabled="dis === true || request.status !== 'Approved'"
         prepend-icon="mdi-cash-marker"
         color="green"
         @click="deliver()"
@@ -107,7 +107,7 @@
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true || isEditing === true"
+        :disabled="dis === true"
         prepend-icon="mdi-package-check"
         color="green"
         @click="dialog = !dialog"
@@ -161,24 +161,16 @@ export default {
     content:
       "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
     title: "are you sure ? ",
-    link_material: {
-      get: "/api/material/",
-    },
+
     link_property: { get: "/api/custody/" },
-    isdisabled: true,
     dialog: false,
     dialog1: false,
     closedtitle: "properties and material in",
     dis: true,
-    isEditing: false,
     request: {},
     orgrequest: {},
-    roles: [],
     materials: [],
     properties: [],
-    historytype: "",
-    obj: {},
-    historyobject: {},
   }),
   created() {
     //GEtet route here
@@ -294,179 +286,12 @@ export default {
         }
       });
     },
-    material_append(value) {
-      const x = {};
-      x.material = value._id;
-      x.request = this.orgrequest._id;
-      x.quantity = value.qty;
-      x.operation = "assign";
-      this.material_operations(x);
-    },
-    property_append(value) {
-      const x = {};
-      x.custody = value._id;
-      x.request = this.orgrequest._id;
-      x.quantity = value.qty;
-      x.operation = "assign";
-      this.property_operations(x);
-    },
-    onClickChild_property(value) {
-      // console.log(value);
-      this.historytype = "property";
-      this.historyview(value._id);
-    },
-    onClickChild_material(value) {
-      this.historytype = "material";
-      this.historyview(value._id);
-    },
-    submit(value) {
-      //Post route here
-      console.log(value);
-      const x = {};
-      x.request = this.$route.params.id;
-      x.quantity = value.qty;
-      x.operation = value.operation;
-      if (this.historytype === "property") {
-        x.custody = value._id;
-        this.property_operations(x);
-      } else {
-        x.material = value._id;
-        this.material_operations(x);
-      }
-      // console.log(x);
-    },
-    property_operations(obj) {
-      if (obj.operation === "assign") {
-        axios
-          .post("/api/custodyrequest/assign", {
-            custody: obj.custody,
-            request: obj.request,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.propertiesload();
-              this.dialog2 = false;
-            }
-          });
-      } else {
-        axios
-          .patch("/api/custodyrequest/back", {
-            custody: obj.custody,
-            request: obj.request,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.propertiesload();
-              this.dialog2 = false;
-            }
-          });
-      }
-    },
-    material_operations(obj) {
-      if (obj.operation === "assign") {
-        axios
-          .post("/api/materialrequest/assign", {
-            material: obj.material,
-            request: obj.request,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.materialsload();
-              this.dialog2 = false;
-            }
-          });
-      } else {
-        axios
-          .patch("/api/materialrequest/back", {
-            material: obj.material,
-            request: obj.request,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.materialsload();
-              this.dialog2 = false;
-            }
-          });
-      }
-    },
+
     check() {
       this.dialog = false;
       this.dialog1 = true;
     },
-    historyview(id) {
-      console.log(id);
-      console.log(this.historytype);
-      this.historyobject.title = this.historytype + " history";
-      if (this.historytype === "property") {
-        this.obj = this.properties.find((m) => m._id === id);
-        this.historyobject._id = this.obj.property_id;
-      } else {
-        this.obj = this.materials.find((m) => m._id === id);
-        this.historyobject._id = this.obj.material_id;
-      }
-      this.historyobject.id = this.obj._id;
-      this.historyobject.name = this.obj.name;
-      this.historyobject.data = this.obj.history;
-      this.historyobject.qty = this.obj.totalQuantity;
-      this.historyobject.date = this.obj.lastDate;
-      this.historyobject.note = this.obj.note;
-      this.historyobject.header = this.headers.historyheader;
-      this.dialog2 = true;
-    },
-    savenote(value) {
-      if (this.historytype === "material") {
-        axios
-          .patch("/api/materialrequest/note/" + value.id, {
-            note: value.note,
-          })
-          .then(swal("success", "yayyy", "success"))
-          .then(() => {
-            this.dialog2 = false;
-            this.materialsload();
-          });
-      } else {
-        axios
-          .patch("/api/custodyrequest/note/" + value.id, {
-            note: value.note,
-          })
-          .then(swal("success", "yayyy", "success"))
-          .then(() => {
-            this.dialog2 = false;
-            this.propertiesload();
-          });
-      }
-    },
-    criticalchange() {
-      if (this.isEditing === false) {
-        this.isEditing = !this.isEditing;
-      } else {
-        this.content =
-          "this change is critical and must double check it :  request National id is : ( " +
-          this.request.nid +
-          " )";
-        this.dialog = !this.dialog;
-      }
-    },
+
     clone() {
       this.request.id = this.orgrequest._id;
       this.request.name = this.orgrequest.name;
@@ -482,23 +307,13 @@ export default {
       this.dialog = false;
       this.dialog1 = false;
       this.dis = !this.dis;
-      this.isEditing = false;
-
-      this.request.name = this.orgrequest.name;
-      this.request.code = this.orgrequest.code;
-      this.request.img = this.orgrequest.img;
-      this.request.nid = this.orgrequest.NID;
-      this.request.role = this.orgrequest.role;
-      this.request.note = this.orgrequest.note;
-      this.request.phone = this.orgrequest.phoneNo;
-      this.request.properties = this.orgrequest.currentCustodies;
+      this.clone();
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
     save() {
       this.dis = !this.dis;
       this.dialog = false;
-      this.isEditing = false;
       this.dialog1 = false;
       axios
         .patch("/api/buyRequest/" + this.$route.params.id, {

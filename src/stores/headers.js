@@ -73,6 +73,17 @@ export const useheaders = defineStore("headers", {
       { title: "status", key: "status" },
       { title: "created at", key: "time" },
     ],
+    order_header: [
+      {
+        align: "start",
+        key: "name",
+        sortable: false,
+        title: "name",
+      },
+      { title: "status", key: "status" },
+      { title: "client", key: "client" },
+      { title: "created at", key: "time" },
+    ],
     shipment_header: [
       {
         align: "start",

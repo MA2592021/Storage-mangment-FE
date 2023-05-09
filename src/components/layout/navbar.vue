@@ -103,7 +103,7 @@ export default {
         },
 
         { icon: "mdi-hanger", text: "models", route: "/model/dashboard" },
-        { icon: "mdi-cart", text: "Oreders", route: "/order/" },
+        { icon: "mdi-cart", text: "Orders", route: "/order/dashboard" },
 
         {
           icon: "mdi-ticket-account",

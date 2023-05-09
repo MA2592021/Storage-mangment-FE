@@ -316,6 +316,39 @@ const router = createRouter({
         },
       ],
     },
+    // order routes
+    {
+      path: "/order/",
+      name: "order-land",
+
+      component: () => import("../views/orders/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "order-dash",
+
+          component: () => import("../views/orders/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "order-add",
+
+          component: () => import("../views/orders/add.vue"),
+        },
+        {
+          path: "all",
+          name: "order-all",
+
+          component: () => import("../views/orders/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "order-page",
+
+          component: () => import("../views/orders/orderPage.vue"),
+        },
+      ],
+    },
     //color routes
     {
       path: "/utils/color/",

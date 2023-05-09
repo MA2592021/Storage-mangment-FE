@@ -2,8 +2,8 @@
 <template>
   <v-card elevation="0" style="width: 100%">
     <v-card-title class="text-center">
-      <v-icon icon="mdi-plus" style="stage: #fbc02d" class="mb-2"></v-icon>
-      <span class="text-h5" style="stage: #fbc02d">Add Stage</span>
+      <v-icon icon="mdi-plus" style="order: #fbc02d" class="mb-2"></v-icon>
+      <span class="text-h5" style="order: #fbc02d">Add order</span>
     </v-card-title>
     <v-card-text>
       <v-container>
@@ -11,7 +11,7 @@
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               label="Name*"
-              v-model="stage.name"
+              v-model="order.name"
               required
               hint="Required"
             ></v-text-field>
@@ -19,43 +19,36 @@
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               required
-              v-model="stage.code"
+              v-model="order.code"
               label="code*"
               hint="Required"
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="type*"
+              label="client*"
               chips
-              v-model="stage.type"
+              v-model="order.client"
               persistent-hint
               hint="Required"
-              :items="types"
-              item-title="type"
+              :items="clients"
+              item-title="name"
             ></v-autocomplete
           ></v-col>
+
           <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              required
-              v-model="stage.rate"
-              label="rate/hour*"
-              hint="Required"
-            ></v-text-field>
+            <v-textarea
+              clearable
+              label="details"
+              v-model="order.details"
+              prepend-inner-icon="mdi-note-text-outline"
+            ></v-textarea>
           </v-col>
-          <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              required
-              v-model="stage.price"
-              label="price/piece*"
-              hint="Required"
-            ></v-text-field
-          ></v-col>
           <v-col cols="12" sm="6" md="6">
             <v-textarea
               clearable
               label="Note"
-              v-model="stage.note"
+              v-model="order.note"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
@@ -76,33 +69,31 @@ import axios from "axios";
 import sweetalert from "sweetalert";
 export default {
   data: () => ({
-    stage: {
+    order: {
       name: "",
       code: "",
-      type: null,
-      rate: "",
-      price: "",
+      client: null,
+      details: "",
       note: "    ",
     },
-    types: [],
+    clients: [],
   }),
   created() {
     axios
-      .get("/api/materialType/")
-      .then((response) => (this.types = response.data.data));
+      .get("/api/client/")
+      .then((response) => (this.clients = response.data.data));
   },
   methods: {
     add() {
-      // this.url = URL.createObjectURL(this.stage.img);
+      // this.url = URL.createObjectURL(this.order.img);
       console.log("im alive");
       axios
-        .post("/api/stage", {
-          name: this.stage.name,
-          code: this.stage.code,
-          type: this.stage.type,
-          rate: this.stage.rate,
-          price: this.stage.price,
-          note: this.stage.note,
+        .post("/api/order/", {
+          name: this.order.name,
+          client: this.order.client,
+
+          details: this.order.details,
+          note: this.order.note,
         })
         .then((response) => {
           if (response.data.errors) {

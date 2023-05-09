@@ -53,7 +53,7 @@
             :dot-color="
               h.state === 'Approved'
                 ? 'teal-lighten-3'
-                : h.state === 'shipped'
+                : h.state === 'Shipped'
                 ? 'green'
                 : 'pink'
             "
@@ -74,7 +74,7 @@
     <v-card-actions class="mx-auto">
       <v-btn
         @click="cancel()"
-        :disabled="shipment.status === 'Delivered'"
+        :disabled="shipment.status === 'Shipped'"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
         {{ dis ? "edit" : "cancel" }}
@@ -89,7 +89,7 @@
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true || isEditing === true"
+        :disabled="dis === true"
         prepend-icon="mdi-check-decagram"
         color="teal-lighten-3"
         @click="approve()"
@@ -98,16 +98,16 @@
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true || isEditing === true"
-        prepend-icon="mdi-cash-marker"
+        :disabled="dis === true || shipment.status !== 'Approved'"
+        prepend-icon="mdi-truck"
         color="green"
         @click="deliver()"
       >
-        deliverd
+        Ship
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true || isEditing === true"
+        :disabled="dis === true"
         prepend-icon="mdi-package-check"
         color="green"
         @click="dialog = !dialog"
@@ -118,14 +118,12 @@
   </v-card>
   <v-card class="mt-3" style="width: 100%">
     <shipmentpanel
-      v-bind:reqmaterial="shipment.materials"
-      v-bind:reqproperty="shipment.properties"
+      v-bind:reqcarton="shipment.cartons"
       v-bind:status="shipment.status"
       v-bind:closedtitle="closedtitle"
       v-bind:panelname="'inclusions'"
       v-bind:name="shipment.name"
-      @material="appendmaterial"
-      @property="appendproperty"
+      @cartons="appendcarton"
     />
   </v-card>
   <popuptest
@@ -161,24 +159,13 @@ export default {
     content:
       "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
     title: "are you sure ? ",
-    link_material: {
-      get: "/api/material/",
-    },
-    link_property: { get: "/api/custody/" },
-    isdisabled: true,
+
     dialog: false,
     dialog1: false,
-    closedtitle: "properties and material in",
+    closedtitle: "cartons in",
     dis: true,
-    isEditing: false,
     shipment: {},
     orgshipment: {},
-    roles: [],
-    materials: [],
-    properties: [],
-    historytype: "",
-    obj: {},
-    historyobject: {},
   }),
   created() {
     //GEtet route here
@@ -210,27 +197,25 @@ export default {
           x.name = response.data.data.name;
           x.time = moment(response.data.data.createdAt).calendar();
           x.history = response.data.data.history;
-          x.materials = response.data.data.materials;
-          x.properties = response.data.data.custodies;
+          x.cartons = response.data.data.cartons;
+          x.client = response.data.data.client;
+          x.note = response.data.data.note;
+          x.details = response.data.data.details;
+          console.log(x);
           this.orgshipment = x;
 
           this.clone();
         }
       });
     },
-    appendproperty(value) {
-      // axios.patch('/api/buyshipment/materials/add/'+this.$route.params.id,{
-      // materials: [value];
-      // })
-      console.log("material", value);
-    },
-    appendmaterial(value) {
+
+    appendcarton(value) {
       // axios.patch('/api/buyshipment/custodies/add/'+this.$route.params.id,{
       //   custodies:[
       // value
       //   ]
       // })
-      console.log("property", value);
+      console.log("cartons", value);
     },
     approve() {
       swal({
@@ -248,7 +233,7 @@ export default {
             })
             .then(() => {
               axios
-                .patch("/api/buyshipment/approve/" + this.$route.params.id)
+                .patch("/api/shipment/approved/" + this.$route.params.id)
                 .then((response) => {
                   if (response.data.errors) {
                     swal("error", response.data.errors[0].msg, "error");
@@ -268,7 +253,7 @@ export default {
     deliver() {
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to deliver this shipment?",
+        text: "Are you sure that you want to ship this shipment?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
@@ -281,16 +266,12 @@ export default {
             })
             .then(() => {
               axios
-                .patch("/api/buyshipment/delivered/" + this.$route.params.id)
+                .patch("/api/shipment/shipped/" + this.$route.params.id)
                 .then((response) => {
                   if (response.data.errors) {
                     swal("error", response.data.errors[0].msg, "error");
                   } else {
-                    swal(
-                      "success",
-                      "shipment delivered successfully",
-                      "success"
-                    );
+                    swal("success", "shipment shipped successfully", "success");
                     this.shipmentload();
                   }
                 });
@@ -298,214 +279,38 @@ export default {
         }
       });
     },
-    material_append(value) {
-      const x = {};
-      x.material = value._id;
-      x.shipment = this.orgshipment._id;
-      x.quantity = value.qty;
-      x.operation = "assign";
-      this.material_operations(x);
-    },
-    property_append(value) {
-      const x = {};
-      x.custody = value._id;
-      x.shipment = this.orgshipment._id;
-      x.quantity = value.qty;
-      x.operation = "assign";
-      this.property_operations(x);
-    },
-    onClickChild_property(value) {
-      // console.log(value);
-      this.historytype = "property";
-      this.historyview(value._id);
-    },
-    onClickChild_material(value) {
-      this.historytype = "material";
-      this.historyview(value._id);
-    },
-    submit(value) {
-      //Post route here
-      console.log(value);
-      const x = {};
-      x.shipment = this.$route.params.id;
-      x.quantity = value.qty;
-      x.operation = value.operation;
-      if (this.historytype === "property") {
-        x.custody = value._id;
-        this.property_operations(x);
-      } else {
-        x.material = value._id;
-        this.material_operations(x);
-      }
-      // console.log(x);
-    },
-    property_operations(obj) {
-      if (obj.operation === "assign") {
-        axios
-          .post("/api/custodyshipment/assign", {
-            custody: obj.custody,
-            shipment: obj.shipment,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.propertiesload();
-              this.dialog2 = false;
-            }
-          });
-      } else {
-        axios
-          .patch("/api/custodyshipment/back", {
-            custody: obj.custody,
-            shipment: obj.shipment,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.propertiesload();
-              this.dialog2 = false;
-            }
-          });
-      }
-    },
-    material_operations(obj) {
-      if (obj.operation === "assign") {
-        axios
-          .post("/api/materialshipment/assign", {
-            material: obj.material,
-            shipment: obj.shipment,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.materialsload();
-              this.dialog2 = false;
-            }
-          });
-      } else {
-        axios
-          .patch("/api/materialshipment/back", {
-            material: obj.material,
-            shipment: obj.shipment,
-            quantity: obj.quantity,
-            operation: obj.operation,
-          })
-          .then((response) => {
-            if (response.data.errors) {
-              swal("error", response.data.errors[0].msg, "errors");
-            } else {
-              swal("success", "yayyy", "success");
-              this.materialsload();
-              this.dialog2 = false;
-            }
-          });
-      }
-    },
+
     check() {
       this.dialog = false;
       this.dialog1 = true;
     },
-    historyview(id) {
-      console.log(id);
-      console.log(this.historytype);
-      this.historyobject.title = this.historytype + " history";
-      if (this.historytype === "property") {
-        this.obj = this.properties.find((m) => m._id === id);
-        this.historyobject._id = this.obj.property_id;
-      } else {
-        this.obj = this.materials.find((m) => m._id === id);
-        this.historyobject._id = this.obj.material_id;
-      }
-      this.historyobject.id = this.obj._id;
-      this.historyobject.name = this.obj.name;
-      this.historyobject.data = this.obj.history;
-      this.historyobject.qty = this.obj.totalQuantity;
-      this.historyobject.date = this.obj.lastDate;
-      this.historyobject.note = this.obj.note;
-      this.historyobject.header = this.headers.historyheader;
-      this.dialog2 = true;
-    },
-    savenote(value) {
-      if (this.historytype === "material") {
-        axios
-          .patch("/api/materialshipment/note/" + value.id, {
-            note: value.note,
-          })
-          .then(swal("success", "yayyy", "success"))
-          .then(() => {
-            this.dialog2 = false;
-            this.materialsload();
-          });
-      } else {
-        axios
-          .patch("/api/custodyshipment/note/" + value.id, {
-            note: value.note,
-          })
-          .then(swal("success", "yayyy", "success"))
-          .then(() => {
-            this.dialog2 = false;
-            this.propertiesload();
-          });
-      }
-    },
-    criticalchange() {
-      if (this.isEditing === false) {
-        this.isEditing = !this.isEditing;
-      } else {
-        this.content =
-          "this change is critical and must double check it :  shipment National id is : ( " +
-          this.shipment.nid +
-          " )";
-        this.dialog = !this.dialog;
-      }
-    },
+
     clone() {
       this.shipment.id = this.orgshipment._id;
       this.shipment.name = this.orgshipment.name;
-      this.shipment.details = this.orgshipment.code;
-      this.shipment.history = this.orgshipment.history;
-      this.shipment.materials = this.orgshipment.materials;
-      this.shipment.properties = this.orgshipment.properties;
-      this.shipment.note = this.orgshipment.note;
       this.shipment.status = this.orgshipment.status;
+      this.shipment.details = this.orgshipment.details;
+      this.shipment.history = this.orgshipment.history;
+      this.shipment.cartons = this.orgshipment.cartons;
+      this.shipment.note = this.orgshipment.note;
+      this.shipment.client = this.orgshipment.client;
       this.shipment.time = this.orgshipment.time;
     },
     cancel() {
       this.dialog = false;
       this.dialog1 = false;
       this.dis = !this.dis;
-      this.isEditing = false;
 
-      this.shipment.name = this.orgshipment.name;
-      this.shipment.code = this.orgshipment.code;
-      this.shipment.img = this.orgshipment.img;
-      this.shipment.nid = this.orgshipment.NID;
-      this.shipment.role = this.orgshipment.role;
-      this.shipment.note = this.orgshipment.note;
-      this.shipment.phone = this.orgshipment.phoneNo;
-      this.shipment.properties = this.orgshipment.currentCustodies;
+      this.clone();
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
     save() {
       this.dis = !this.dis;
       this.dialog = false;
-      this.isEditing = false;
       this.dialog1 = false;
       axios
-        .patch("/api/buyshipment/" + this.$route.params.id, {
+        .patch("/api/buyshishipmentpment/" + this.$route.params.id, {
           name: this.shipment.name,
           details: this.shipment.details,
 
@@ -537,7 +342,7 @@ export default {
             })
             .then(() => {
               axios
-                .delete("/api/buyshipment/" + this.$route.params.id)
+                .delete("/api/shipment/" + this.$route.params.id)
                 .then((response) => {
                   if (response.data.errors) {
                     swal("error", response.data.errors[0].msg, "error");
