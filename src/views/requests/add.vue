@@ -32,40 +32,23 @@
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
-          <v-col cols="12" sm="12">
-            <imageuploader @selected="imageup" />
-          </v-col>
+          <v-col cols="12" sm="12"> </v-col>
         </v-row>
       </v-container>
       <small>*indicates required field</small>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
       <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import imageuploader from "../../components/imageuploader.vue";
 import axios from "axios";
 import swal from "sweetalert";
 export default {
-  components: { imageuploader },
   data: () => ({
-    rules: [
-      (value) => {
-        return (
-          !value ||
-          !value.length ||
-          value[0].size < 2000000 ||
-          "Avatar size should be less than 2 MB!"
-        );
-      },
-    ],
-    url: null,
-    image: null,
     request: {
       name: "",
       details: "",
@@ -75,7 +58,6 @@ export default {
 
   methods: {
     add() {
-      // this.url = URL.createObjectURL(this.request.img);
       console.log("im alive");
       axios
         .post("/api/buyRequest/", {
@@ -89,16 +71,13 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "request added successfully", "success");
+            this.$router.push({ path: "/request/all" });
           }
         })
         .catch((err) => {
           console.log(err);
         });
-    },
-
-    imageup(image) {
-      this.request.img = image[0];
     },
   },
 };

@@ -92,7 +92,7 @@ export default {
         );
       },
     ],
-    roles: "",
+    roles: [],
     url: null,
     image: null,
     employee: {
@@ -119,8 +119,7 @@ export default {
         .post("/api/employee", {
           name: this.employee.name,
           code: this.employee.code,
-          "role.title": this.employee.role.title,
-          "role.num": this.employee.role.number,
+          role: this.employee.role._id,
           phoneNo: this.employee.phone,
           NID: this.employee.nid,
           note: this.employee.note,
@@ -130,7 +129,10 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "employee added successfully", "success");
+            this.$router.push({
+              path: "/employee/all",
+            });
           }
         })
         .catch((err) => {

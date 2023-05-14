@@ -31,60 +31,21 @@ export default {
   //test
   data() {
     return {
-      employees: [
-        {
-          note: "lailo lailo",
-          img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
-          nid: "12312312313",
-          code: "254",
-          name: "tomy",
-          role: "Supervisor",
-          phone: "01110133639",
-        },
-        {
-          note: "lailo lailo",
-          img: "https://cdn.vuetifyjs.com/images/parallax/material.jpg",
-          nid: "12312312313",
-          code: "1234",
-          name: "sherif mohamed",
-          role: "employee",
-          phone: "01110133639",
-        },
-        {
-          code: "876",
-          name: "el gamal",
-          role: "Admin",
-          phone: "01110133639",
-          note: "lailo lailo",
-          img: "",
-          nid: "12312312313",
-        },
-        {
-          code: "655",
-          name: "amir",
-          role: "Admin",
-          phone: "01110133639",
-          note: "lailo lailo",
-          img: "",
-          nid: "12312312313",
-        },
-        {
-          code: "254",
-          name: "gamalko",
-          role: "Admin",
-          phone: "01110133639",
-          note: "lailo lailo",
-          img: "",
-          nid: "12312312313",
-        },
-      ],
+      employees: [],
     };
   },
   created() {
     //Get route
     axios.get("/api/employee/").then((response) => {
       console.log(response);
-      this.employees = response.data.data;
+      response.data.data.forEach((element) => {
+        const x = {};
+        x._id = element._id;
+        x.code = element.code;
+        x.name = element.name;
+        x.role = element.role.title;
+        this.employees.push(x);
+      });
     });
   },
   setup() {

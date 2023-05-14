@@ -89,7 +89,7 @@
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true"
+        :disabled="dis === true || request.status === 'Approved'"
         prepend-icon="mdi-check-decagram"
         color="teal-lighten-3"
         @click="approve()"
@@ -124,16 +124,26 @@
       v-bind:closedtitle="closedtitle"
       v-bind:panelname="'inclusions'"
       v-bind:name="request.name"
+      v-if="done"
       @material="appendmaterial"
       @property="appendproperty"
     />
   </v-card>
-  <popuptest
+  <!-- <popuptest
     v-model="dialog"
     v-if="dialog"
     v-bind:title="title"
     v-bind:content="content"
     @save="check()"
+    @close="cancel()"
+  /> -->
+  <requestdeliver
+    v-model="dialog"
+    v-if="dialog"
+    v-bind:title="content"
+    v-bind:materials="request.materials"
+    v-bind:properties="request.properties"
+    @append="deliverd"
     @close="cancel()"
   />
   <check
@@ -145,8 +155,8 @@
 </template>
 
 <script>
-import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
+import requestdeliver from "../../components/requestdeliver.vue";
 import check from "../../components/checkpopup.vue";
 import requestpanel from "../../components/requestpanel.vue";
 import axios from "axios";
@@ -155,7 +165,7 @@ import { useheaders } from "../../stores/headers";
 import swal from "sweetalert";
 
 export default {
-  components: { paneltable, popuptest, check, requestpanel },
+  components: { requestdeliver, popuptest, check, requestpanel },
   //test
   data: () => ({
     content:
@@ -171,6 +181,10 @@ export default {
     orgrequest: {},
     materials: [],
     properties: [],
+    done: false,
+    reqobj: null,
+    deliverdmaterials: [],
+    deliveredproperties: [],
   }),
   created() {
     //GEtet route here
@@ -200,13 +214,17 @@ export default {
               response.data.data.history.length - 1
             ].state;
           x.name = response.data.data.name;
+          x.details = response.data.data.details;
+          x.note = response.data.data.note;
           x.time = moment(response.data.data.createdAt).calendar();
           x.history = response.data.data.history;
           x.materials = response.data.data.materials;
           x.properties = response.data.data.custodies;
           this.orgrequest = x;
+          console.log(x);
 
           this.clone();
+          this.done = true;
         }
       });
     },
@@ -214,15 +232,41 @@ export default {
       // axios.patch('/api/buyRequest/materials/add/'+this.$route.params.id,{
       // materials: [value];
       // })
-      console.log("material", value);
+      axios
+        .patch("/api/buyRequest/custodies/update/" + this.$route.params.id, {
+          custodies: value,
+        })
+        .then((response) => {
+          console.log(response);
+
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "request updated successfully");
+          }
+        });
+      console.log("property", value);
     },
     appendmaterial(value) {
+      console.log(value);
       // axios.patch('/api/buyRequest/custodies/add/'+this.$route.params.id,{
       //   custodies:[
       // value
       //   ]
       // })
-      console.log("property", value);
+      axios
+        .patch("/api/buyRequest/materials/update/" + this.$route.params.id, {
+          materials: value,
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "request updated successfully");
+            console.log(response);
+          }
+        });
+      console.log("material", value);
     },
     approve() {
       swal({
@@ -268,25 +312,33 @@ export default {
               swal(`we should check password here : ${value}`);
             })
             .then(() => {
-              axios
-                .patch("/api/buyRequest/delivered/" + this.$route.params.id)
-                .then((response) => {
-                  if (response.data.errors) {
-                    swal("error", response.data.errors[0].msg, "error");
-                  } else {
-                    swal(
-                      "success",
-                      "request delivered successfully",
-                      "success"
-                    );
-                    this.requestload();
-                  }
-                });
+              this.dialog = true;
             });
         }
       });
     },
+    async deliverd(material, property) {
+      this.dialog = false;
+      console.log("material", material);
+      console.log("property", property);
 
+      await this.appendmaterial(material);
+      await this.appendproperty(property);
+      this.deliverbbe();
+    },
+    deliverbbe() {
+      axios
+        .patch("/api/buyRequest/delivered/" + this.$route.params.id)
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "request delivered successfully", "success");
+            this.dis = true;
+            this.requestload();
+          }
+        });
+    },
     check() {
       this.dialog = false;
       this.dialog1 = true;
@@ -300,6 +352,7 @@ export default {
       this.request.materials = this.orgrequest.materials;
       this.request.properties = this.orgrequest.properties;
       this.request.note = this.orgrequest.note;
+      this.request.details = this.orgrequest.details;
       this.request.status = this.orgrequest.status;
       this.request.time = this.orgrequest.time;
     },

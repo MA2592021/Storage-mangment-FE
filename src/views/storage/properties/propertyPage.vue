@@ -6,7 +6,7 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="material.img"
+          :src="property.img"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -16,7 +16,7 @@
               label="Name "
               required
               :readonly="dis === true"
-              v-model="material.name"
+              v-model="property.name"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -25,7 +25,8 @@
               required
               label="available "
               :readonly="dis === true"
-              v-model="material.available"
+              v-model="property.available"
+              :suffix="property.unit"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -33,9 +34,10 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              v-model="material.quantity"
+              v-model="property.quantity"
               label="quantity "
               :readonly="!isEditing"
+              :suffix="property.unit"
               variant="underlined"
               ><template v-slot:append>
                 <v-slide-x-reverse-transition mode="out-in">
@@ -59,7 +61,8 @@
               required
               label="max "
               :readonly="dis === true"
-              v-model="material.max"
+              v-model="property.max"
+              :suffix="property.unit"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -68,7 +71,8 @@
               required
               label="min "
               :readonly="dis === true"
-              v-model="material.min"
+              v-model="property.min"
+              :suffix="property.unit"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -76,10 +80,11 @@
           <v-col cols="12" sm="6">
             <v-autocomplete
               label="Role "
-              v-model="material.role"
+              v-model="property.role"
               variant="underlined"
               :readonly="dis === true"
-              :items="['Supervisor', 'material']"
+              :items="roles"
+              return-object
             ></v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6">
@@ -87,7 +92,7 @@
               required
               label="Unit "
               :readonly="dis === true"
-              v-model="material.unit"
+              v-model="property.unit"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -95,7 +100,7 @@
             ><v-textarea
               :clearable="dis === false"
               label="Note"
-              v-model="material.note"
+              v-model="property.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -104,7 +109,7 @@
             ><v-textarea
               :clearable="dis === false"
               label="details"
-              v-model="material.details"
+              v-model="property.details"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -143,7 +148,7 @@
         v-bind:header="headers.employee_hand_header"
         v-bind:panelname="'Employees'"
         v-bind:openedtitle="openedtitle"
-        v-bind:closedtitle="this.material.name"
+        v-bind:closedtitle="this.property.name"
         v-bind:link="link"
         @clicked="onClickChild_employee"
         @appended="employee_appended"
@@ -180,10 +185,9 @@ import popuptest from "../../../components/popuptest.vue";
 import check from "../../../components/checkpopup.vue";
 import history from "../../../components/historypopup.vue";
 import axios from "axios";
-
-import sweetalert from "sweetalert";
+import swal from "sweetalert";
 import { useheaders } from "../../../stores/headers";
-
+import moment from "moment";
 export default {
   components: { paneltable, popuptest, check, history },
 
@@ -199,7 +203,7 @@ export default {
     openedtitle: "Employees have",
     dis: true,
     isEditing: false,
-    material: {
+    property: {
       img: "/arkan_logo-no-text.png",
     },
     orgproperty: {},
@@ -207,9 +211,13 @@ export default {
     historytype: "",
     obj: {},
     historyobject: {},
+    roles: [],
   }),
   created() {
     //GEtet route here
+    axios.get("/api/role").then((response) => {
+      this.roles = response.data.data;
+    });
     this.propertyload();
     this.property_employee_load();
   },
@@ -238,7 +246,7 @@ export default {
           if (response.data.errors) {
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yayyy", "success");
+            swal("success", "employee appended successfully", "success");
             this.property_employee_load();
           }
         });
@@ -264,7 +272,7 @@ export default {
             const x = {};
             x._id = element._id;
             x.history = element.history;
-            x.lastDate = element.lastDate;
+            x.lastDate = moment(element.lastDate).calendar();
             x.totalQuantity = element.totalQuantity;
             x.name = element.employee.name;
             x.employee_id = element.employee._id;
@@ -298,7 +306,11 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal(
+                "success",
+                "employee history updated successfully",
+                "success"
+              );
               this.property_employee_load();
               this.dialog2 = false;
             }
@@ -315,7 +327,11 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal(
+                "success",
+                "employee history updated successfully",
+                "success"
+              );
               this.property_employee_load();
               this.dialog2 = false;
             }
@@ -328,7 +344,7 @@ export default {
         this.properties.find((m) => m._id === value.id).note = value.note;
         console.log(this.properties.find((m) => m._id === value.id).note);
       } else {
-        this.materials.find((m) => m._id === value.id).note = value.note;
+        this.propertys.find((m) => m._id === value.id).note = value.note;
       }
     },
     check() {
@@ -343,7 +359,7 @@ export default {
         this.obj = this.employees.find((m) => m._id === id);
         this.historyobject._id = this.obj.employee_id;
       } else {
-        this.obj = this.materials.find((m) => m._id === id);
+        this.obj = this.propertys.find((m) => m._id === id);
       }
       this.historyobject.id = this.obj.id;
       this.historyobject.name = this.obj.name;
@@ -359,25 +375,25 @@ export default {
         this.isEditing = !this.isEditing;
       } else {
         this.content =
-          "this change is critical and must double check it :  material quantity is : ( " +
-          this.material.quantity +
+          "this change is critical and must double check it :  property quantity is : ( " +
+          this.property.quantity +
           " )";
         this.dialog = !this.dialog;
       }
     },
     clone() {
-      this.material.id = this.orgproperty._id;
-      this.material.name = this.orgproperty.name;
-      this.material.quantity = this.orgproperty.quantity;
-      //   this.material.img = this.orgproperty.img;
-      this.material.available = this.orgproperty.available;
-      this.material.role = this.orgproperty.role;
-      this.material.note = this.orgproperty.note;
-      this.material.unit = this.orgproperty.unit;
-      this.material.details = this.orgproperty.details;
-      this.material.employees = this.orgproperty.employees;
-      this.material.max = this.orgproperty.max;
-      this.material.min = this.orgproperty.min;
+      this.property.id = this.orgproperty._id;
+      this.property.name = this.orgproperty.name;
+      this.property.quantity = this.orgproperty.quantity;
+      //   this.property.img = this.orgproperty.img;
+      this.property.available = this.orgproperty.available;
+      this.property.role = this.orgproperty.role;
+      this.property.note = this.orgproperty.note;
+      this.property.unit = this.orgproperty.unit;
+      this.property.details = this.orgproperty.details;
+      this.property.employees = this.orgproperty.employees;
+      this.property.max = this.orgproperty.max;
+      this.property.min = this.orgproperty.min;
     },
     cancel() {
       this.dialog = false;
@@ -385,18 +401,7 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.material.id = this.orgproperty._id;
-      this.material.name = this.orgproperty.name;
-      this.material.quantity = this.orgproperty.quantity;
-      //   this.material.img = this.orgproperty.img;
-      this.material.available = this.orgproperty.available;
-      this.material.role = this.orgproperty.role;
-      this.material.note = this.orgproperty.note;
-      this.material.unit = this.orgproperty.unit;
-      this.material.details = this.orgproperty.details;
-      this.material.employees = this.orgproperty.employees;
-      this.material.max = this.orgproperty.max;
-      this.material.min = this.orgproperty.min;
+      this.clone();
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
@@ -405,34 +410,27 @@ export default {
       this.dialog = false;
       this.isEditing = false;
       this.dialog1 = false;
-      // this.materials.material.name = this.material.name;
-      // this.materials.material.code = this.material.code;
-      // this.materials.material.img = this.material.img;
-      // this.materials.material.nid = this.material.nid;
-      // this.materials.material.role = this.material.role;
-      // this.materials.material.note = this.material.note;
-      // this.materials.material.phone = this.material.phone;
 
       //save route here
       axios
         .patch("/api/custody/" + this.$route.params.id, {
-          name: this.material.name,
-          unit: this.material.unit,
-          "role.title": this.material.role.title,
-          "role.num": 1,
-          type: this.material.type,
-          max: this.material.max,
-          min: this.material.min,
-          note: this.material.note,
-          details: this.material.details,
-          available: this.material.available,
-          quantity: this.material.quantity,
+          name: this.property.name,
+          unit: this.property.unit,
+          role: this.property.role._id,
+          type: this.property.type,
+          max: this.property.max,
+          min: this.property.min,
+          note: this.property.note,
+          details: this.property.details,
+          available: this.property.available,
+          quantity: this.property.quantity,
         })
         .then((response) => {
           if (response.data.errors) {
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yayy", "success");
+            swal("success", "property updated successfully", "success");
+            this.propertyload();
           }
         });
     },

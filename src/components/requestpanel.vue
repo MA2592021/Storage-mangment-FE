@@ -57,8 +57,7 @@
             <v-data-table
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
-              :items="reqproperty"
-              item-value="name"
+              :items="dataprop"
               class="elevation-1"
             >
               <template v-slot:item="{ item }">
@@ -67,10 +66,15 @@
                     {{ item.columns.name }}
                   </td>
                   <td>
-                    <h4>{{ item.raw.qty }} {{ item.raw.type }}</h4>
+                    <h4>{{ item.raw.quantity }} {{ item.raw.unit }}</h4>
                   </td>
                   <td>
-                    <v-btn color="red" :disabled="dis">Delete</v-btn>
+                    <v-btn
+                      color="red"
+                      :disabled="dis"
+                      @click="deleteitem(item.raw._id, 'property')"
+                      >Delete</v-btn
+                    >
                   </td>
                 </tr>
               </template></v-data-table
@@ -81,8 +85,7 @@
             <v-data-table
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
-              :items="reqmaterial"
-              item-value="name"
+              :items="datamat"
               class="elevation-1"
             >
               <template v-slot:item="{ item }">
@@ -91,7 +94,7 @@
                     {{ item.columns.name }}
                   </td>
                   <td>
-                    <h4>{{ item.raw.qty }} {{ item.raw.type }}</h4>
+                    <h4>{{ item.raw.quantity }} {{ item.raw.type }}</h4>
                   </td>
                   <td>
                     <v-btn
@@ -111,7 +114,7 @@
           <v-btn
             color="red "
             @click="dis = !dis"
-            :disabled="status === 'Delivered'"
+            :disabled="status === 'Approved'"
           >
             Edit {{ panelname }}
           </v-btn>
@@ -146,19 +149,20 @@ export default {
           sortable: false,
           key: "name",
         },
-        { title: "quantity", key: "qty" },
+        { title: "quantity", key: "quantity" },
       ],
 
       material: [],
       property: [],
-
+      datamat: [],
+      dataprop: [],
       qty: "",
     };
   },
   methods: {
     appendtable() {
       if (this.selectedtype === "material") {
-        const found = this.reqmaterial.find(
+        const found = this.datamat.find(
           (element) => element._id === this.selected._id
         );
 
@@ -170,15 +174,15 @@ export default {
           } else {
             const x = {};
 
-            x.qty = this.qty;
+            x.quantity = this.qty;
             x.name = this.selected.name;
             x._id = this.selected._id;
-            this.reqmaterial.push(x);
+            this.datamat.push(x);
             this.resett();
           }
         }
       } else {
-        const found = this.reqproperty.find(
+        const found = this.dataprop.find(
           (element) => element._id === this.selected._id
         );
 
@@ -190,10 +194,10 @@ export default {
           } else {
             const x = {};
 
-            x.qty = this.qty;
+            x.quantity = this.qty;
             x.name = this.selected.name;
             x._id = this.selected._id;
-            this.reqproperty.push(x);
+            this.dataprop.push(x);
             this.resett();
           }
         }
@@ -205,29 +209,58 @@ export default {
     },
     deleteitem(id, type) {
       if (type === "material") {
-        const index = this.requestmaterial.findIndex(
+        const index = this.reqmaterial.findIndex(
           (element) => element._id === id
         );
-        this.requestmaterial.splice(index, 1);
+        this.reqmaterial.splice(index, 1);
+      } else {
+        const index = this.reqproperty.findIndex(
+          (element) => element._id === id
+        );
+        this.reqproperty.splice(index, 1);
       }
     },
     appendreq() {
       const materials = [];
       const custodies = [];
-      this.reqmaterial.forEach((element) => {
+      this.datamat.forEach((element) => {
         const x = {};
         x.material = element._id;
-        x.quantity = element.qty;
+        x.quantity = element.quantity;
         materials.push(x);
       });
       this.$emit("material", materials);
-      this.reqproperty.forEach((element) => {
+      this.dataprop.forEach((element) => {
         const y = {};
         y.custody = element._id;
-        y.quantity = element.qty;
+        y.quantity = element.quantity;
         custodies.push(y);
       });
+      this.dis = true;
       this.$emit("property", custodies);
+    },
+    dothings() {
+      console.log(this.reqmaterial);
+      this.reqmaterial.forEach((element) => {
+        const x = {};
+        x.name = element.id.name;
+        x._id = element._id;
+        x.id = element.id._id;
+        x.quantity = element.quantity;
+        // console.log(x);
+        // x.suppliername = element.supplier.name;
+        this.datamat.push(x);
+      });
+      this.reqproperty.forEach((element) => {
+        const x = {};
+        x.name = element.id.name;
+        x._id = element._id;
+        x.id = element.id._id;
+        x.quantity = element.quantity;
+        console.log(x);
+        // x.suppliername = element.supplier.name;
+        this.dataprop.push(x);
+      });
     },
   },
   created() {
@@ -237,6 +270,7 @@ export default {
         this.properties = response.data.data;
       });
     });
+    this.dothings();
   },
   props: {
     name: String,

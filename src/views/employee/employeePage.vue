@@ -467,15 +467,7 @@ export default {
       this.dialog1 = false;
       this.dis = !this.dis;
       this.isEditing = false;
-
-      this.employee.name = this.orgemployee.name;
-      this.employee.code = this.orgemployee.code;
-      this.employee.img = this.orgemployee.img;
-      this.employee.nid = this.orgemployee.NID;
-      this.employee.role = this.orgemployee.role;
-      this.employee.note = this.orgemployee.note;
-      this.employee.phone = this.orgemployee.phoneNo;
-      this.employee.properties = this.orgemployee.currentCustodies;
+      this.clone();
       this.content =
         "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
     },
@@ -488,8 +480,7 @@ export default {
         .patch("/api/employee/" + this.$route.params.id, {
           name: this.employee.name,
           code: this.employee.code,
-          "role.title": this.employee.role.title,
-          "role.num": this.employee.role.number,
+          role: this.employee.role._id,
           phoneNo: this.employee.phone,
           NID: this.employee.nid,
           note: this.employee.note,

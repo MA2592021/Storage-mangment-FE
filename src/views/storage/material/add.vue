@@ -23,13 +23,17 @@
               hint="Required"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="3" md="3">
-            <v-text-field
+          <v-col cols="12" sm="6">
+            <v-autocomplete
               label="type*"
+              chips
               v-model="material.type"
+              persistent-hint
               hint="Required"
-              required
-            ></v-text-field>
+              :items="types"
+              item-title="type"
+              return-object
+            ></v-autocomplete>
           </v-col>
 
           <v-col cols="12" sm="6">
@@ -123,10 +127,14 @@ export default {
       details: "    ",
     },
     roles: [],
+    types: [],
   }),
   created() {
     axios.get("/api/role").then((response) => {
       this.roles = response.data.data;
+    });
+    axios.get("/api/materialType").then((response) => {
+      this.types = response.data.data;
     });
   },
   methods: {
@@ -137,9 +145,8 @@ export default {
         .post("/api/material", {
           name: this.material.name,
           unit: this.material.unit,
-          "role.title": this.material.role.title,
-          "role.num": this.material.role.number,
-          type: this.material.type,
+          role: this.material.role._id,
+          type: this.material.type._id,
           max: this.material.max,
           min: this.material.min,
           note: this.material.note,
@@ -150,7 +157,8 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "material added successfully", "success");
+            this.$router.push({ path: "/storage/material/all" });
           }
         })
         .catch((err) => {

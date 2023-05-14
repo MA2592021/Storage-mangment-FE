@@ -30,60 +30,24 @@ export default {
   },
   data() {
     return {
-      properties: [
-        {
-          role: "aaa",
-          _id: "644f5e907b81fa9ea02ba947",
-          name: "property 1",
-          quantity: 1000,
-          available: 1000,
-          max: 1000,
-          min: 10,
-          unit: "a",
-        },
-        {
-          role: "aaa",
-          _id: "644f5ec27b81fa9ea02ba949",
-          name: "property 2",
-          quantity: 0,
-          available: 0,
-          max: 1000,
-          min: 10,
-          details: "test",
-          unit: "a",
-          note: "test",
-        },
-        {
-          role: "aaa",
-          _id: "644f6c2810221101348d7a88",
-          name: "property 3",
-          quantity: 500,
-          available: 495,
-          max: 1000,
-          min: 10,
-          details: "test",
-          unit: "a",
-          note: "test",
-        },
-        {
-          role: "employee",
-          _id: "644f6eac10221101348d7aa1",
-          name: "testtt",
-          quantity: 1000,
-          available: 1000,
-          max: 1000,
-          min: 50,
-          unit: "ttt",
-          note: "    ",
-        },
-      ],
+      properties: [],
     };
   },
   created() {
     //Get route
     axios.get("/api/custody/").then((response) => {
       console.log(response);
-      this.properties = response.data.data;
+      response.data.data.forEach((element) => {
+        const x = {};
+        x._id = element._id;
+        x.name = element.name;
+        x.quantity = element.quantity;
+        x.available = element.available;
+        x.max = element.max;
+        x.min = element.min;
+        x.role = element.role.title;
+        this.properties.push(x);
+      });
     });
   },
   setup() {

@@ -15,20 +15,12 @@
               hint="Required"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="3" md="3">
+          <v-col cols="12" sm="6" md="6">
             <v-text-field
               required
               v-model="property.unit"
               label="unit*"
               hint="Required"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="3" md="3">
-            <v-text-field
-              label="type*"
-              v-model="property.type"
-              hint="Required"
-              required
             ></v-text-field>
           </v-col>
 
@@ -114,7 +106,6 @@ export default {
     property: {
       name: "",
       unit: "",
-      type: "",
       max: "",
       min: "",
       img: "",
@@ -137,9 +128,7 @@ export default {
         .post("/api/custody/", {
           name: this.property.name,
           unit: this.property.unit,
-          "role.title": this.property.role.title,
-          "role.num": this.property.role.number,
-          type: this.property.type,
+          role: this.property.role._id,
           max: this.property.max,
           min: this.property.min,
           note: this.property.note,
@@ -150,7 +139,8 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "property added successfully", "success");
+            this.$router.push({ path: "/storage/property/all" });
           }
         })
         .catch((err) => {

@@ -24,7 +24,7 @@ export default {
   name: "image-upload-preview",
   data() {
     return {
-      image: "",
+      image: null,
       imagePreview: "",
     };
   },

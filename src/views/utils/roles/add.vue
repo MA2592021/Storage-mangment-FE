@@ -11,7 +11,7 @@
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               label="Name*"
-              v-model="role.name"
+              v-model="role.title"
               required
               hint="Required"
             ></v-text-field>
@@ -61,7 +61,8 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "role added successfully", "success");
+            this.$router.push({ path: "/utils/role/all" });
           }
         })
         .catch((err) => {

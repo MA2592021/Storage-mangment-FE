@@ -80,7 +80,8 @@
               v-model="material.role"
               variant="underlined"
               :readonly="dis === true"
-              :items="['Supervisor', 'material']"
+              :items="roles"
+              return-object
             ></v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6">
@@ -91,6 +92,17 @@
               v-model="material.unit"
               variant="underlined"
             ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="type "
+              v-model="material.type"
+              variant="underlined"
+              :readonly="dis === true"
+              :items="types"
+              item-title="type"
+              return-object
+            ></v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6"
             ><v-textarea
@@ -181,8 +193,8 @@ import popuptest from "../../../components/popuptest.vue";
 import check from "../../../components/checkpopup.vue";
 import history from "../../../components/historypopup.vue";
 import axios from "axios";
-
-import sweetalert from "sweetalert";
+import moment from "moment";
+import swal from "sweetalert";
 import { useheaders } from "../../../stores/headers";
 
 export default {
@@ -208,9 +220,19 @@ export default {
     historytype: "",
     obj: {},
     historyobject: {},
+    roles: [],
+    types: [],
   }),
   created() {
     //GEtet route here
+    axios.get("/api/role").then((response) => {
+      this.roles = response.data.data;
+      console.log(response);
+    });
+    axios.get("/api/materialType").then((response) => {
+      this.types = response.data.data;
+      console.log(response);
+    });
     this.material_load();
     this.employees_material_load();
   },
@@ -230,6 +252,7 @@ export default {
           swal("error", response.data.errors[0].msg, "error");
         } else {
           this.orgmaterial = response.data.data;
+          console.log(response);
           this.clone();
         }
       });
@@ -243,7 +266,7 @@ export default {
             const x = {};
             x.id = element._id;
             x.totalQuantity = element.totalQuantity;
-            x.lastDate = element.lastDate;
+            x.lastDate = moment(element.lastDate).calendar();
             x.history = element.history;
             x.name = element.employee.name;
             x.employee_id = element.employee._id;
@@ -270,7 +293,7 @@ export default {
           if (response.data.errors) {
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yayyy", "success");
+            swal("success", "employee appended succesfully", "success");
             this.employees_material_load();
           }
         });
@@ -300,7 +323,11 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal(
+                "success",
+                "employee history updated successfully",
+                "success"
+              );
               this.employees_material_load();
               this.dialog2 = false;
             }
@@ -317,7 +344,11 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal(
+                "success",
+                "employee history updated successfully",
+                "success"
+              );
               this.employees_material_load();
               this.dialog2 = false;
             }
@@ -329,7 +360,9 @@ export default {
         .patch("/api/materialEmployee/note/" + value.id, {
           note: value.note,
         })
-        .then(swal("success", "yayyy", "success"))
+        .then(
+          swal("success", "employee history updated successfully", "success")
+        )
         .then(() => {
           this.dialog2 = false;
           this.employees_material_load();
@@ -377,6 +410,7 @@ export default {
       this.material.available = this.orgmaterial.available;
       this.material.role = this.orgmaterial.role;
       this.material.note = this.orgmaterial.note;
+      this.material.type = this.orgmaterial.type;
       this.material.unit = this.orgmaterial.unit;
       this.material.details = this.orgmaterial.details;
       this.material.employees = this.orgmaterial.employees;
@@ -422,9 +456,8 @@ export default {
         .patch("/api/material/" + this.$route.params.id, {
           name: this.material.name,
           unit: this.material.unit,
-          "role.title": this.material.role.title,
-          "role.num": 1,
-          type: this.material.type,
+          role: this.material.role._id,
+          type: this.material.type._id,
           max: this.material.max,
           min: this.material.min,
           note: this.material.note,
@@ -436,7 +469,8 @@ export default {
           if (response.data.errors) {
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yayy", "success");
+            swal("success", "material updated successfully", "success");
+            this.material_load();
           }
         });
     },
