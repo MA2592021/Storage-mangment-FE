@@ -17,12 +17,12 @@
           </v-col>
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="client*"
+              label="order*"
               chips
-              v-model="shipment.client"
+              v-model="shipment.order"
               persistent-hint
               hint="Required"
-              :items="clients"
+              :items="order"
               item-title="name"
               return-object
             ></v-autocomplete>
@@ -35,7 +35,7 @@
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
-          <v-col cols="12"
+          <v-col cols="12" sm="6"
             ><v-textarea
               clearable
               label="Note"
@@ -64,15 +64,15 @@ export default {
     image: null,
     shipment: {
       name: "",
-      client: null,
+      order: null,
       details: "",
       note: "    ",
     },
-    clients: [],
+    order: [],
   }),
   created() {
-    axios.get("/api/client").then((response) => {
-      this.clients = response.data.data;
+    axios.get("/api/order").then((response) => {
+      this.order = response.data.data;
     });
   },
   methods: {
@@ -82,7 +82,7 @@ export default {
         .post("/api/shipment/", {
           name: this.shipment.name,
           details: this.shipment.details,
-          client: this.shipment.client._id,
+          order: this.shipment.order._id,
           note: this.shipment.note,
         })
         .then((response) => {
@@ -90,7 +90,7 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "shipment added successfully", "success");
             this.$router.push({ path: "/shipment/all" });
           }
         })

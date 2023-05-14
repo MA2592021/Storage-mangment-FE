@@ -66,12 +66,19 @@
       </v-btn>
     </v-card-actions>
   </v-card>
+  <orderpanel
+    class="mt-2"
+    v-bind:name="order.name"
+    v-bind:reqmodel="order.models"
+  />
 </template>
 
 <script>
 import axios from "axios";
 import swal from "sweetalert";
+import orderpanel from "../../components/orderpanel.vue";
 export default {
+  components: { orderpanel },
   data() {
     return {
       order: {},

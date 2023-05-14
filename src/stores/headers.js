@@ -93,7 +93,6 @@ export const useheaders = defineStore("headers", {
         sortable: false,
         title: "name",
       },
-      { title: "status", key: "status" },
       { title: "client", key: "client" },
       { title: "created at", key: "time" },
     ],
@@ -104,7 +103,7 @@ export const useheaders = defineStore("headers", {
         sortable: false,
         title: "name",
       },
-      { title: "client", key: "client" },
+      { title: "order", key: "order" },
       { title: "created at", key: "time" },
     ],
     carton_header: [

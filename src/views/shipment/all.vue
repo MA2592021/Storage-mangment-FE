@@ -42,7 +42,7 @@ export default {
       response.data.data.forEach((element) => {
         const x = {};
         x._id = element._id;
-        x.client = element.client;
+        x.order = element.order;
         x.name = element.name;
         x.time = moment(element.createdAt).calendar();
         this.shipment.push(x);

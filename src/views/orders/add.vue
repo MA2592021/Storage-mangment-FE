@@ -16,14 +16,7 @@
               hint="Required"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              required
-              v-model="order.code"
-              label="code*"
-              hint="Required"
-            ></v-text-field>
-          </v-col>
+
           <v-col cols="12" sm="6">
             <v-autocomplete
               label="client*"
@@ -33,6 +26,7 @@
               hint="Required"
               :items="clients"
               item-title="name"
+              return-object
             ></v-autocomplete
           ></v-col>
 
@@ -54,7 +48,7 @@
           </v-col>
         </v-row>
       </v-container>
-      <small>*indicates required field</small>
+      <small>*indicates required field</small> {{ order }}
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -71,7 +65,6 @@ export default {
   data: () => ({
     order: {
       name: "",
-      code: "",
       client: null,
       details: "",
       note: "    ",
@@ -90,8 +83,7 @@ export default {
       axios
         .post("/api/order/", {
           name: this.order.name,
-          client: this.order.client,
-
+          client: this.order.client._id,
           details: this.order.details,
           note: this.order.note,
         })
@@ -100,7 +92,8 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "order added succesfully", "success");
+            this.$router.push({ path: "/order/all" });
           }
         })
         .catch((err) => {

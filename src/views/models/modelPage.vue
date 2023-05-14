@@ -42,40 +42,7 @@
               :readonly="dis"
             ></v-autocomplete>
           </v-col>
-          <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              required
-              v-model="model.nid"
-              label="National ID "
-              :readonly="!isEditing"
-              variant="underlined"
-              ><template v-slot:append>
-                <v-slide-x-reverse-transition mode="out-in">
-                  <v-btn
-                    size="x-small"
-                    :key="`icon-${isEditing}`"
-                    :color="isEditing ? 'success' : 'error'"
-                    :icon="
-                      isEditing
-                        ? 'mdi-check-outline'
-                        : 'mdi-circle-edit-outline'
-                    "
-                    :disabled="dis === true"
-                    @click="criticalchange()"
-                  ></v-btn>
-                </v-slide-x-reverse-transition> </template
-            ></v-text-field>
-          </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-autocomplete
-              label="Role "
-              v-model="model.role"
-              variant="underlined"
-              :readonly="dis === true"
-              :items="['Supervisor', 'model']"
-            ></v-autocomplete>
-          </v-col>
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
@@ -114,26 +81,7 @@
     </v-card-actions>
   </v-card>
   <v-card class="mt-3" style="width: 100%">
-    <v-expansion-panels variant="popout" class="my-4">
-      <paneltable
-        v-bind:data="properties"
-        v-bind:header="headers.model_hand_header"
-        v-bind:panelname="'properties'"
-        v-bind:openedtitle="openedtitle"
-        v-bind:closedtitle="this.model.name"
-        v-bind:link="link"
-        @clicked="onClickChild_property"
-      />
-      <paneltable
-        v-bind:data="materials"
-        v-bind:header="headers.model_hand_header"
-        v-bind:panelname="'materials'"
-        v-bind:openedtitle="openedtitle1"
-        v-bind:closedtitle="this.model.name"
-        v-bind:link="link"
-        @clicked="onClickChild_material"
-      />
-    </v-expansion-panels>
+    <modelpanel />
   </v-card>
   <popuptest
     v-model="dialog"
@@ -160,7 +108,7 @@
 </template>
 
 <script>
-import paneltable from "../../components/paneltable.vue";
+import modelpanel from "../../components/modelpanel.vue";
 import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
 import history from "../../components/historypopup.vue";
@@ -168,7 +116,7 @@ import history from "../../components/historypopup.vue";
 import { useheaders } from "../../stores/headers";
 
 export default {
-  components: { paneltable, popuptest, check, history },
+  components: { modelpanel, popuptest, check, history },
 
   data: () => ({
     content:

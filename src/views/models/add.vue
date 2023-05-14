@@ -4,112 +4,152 @@
       <v-icon icon="mdi-plus" style="color: #fbc02d" class="mb-2"></v-icon>
       <span class="text-h5" style="color: #fbc02d">Add Model</span>
     </v-card-title>
-    <v-card-text>
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <v-text-field
-              label="Name*"
-              v-model="model.name"
-              required
-              hint="Required"
-            ></v-text-field>
-          </v-col>
+    <v-window v-model="step">
+      <v-window-item :value="1">
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  label="Name*"
+                  v-model="model.name"
+                  required
+                  hint="Required"
+                ></v-text-field>
+              </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-autocomplete
-              label="colors*"
-              chips
-              v-model="model.colors"
-              persistent-hint
-              multiple
-              hint="Required"
-              :items="colors"
-              item-title="name"
-              return-object
-            ></v-autocomplete>
-          </v-col>
+              <v-col cols="12" sm="6">
+                <v-autocomplete
+                  label="colors*"
+                  chips
+                  v-model="model.colors"
+                  persistent-hint
+                  multiple
+                  hint="Required"
+                  :items="colors"
+                  item-title="name"
+                  return-object
+                ></v-autocomplete>
+              </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-autocomplete
-              label="sizes*"
-              chips
-              v-model="model.sizes"
-              persistent-hint
-              multiple
-              hint="Required"
-              :items="sizes"
-              item-title="name"
-              return-object
-            ></v-autocomplete>
-          </v-col>
+              <v-col cols="12" sm="6">
+                <v-autocomplete
+                  label="sizes*"
+                  chips
+                  v-model="model.sizes"
+                  persistent-hint
+                  multiple
+                  hint="Required"
+                  :items="sizes"
+                  item-title="name"
+                  return-object
+                ></v-autocomplete>
+              </v-col>
 
-          <v-col cols="12">
-            <v-autocomplete
-              label="stages*"
-              chips
-              v-model="model.stages"
-              persistent-hint
-              multiple
-              hint="Required"
-              :items="stages"
-              item-title="name"
-              return-object
-              closable-chips
-              @update:modelValue="test"
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="12">
-            <v-autocomplete
-              label="materials*"
-              chips
-              v-model="model.material"
-              persistent-hint
-              multiple
-              hint="Required"
-              :items="materials"
-              item-title="name"
-              return-object
-            >
-            </v-autocomplete>
-          </v-col>
-          <v-col cols="12" sm="6"
-            ><v-textarea
-              clearable
-              label="Note"
-              v-model="model.note"
-              prepend-inner-icon="mdi-note-text-outline"
-            ></v-textarea>
-          </v-col>
-          <v-col cols="12" sm="6"
-            ><v-textarea
-              clearable
-              label="details"
-              v-model="model.details"
-              prepend-inner-icon="mdi-note-text-outline"
-            ></v-textarea>
-          </v-col>
+              <v-col cols="12">
+                <v-autocomplete
+                  label="stages*"
+                  chips
+                  v-model="model.stages"
+                  persistent-hint
+                  multiple
+                  hint="Required"
+                  :items="stages"
+                  item-title="name"
+                  return-object
+                  closable-chips
+                  @update:modelValue="test"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12">
+                <v-autocomplete
+                  label="materials*"
+                  chips
+                  v-model="model.material"
+                  persistent-hint
+                  multiple
+                  hint="Required"
+                  :items="materials"
+                  item-title="name"
+                  return-object
+                >
+                </v-autocomplete>
+              </v-col>
+              <v-col cols="12" sm="6"
+                ><v-textarea
+                  clearable
+                  label="Note"
+                  v-model="model.note"
+                  prepend-inner-icon="mdi-note-text-outline"
+                ></v-textarea>
+              </v-col>
+              <v-col cols="12" sm="6"
+                ><v-textarea
+                  clearable
+                  label="details"
+                  v-model="model.details"
+                  prepend-inner-icon="mdi-note-text-outline"
+                ></v-textarea>
+              </v-col>
 
-          <v-col cols="12" sm="12">
-            <imageuploader @selected="imageup" />
-          </v-col>
-        </v-row>
-      </v-container>
-      <small>*indicates required field</small>
-    </v-card-text>
+              <v-col cols="12" sm="12">
+                <imageuploader @selected="imageup" />
+              </v-col>
+            </v-row>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+      </v-window-item>
+      <v-window-item :value="2">
+        <v-card-text>
+          <stageinput />
+        </v-card-text>
+      </v-window-item>
+      <v-window-item :value="3">
+        <consumption v-bind:colors="model.colors" v-bind:sizes="model.sizes" />
+      </v-window-item>
+      <v-window-item :value="4">
+        <div class="pa-4 text-center">
+          <v-img
+            class="mb-4"
+            contain
+            height="128"
+            src="/arkan_logo-no-text.png"
+          ></v-img>
+          <h3 class="text-h6 font-weight-light mb-2">
+            are you sure want to add this model?
+          </h3>
+          <span class="text-caption text-grey"
+            >please be sure of data entered you can go back
+          </span>
+        </div>
+      </v-window-item>
+    </v-window>
+
     <v-card-actions>
+      <v-btn v-if="step > 1" variant="text" @click="step--"> Back </v-btn>
       <v-spacer></v-spacer>
-      <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
-      <v-btn color="green-darken-1" variant="text" @click="add"> Next </v-btn>
+      <v-btn v-if="step < 4" color="primary" variant="flat" @click="step++">
+        Next
+      </v-btn>
+      <v-btn
+        color="green-darken-1"
+        variant="text"
+        @click="add"
+        v-if="step === 4"
+      >
+        Add
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 import imageuploader from "../../components/imageuploader.vue";
-
+import stageinput from "../../components/stageinput.vue";
+import consumption from "../../components/consumption.vue";
 export default {
-  components: { imageuploader },
+  components: { imageuploader, stageinput, consumption },
   data: () => ({
     rules: [
       (value) => {
@@ -121,6 +161,7 @@ export default {
         );
       },
     ],
+    step: 1,
     url: null,
     image: null,
     model: {

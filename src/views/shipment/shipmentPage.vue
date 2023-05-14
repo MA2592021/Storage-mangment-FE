@@ -143,7 +143,6 @@
 </template>
 
 <script>
-import paneltable from "../../components/paneltable.vue";
 import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
 import shipmentpanel from "../../components/shipmentpanel.vue";
@@ -153,7 +152,7 @@ import { useheaders } from "../../stores/headers";
 import swal from "sweetalert";
 
 export default {
-  components: { paneltable, popuptest, check, shipmentpanel },
+  components: { popuptest, check, shipmentpanel },
   //test
   data: () => ({
     content:
@@ -272,6 +271,7 @@ export default {
                     swal("error", response.data.errors[0].msg, "error");
                   } else {
                     swal("success", "shipment shipped successfully", "success");
+                    this.dis = true;
                     this.shipmentload();
                   }
                 });

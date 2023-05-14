@@ -24,6 +24,7 @@
 import tt from "../../components/table.vue";
 import { useheaders } from "../../stores/headers";
 import axios from "axios";
+import moment from "moment";
 export default {
   components: {
     tt,
@@ -37,7 +38,15 @@ export default {
     //Get route
     axios.get("/api/order/").then((response) => {
       console.log(response);
-      this.order = response.data.data;
+      response.data.data.forEach((element) => {
+        console.log(element);
+        const x = {};
+        x.name = element.name;
+        x.client = element.client;
+        x.time = moment(element.createdAt).calendar();
+        console.log(x);
+        this.order.push(x);
+      });
     });
   },
   setup() {
