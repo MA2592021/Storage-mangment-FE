@@ -243,6 +243,7 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "request updated successfully");
+            this.requestload();
           }
         });
       console.log("property", value);
@@ -264,6 +265,7 @@ export default {
           } else {
             swal("success", "request updated successfully");
             console.log(response);
+            this.requestload();
           }
         });
       console.log("material", value);
