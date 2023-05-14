@@ -47,8 +47,7 @@
         <h3>properties</h3>
         <v-container v-for="(material, index) in properties" :key="material">
           <v-row>
-            <v-col cols="12"
-              ><h1>{{ index }}</h1>
+            <v-col cols="12">
               <v-text-field
                 label="name"
                 variant="solo"

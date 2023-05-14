@@ -24,14 +24,7 @@
               hint="Required"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              required
-              v-model="carton.shipment"
-              label="shipment*"
-              hint="Required"
-            ></v-text-field>
-          </v-col>
+
           <v-col cols="12" sm="6">
             <v-autocomplete
               label="model*"
@@ -114,6 +107,7 @@ export default {
     modelload() {
       axios.get("/api/model/").then((response) => {
         this.models = response.data.data;
+        console.log(this.models);
       });
     },
     sizeload() {

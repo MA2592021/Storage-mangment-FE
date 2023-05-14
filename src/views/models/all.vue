@@ -30,67 +30,7 @@ export default {
   },
   data() {
     return {
-      models: [
-        {
-          _id: 1,
-          name: "dafa",
-          colors: [
-            { name: "red", code: "231" },
-            { name: "black", code: "231" },
-          ],
-          sizes: [
-            { name: "XL", code: "65" },
-            { name: "L", code: "65" },
-          ],
-          details: "any details here bbe",
-          note: "asdasd",
-          image: "",
-          stages: [
-            { name: "stage1", id: "2", priorty: "1", machine_type: "singer" },
-          ],
-          materials: [{ name: "zorar", id: "22", qty: "12" }],
-        },
-
-        {
-          _id: 2,
-          name: "abo el feda",
-          colors: [
-            { name: "red", code: "231" },
-            { name: "black", code: "231" },
-          ],
-          sizes: [
-            { name: "XL", code: "65" },
-            { name: "L", code: "65" },
-          ],
-          details: "any details here bbe",
-          note: "asdasd",
-          image: "",
-          stages: [
-            { name: "stage1", id: "2", priorty: "1", machine_type: "singer" },
-          ],
-          materials: [{ name: "zorar", id: "22", qty: "12" }],
-        },
-
-        {
-          _id: 3,
-          name: "mnasek",
-          colors: [
-            { name: "red", code: "231" },
-            { name: "black", code: "231" },
-          ],
-          sizes: [
-            { name: "XL", code: "65" },
-            { name: "L", code: "65" },
-          ],
-          details: "any details here bbe",
-          note: "asdasd",
-          image: "",
-          stages: [
-            { name: "stage1", id: "2", priorty: "1", machine_type: "singer" },
-          ],
-          materials: [{ name: "zorar", id: "22", qty: "12" }],
-        },
-      ],
+      models: [],
     };
   },
   created() {

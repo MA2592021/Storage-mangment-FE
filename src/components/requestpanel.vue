@@ -209,15 +209,11 @@ export default {
     },
     deleteitem(id, type) {
       if (type === "material") {
-        const index = this.reqmaterial.findIndex(
-          (element) => element._id === id
-        );
-        this.reqmaterial.splice(index, 1);
+        const index = this.datamat.findIndex((element) => element._id === id);
+        this.datamat.splice(index, 1);
       } else {
-        const index = this.reqproperty.findIndex(
-          (element) => element._id === id
-        );
-        this.reqproperty.splice(index, 1);
+        const index = this.dataprop.findIndex((element) => element._id === id);
+        this.dataprop.splice(index, 1);
       }
     },
     appendreq() {

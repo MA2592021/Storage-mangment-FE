@@ -25,7 +25,7 @@
 
         <br />
 
-        Stage ID is : {{ stage.stage_id }}
+        Stage ID is : {{ stage._id }}
         <br />
         id {{ stage.id }}
       </p>
@@ -79,6 +79,7 @@
 
 <script>
 import tabs from "../components/layout/tabs.vue";
+import axios from "axios";
 export default {
   components: { tabs },
 
@@ -88,10 +89,14 @@ export default {
       realstages: [],
       id: 0,
       selected: null,
+      data: [],
     };
   },
-  props: {
-    data: Array,
+
+  created() {
+    axios.get("/api/stage/").then((response) => {
+      this.data = response.data.data;
+    });
   },
   methods: {
     addstage() {
@@ -140,7 +145,7 @@ export default {
       console.log(this.stages.find((m) => m.id === index));
       this.stages.find((m) => m.id === index).name = selected.name;
       this.stages.find((m) => m.id === index).desc = selected.desc;
-      this.stages.find((m) => m.id === index).stage_id = selected.stage_id;
+      this.stages.find((m) => m.id === index)._id = selected._id;
       this.selected = null;
     },
     save() {
@@ -150,7 +155,7 @@ export default {
       this.stages.forEach((element) => {
         const x = {};
 
-        x.id = element.id;
+        x.id = element._id;
         x.piriority = counter;
         this.realstages.push(x);
         counter += 1;

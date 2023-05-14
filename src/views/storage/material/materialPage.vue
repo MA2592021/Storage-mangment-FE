@@ -277,9 +277,9 @@ export default {
         });
     },
     onClickChild_employee(value) {
-      // console.log(value);
+      console.log("onclcick child", value);
       this.historytype = "employee";
-      this.historyview(value._id);
+      this.historyview(value);
     },
     employee_append(value) {
       axios
@@ -372,12 +372,13 @@ export default {
       this.dialog = false;
       this.dialog1 = true;
     },
-    historyview(id) {
+    historyview(value) {
       // console.log(this.propfind(id));
-
       this.historyobject.title = this.historytype + " history";
       if (this.historytype === "employee") {
-        this.obj = this.employees.find((m) => m._id === id);
+        this.obj = this.employees.find(
+          (m) => m.employee_id === value.employee_id
+        );
         this.historyobject._id = this.obj.employee_id;
       } else {
         this.obj = this.materials.find((m) => m._id === id);

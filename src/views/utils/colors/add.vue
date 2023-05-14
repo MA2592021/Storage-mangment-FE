@@ -61,7 +61,8 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "color added successfully", "success");
+            this.$router.push({ path: "/utils/color/all" });
           }
         })
         .catch((err) => {

@@ -109,7 +109,8 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "stage added successfully", "success");
+            this.$router.push({ path: "/utils/stage/all" });
           }
         })
         .catch((err) => {

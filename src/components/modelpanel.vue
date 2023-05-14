@@ -17,25 +17,25 @@
         </template>
       </v-expansion-panel-title>
       <v-expansion-panel-text>
-        <stages />
-
-        <v-row justify="center" class="mt-4">
-          <v-btn
-            color="red "
-            @click="dis = !dis"
-            :disabled="status === 'Delivered'"
+        <v-row>
+          <v-col col="6" xs="12" align="center">
+            <v-data-table
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers1"
+              :items="reqmodel"
+              item-value="name"
+              class="elevation-1"
+            >
+              <template v-slot:item="{ item }">
+                <tr v-ripple @click="dosomething(item.raw)">
+                  <td>
+                    {{ item.columns.name }}
+                  </td>
+                </tr>
+              </template></v-data-table
+            ></v-col
           >
-            Edit models
-          </v-btn>
-          <v-btn
-            color="green "
-            :disabled="dis"
-            class="ml-auto"
-            @click="appendreq()"
-          >
-            Append models
-          </v-btn></v-row
-        >
+        </v-row>
       </v-expansion-panel-text> </v-expansion-panel
     ><v-expansion-panel>
       <v-expansion-panel-title>
@@ -48,6 +48,44 @@
                   {{ name }}
                 </span>
                 <span v-else key="1"> orders in {{ name }} </span>
+              </v-fade-transition>
+            </v-col>
+          </v-row>
+        </template>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-row>
+          <v-col col="6" xs="12" align="center">
+            <v-data-table
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers1"
+              :items="reqmodel"
+              item-value="name"
+              class="elevation-1"
+            >
+              <template v-slot:item="{ item }">
+                <tr v-ripple @click="dosomething(item.raw)">
+                  <td>
+                    {{ item.columns.name }}
+                  </td>
+                </tr>
+              </template></v-data-table
+            ></v-col
+          >
+        </v-row>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+    <v-expansion-panel>
+      <v-expansion-panel-title>
+        <template v-slot:default="{ expanded }">
+          <v-row no-gutters>
+            <v-col cols="4" class="d-flex justify-start"> materials </v-col>
+            <v-col cols="8" class="text-grey">
+              <v-fade-transition leave-absolute>
+                <span v-if="expanded" key="0">
+                  {{ name }}
+                </span>
+                <span v-else key="1"> materials used in {{ name }} </span>
               </v-fade-transition>
             </v-col>
           </v-row>

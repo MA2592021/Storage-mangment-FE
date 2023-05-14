@@ -48,21 +48,6 @@
 
               <v-col cols="12">
                 <v-autocomplete
-                  label="stages*"
-                  chips
-                  v-model="model.stages"
-                  persistent-hint
-                  multiple
-                  hint="Required"
-                  :items="stages"
-                  item-title="name"
-                  return-object
-                  closable-chips
-                  @update:modelValue="test"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12">
-                <v-autocomplete
                   label="materials*"
                   chips
                   v-model="model.material"
@@ -102,7 +87,7 @@
       </v-window-item>
       <v-window-item :value="2">
         <v-card-text>
-          <stageinput />
+          <stageinput @stages_done="stagethings" />
         </v-card-text>
       </v-window-item>
       <v-window-item :value="3">
@@ -148,6 +133,7 @@
 import imageuploader from "../../components/imageuploader.vue";
 import stageinput from "../../components/stageinput.vue";
 import consumption from "../../components/consumption.vue";
+import axios from "axios";
 export default {
   components: { imageuploader, stageinput, consumption },
   data: () => ({
@@ -174,34 +160,38 @@ export default {
       materials: null,
       note: "",
     },
-    stages: [{ name: "2as" }, { name: "kawy" }, { name: "testo" }],
     materials: [
       { name: "zorar", id: "232" },
       { name: "white 2omash ", id: "231" },
     ],
-    colors: [
-      { name: "red", code: "123" },
-      { name: "white", code: "2312" },
-      { name: "black", code: "432" },
-    ],
-    sizes: [
-      { name: "XL", code: "65" },
-      { name: "L", code: "53" },
-      { name: "S", code: "44" },
-    ],
+    colors: [],
+    sizes: [],
   }),
-
+  created() {
+    this.colorload();
+    this.sizeload();
+  },
   methods: {
     add() {
       this.url = URL.createObjectURL(this.employee.img);
+    },
+    sizeload() {
+      axios.get("/api/size/").then((response) => {
+        this.sizes = response.data.data;
+      });
+    },
+    colorload() {
+      axios.get("/api/color/").then((response) => {
+        this.colors = response.data.data;
+      });
     },
 
     imageup(image) {
       this.employee.img = image[0];
     },
-    test(e) {
-      console.log("test");
-      console.log(e);
+    stagethings(value) {
+      this.model.stages = value;
+      console.log(this.model.stages);
     },
   },
 };

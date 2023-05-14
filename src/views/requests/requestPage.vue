@@ -243,12 +243,13 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "request updated successfully");
+            this.deliverbbe();
             this.requestload();
           }
         });
       console.log("property", value);
     },
-    appendmaterial(value) {
+    appendmaterial(value, property) {
       console.log(value);
       // axios.patch('/api/buyRequest/custodies/add/'+this.$route.params.id,{
       //   custodies:[
@@ -265,6 +266,7 @@ export default {
           } else {
             swal("success", "request updated successfully");
             console.log(response);
+            this.appendproperty(property);
             this.requestload();
           }
         });
@@ -324,9 +326,7 @@ export default {
       console.log("material", material);
       console.log("property", property);
 
-      await this.appendmaterial(material);
-      await this.appendproperty(property);
-      this.deliverbbe();
+      await this.appendmaterial(material, property);
     },
     deliverbbe() {
       axios
