@@ -5,6 +5,7 @@
 
 <script>
 import tabs from "../components/layout/tabs.vue";
+
 export default {
   components: { tabs },
 
