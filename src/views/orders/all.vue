@@ -42,7 +42,7 @@ export default {
         console.log(element);
         const x = {};
         x.name = element.name;
-        x.client = element.client;
+        x.client = element.client.name;
         x.time = moment(element.createdAt).calendar();
         console.log(x);
         this.order.push(x);

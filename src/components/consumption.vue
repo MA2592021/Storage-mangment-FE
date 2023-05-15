@@ -1,11 +1,57 @@
 <template>
-  <transition-group name="list" tag="ul"> <h1>testo</h1></transition-group>
+  <transition-group name="list" tag="ul">
+    <v-row class="border" v-for="(c, index) in counter" :key="c"
+      ><v-col cols="12" align="center"
+        ><h3>material {{ index + 1 }}</h3></v-col
+      >
+      <v-col cols="12" sm="4"
+        ><v-autocomplete
+          label="select material"
+          :items="materials"
+          v-model="materialselect[index]"
+          return-object
+          item-title="name"
+        ></v-autocomplete
+      ></v-col>
+      <v-col cols="12" sm="3"
+        ><v-text-field
+          label="quantity"
+          :suffix="materialselect[index] ? materialselect[index].unit : ''"
+          v-model="qty[index]"
+        ></v-text-field
+      ></v-col>
+      <v-col cols="12" sm="2"
+        ><v-autocomplete
+          label="select colors"
+          :items="colors"
+          item-title="name"
+          v-model="colorselect[index]"
+          chips
+          multiple
+        ></v-autocomplete
+      ></v-col>
+      <v-col cols="12" sm="2"
+        ><v-autocomplete
+          label="select sizes"
+          item-title="name"
+          :items="sizes"
+          v-model="sizeselect[index]"
+          chips
+          multiple
+        ></v-autocomplete
+      ></v-col>
+      <v-col cols="12" sm="1"
+        ><v-btn icon="mdi-delete-circle" class="bg-red" @click="deletee(index)">
+        </v-btn
+      ></v-col>
+    </v-row>
+  </transition-group>
   <v-col class="mx-auto" align="center">
     <v-btn class="mt-2 mr-2" color="warning" @click="addmaterial()"
       >Add Material</v-btn
     >
-    <v-btn class="mt-2" color="success" @click="save()">save</v-btn></v-col
-  >
+    <v-btn class="mt-2" color="success" @click="save()">save</v-btn>
+  </v-col>
 </template>
 
 <script>
@@ -13,28 +59,13 @@ import axios from "axios";
 export default {
   data() {
     return {
-      material: [
-        {
-          id: "0",
-          material: { name: "material name", _id: "23423" },
-          sizes: [
-            { name: "xl", _id: "232" },
-            { name: "xl", _id: "232" },
-            { name: "xl", _id: "232" },
-          ],
-          colors: [
-            { name: "red", _id: "#333" },
-            { name: "red", _id: "#333" },
-            { name: "red", _id: "#333" },
-          ],
-        },
-      ],
-      realmaterial: [],
-      id: 0,
-      selected1: [],
-      selected2: [],
-      selected3: [],
+      counter: [null],
+      materialselect: [],
+      qty: [],
+      colorselect: [],
+      sizeselect: [],
       materials: [],
+      consumption: [],
     };
   },
   props: {
@@ -48,28 +79,19 @@ export default {
   },
   methods: {
     addmaterial() {
-      this.id += 1;
-      this.material.push({
-        id: this.id,
-        name: "material name",
-        sizes: [
-          { name: "xl", _id: "232" },
-          { name: "xl", _id: "232" },
-          { name: "xl", _id: "232" },
-        ],
-        colors: [
-          { name: red, _id: "#333" },
-          { name: red, _id: "#333" },
-          { name: red, _id: "#333" },
-        ],
-      });
+      this.materialselect.push(null);
+      this.colorselect.push(null);
+      this.sizeselect.push(null);
+      this.qty.push(null);
+      this.counter.push(null);
     },
-    deletee(id) {
+    deletee(index) {
       console.log("im alive");
-      this.material.splice(
-        this.material.findIndex((m) => m.id === id),
-        1
-      );
+      this.counter.splice(index, 1);
+      this.materialselect.splice(index, 1);
+      this.colorselect.splice(index, 1);
+      this.sizeselect.splice(index, 1);
+      this.qty.splice(index, 1);
     },
 
     dosomthing(selected, index) {
@@ -84,17 +106,17 @@ export default {
     },
     save() {
       let counter = 0;
-
-      this.realmaterial = [];
-      this.material.forEach((element) => {
+      this.consumption = [];
+      this.materialselect.forEach((element) => {
         const x = {};
-
-        x.id = element.id;
-        x.piriority = counter;
-        this.realmaterial.push(x);
+        x.material = element._id;
+        x.quantity = this.qty[counter];
+        x.sizes = this.sizeselect[counter];
+        x.colors = this.colorselect[counter];
+        this.consumption.push(x);
         counter += 1;
       });
-      this.$emit("material_done", this.realmaterial);
+      this.$emit("material_done", this.consumption);
     },
   },
 };

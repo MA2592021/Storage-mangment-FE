@@ -46,20 +46,6 @@
                 ></v-autocomplete>
               </v-col>
 
-              <v-col cols="12">
-                <v-autocomplete
-                  label="materials*"
-                  chips
-                  v-model="model.material"
-                  persistent-hint
-                  multiple
-                  hint="Required"
-                  :items="materials"
-                  item-title="name"
-                  return-object
-                >
-                </v-autocomplete>
-              </v-col>
               <v-col cols="12" sm="6"
                 ><v-textarea
                   clearable
@@ -91,7 +77,12 @@
         </v-card-text>
       </v-window-item>
       <v-window-item :value="3">
-        <consumption v-bind:colors="model.colors" v-bind:sizes="model.sizes" />
+        <consumption
+          v-bind:colors="model.colors"
+          v-bind:sizes="model.sizes"
+          @material_done="materialthings"
+          v-if="step === 3"
+        />
       </v-window-item>
       <v-window-item :value="4">
         <div class="pa-4 text-center">
@@ -114,7 +105,7 @@
     <v-card-actions>
       <v-btn v-if="step > 1" variant="text" @click="step--"> Back </v-btn>
       <v-spacer></v-spacer>
-      <v-btn v-if="step < 4" color="primary" variant="flat" @click="step++">
+      <v-btn v-if="step < 4" color="primary" variant="flat" @click="steps">
         Next
       </v-btn>
       <v-btn
@@ -134,6 +125,7 @@ import imageuploader from "../../components/imageuploader.vue";
 import stageinput from "../../components/stageinput.vue";
 import consumption from "../../components/consumption.vue";
 import axios from "axios";
+import swal from "sweetalert";
 export default {
   components: { imageuploader, stageinput, consumption },
   data: () => ({
@@ -157,7 +149,7 @@ export default {
       sizes: null,
       img: "",
       stages: null,
-      materials: null,
+      consumption: null,
       note: "",
     },
     materials: [
@@ -173,7 +165,18 @@ export default {
   },
   methods: {
     add() {
-      this.url = URL.createObjectURL(this.employee.img);
+      // this.url = URL.createObjectURL(this.employee.img);
+      axios
+        .post("/api/model", {
+          name: this.model.name,
+          details: this.model.details,
+          note: this.model.note,
+        })
+        .then((response) => {
+          axios.patch("/api/model/stages/add/" + response.data.data._id, {
+            stages: this.model.stages,
+          });
+        });
     },
     sizeload() {
       axios.get("/api/size/").then((response) => {
@@ -185,13 +188,37 @@ export default {
         this.colors = response.data.data;
       });
     },
-
+    steps() {
+      if (
+        this.model.colors === null ||
+        this.model.colors.length === 0 ||
+        this.model.sizes === null ||
+        this.model.sizes.length === 0 ||
+        this.model.name === ""
+      ) {
+        swal("error", "please fill all information", "error");
+      } else if (this.step === 2 && this.model.stages === null) {
+        swal("error", "please save stages before go to next step", "error");
+      } else if (this.step === 3 && this.model.consumption === null) {
+        swal(
+          "error",
+          "please save consumptions before go to next step",
+          "error"
+        );
+      } else {
+        this.step += 1;
+      }
+    },
     imageup(image) {
       this.employee.img = image[0];
     },
     stagethings(value) {
       this.model.stages = value;
       console.log(this.model.stages);
+    },
+    materialthings(value) {
+      this.model.consumption = value;
+      console.log(this.model.consumption);
     },
   },
 };

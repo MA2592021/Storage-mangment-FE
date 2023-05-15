@@ -9,14 +9,17 @@
 
 <script>
 import navbarVue from "./components/layout/navbar.vue";
-import messagebar from "./components/messagebar.vue";
+import axios from "axios";
 export default {
   name: "App",
   components: {
     navbarVue,
-    messagebar,
   },
-
+  created() {
+    console.log("Client request received: Vue app is created");
+    // Perform any initial setup or fetch data here
+    axios.get("/");
+  },
   computed: {
     routePath() {
       return this.$route.path;

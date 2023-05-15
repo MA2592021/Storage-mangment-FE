@@ -114,7 +114,7 @@
           <v-btn
             color="red "
             @click="dis = !dis"
-            :disabled="status === 'Approved'"
+            :disabled="status === 'Approved' || status === 'Delivered'"
           >
             Edit {{ panelname }}
           </v-btn>
