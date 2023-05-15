@@ -1,6 +1,53 @@
 {
-  "welcome": "Welcome!",
-  "home": "Home",
-  "about": "About",
-  "contact": "Contact"
+  "welcome": "hello world",
+  "tabs": {
+    "dashboard": "Dashboard",
+    "all": "All",
+    "add": "Add"
+  },
+  "navbar": {
+    "dashboard": "Dashboard",
+    "employees": "Employees",
+    "models": "Models",
+    "orders": "Orders",
+    "suppliers": "Suppliers",
+    "clients": "Clients",
+    "shipments": "Shipments",
+    "requests": "Requests",
+    "storage": "Storage",
+    "properties": "Properties",
+    "materials": "Materials",
+    "cartons": "Cartons",
+    "utils": "Utils",
+    "colors": "Colors",
+    "sizes": "Sizes",
+    "roles": "Roles",
+    "types": "Types",
+    "stages": "Stages",
+    "machinetypes": "Machine types"
+  },
+  "code": "Code",
+  "name": "Name",
+  "role": "Role",
+  "phone": "Phone Number",
+  "nid": "National ID",
+  "note": "Note",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "cancel": "cancel",
+  "properties": "Properties",
+  "materials": "Materials",
+  "totalqty": "Total Quantity",
+  "lastdate": "Last Date",
+  "append": "Append",
+  "employees": {
+    "employees": "Employees",
+    "all": "All Employees",
+    "add": "Add Employee",
+    "employeedfrom": "Employed from",
+
+    "p1": "Properties with",
+    "p2": "MAterials with"
+  }
 }

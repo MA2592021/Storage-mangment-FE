@@ -1,5 +1,8 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { createI18n } from "vue-i18n";
+import en from "./locales/en";
+import ar from "./locales/ar";
 import axios from "axios";
 
 import App from "./App.vue";
@@ -10,4 +13,18 @@ const pinia = createPinia();
 loadFonts();
 axios.defaults.baseURL = " http://192.168.1.4:5000";
 
-createApp(App).use(router, axios).use(pinia).use(vuetify).mount("#app");
+const i18n = createI18n({
+  locale: "en", // Default language
+  messages: {
+    en,
+    ar,
+    // Add more languages as needed
+  },
+});
+
+createApp(App)
+  .use(router, axios)
+  .use(pinia)
+  .use(i18n)
+  .use(vuetify)
+  .mount("#app");

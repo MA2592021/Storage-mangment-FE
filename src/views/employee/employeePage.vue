@@ -1,7 +1,8 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row
-      ><v-col cols="12" align="center" class="text-h4"> Employees </v-col
+      ><v-col cols="12" align="center" class="text-h4">
+        {{ $t("employees.employees") }} </v-col
       ><v-col cols="3" sm="2"
         ><v-img
           class="bg-white"
@@ -14,7 +15,7 @@
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Name "
+              :label="$t(`name`)"
               required
               :readonly="dis === true"
               v-model="employee.name"
@@ -24,7 +25,7 @@
           <v-col cols="12" sm="6" md="6">
             <v-text-field
               required
-              label="Code "
+              :label="$t(`code`)"
               :readonly="dis === true"
               v-model="employee.code"
               variant="underlined"
@@ -32,7 +33,7 @@
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Phone number "
+              :label="$t(`phone`)"
               variant="underlined"
               :readonly="dis === true"
               v-model="employee.phone"
@@ -43,7 +44,7 @@
             <v-text-field
               required
               v-model="employee.nid"
-              label="National ID "
+              :label="$t(`nid`)"
               :readonly="!isEditing"
               variant="underlined"
               ><template v-slot:append>
@@ -66,7 +67,7 @@
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="Role "
+              :label="$t(`role`)"
               v-model="employee.role"
               variant="underlined"
               :readonly="dis === true"
@@ -78,7 +79,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="Note"
+              :label="$t(`note`)"
               v-model="employee.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -86,7 +87,7 @@
           </v-col>
           <v-col cols="12">
             <v-text-field
-              label="employeed from "
+              :label="$t(`employees.employeedfrom`)"
               required
               readonly
               v-model="employee.time"
@@ -99,7 +100,7 @@
         @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t(`edit`) : $t(`cancel`) }}
       </v-btn>
       <v-btn
         class="ml-auto text-red"
@@ -107,7 +108,7 @@
         :disabled="dis === true"
         prepend-icon="mdi-delete-forever"
       >
-        Delete
+        {{ $t(`delete`) }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -116,7 +117,7 @@
         color="green"
         @click="dialog = !dialog"
       >
-        Save
+        {{ $t(`save`) }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -125,8 +126,8 @@
       <paneltable
         v-bind:data="properties"
         v-bind:header="headers.employee_hand_header"
-        v-bind:panelname="'properties'"
-        v-bind:openedtitle="openedtitle"
+        v-bind:panelname="$t(`properties`)"
+        v-bind:openedtitle="$t(`employees.p1`)"
         v-bind:closedtitle="this.employee.name"
         v-bind:link="link_property"
         @clicked="onClickChild_property"
@@ -135,8 +136,8 @@
       <paneltable
         v-bind:data="materials"
         v-bind:header="headers.employee_hand_header"
-        v-bind:panelname="'materials'"
-        v-bind:openedtitle="openedtitle1"
+        v-bind:panelname="$t(`materials`)"
+        v-bind:openedtitle="$t(`employees.p2`)"
         v-bind:closedtitle="this.employee.name"
         v-bind:link="link_material"
         @clicked="onClickChild_material"

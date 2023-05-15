@@ -1,6 +1,53 @@
 {
-  "welcome": "اهلا!",
-  "home": "Home",
-  "about": "About",
-  "contact": "Contact"
+  "welcome": "hello world",
+  "tabs": {
+    "dashboard": "لوحة القيادة",
+    "all": "الكل",
+    "add": "اضافة"
+  },
+  "navbar": {
+    "dashboard": "لوحة القيادة",
+    "employees": "العمال",
+    "models": "المودلات",
+    "orders": "الاوردرات",
+    "suppliers": "الموردين",
+    "clients": "العملاء",
+    "shipments": "الشحنات",
+    "requests": "الطلبات",
+    "storage": "المخزن",
+    "properties": "العهد",
+    "materials": "مستلزمات الانتاج",
+    "cartons": "الكراتين",
+    "utils": "ادوات",
+    "colors": "الالوان",
+    "sizes": "المقاسات",
+    "roles": "المناصب",
+    "types": "الانواع",
+    "stages": "المراحل",
+    "machinetypes": "انواع الماكينات"
+  },
+  "code": "الكود",
+  "name": "الاسم",
+  "role": "المنصب",
+  "phone": "رقم الهاتف",
+  "nid": "الرقم القومي",
+  "note": "مذكرة",
+  "properties": "عهد",
+  "materials": "مستلزمات انتاج",
+  "totalqty": "كل الكمية",
+  "lastdate": "اخر تاريخ",
+  "append": "اضافة",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "save": "حفظ",
+  "cancel": "الغاء",
+  "employees": {
+    "employees": "العمال",
+    "all": "كل العمال",
+    "add": "اضافة عامل",
+    "employeedfrom": "تم تعيينه منذ",
+
+    "p1": "عهد مع",
+    "p2": "مستلزمات انتاج مع"
+  }
 }

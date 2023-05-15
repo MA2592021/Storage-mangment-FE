@@ -2,14 +2,16 @@
   <v-card elevation="0" style="width: 100%">
     <v-card-title class="text-center">
       <v-icon icon="mdi-plus" style="color: #fbc02d" class="mb-2"></v-icon>
-      <span class="text-h5" style="color: #fbc02d">Add Employee</span>
+      <span class="text-h5" style="color: #fbc02d">{{
+        $t("employees.add")
+      }}</span>
     </v-card-title>
     <v-card-text>
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Name*"
+              :label="$t(`name`) + '*'"
               v-model="employee.name"
               required
               hint="Required"
@@ -19,13 +21,13 @@
             <v-text-field
               required
               v-model="employee.code"
-              label="Code*"
+              :label="$t(`code`) + '*'"
               hint="Required"
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Phone number*"
+              :label="$t(`phone`) + '*'"
               v-model="employee.phone"
               hint="Required"
               required
@@ -35,14 +37,14 @@
             <v-text-field
               required
               v-model="employee.nid"
-              label="National ID*"
+              :label="$t(`nid`) + '*'"
               hint="Required"
             ></v-text-field>
           </v-col>
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="Role*"
+              :label="$t(`role`) + '*'"
               chips
               v-model="employee.role"
               persistent-hint
@@ -55,7 +57,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               clearable
-              label="Note"
+              :label="$t(`note`) + '*'"
               v-model="employee.note"
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>

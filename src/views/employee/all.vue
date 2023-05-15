@@ -7,7 +7,9 @@
           style="color: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="color: #fbc02d">All Employees</span></span
+        <span class="text-h5" style="color: #fbc02d">{{
+          $t("employees.all")
+        }}</span></span
       ></v-col
     >
 
