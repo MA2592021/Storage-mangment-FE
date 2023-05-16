@@ -2,7 +2,9 @@
   <v-card elevation="0" style="width: 100%">
     <v-card-title class="text-center">
       <v-icon icon="mdi-plus" style="color: #fbc02d" class="mb-2"></v-icon>
-      <span class="text-h5" style="color: #fbc02d">Add Model</span>
+      <span class="text-h5" style="color: #fbc02d">{{
+        $t("models.addModel")
+      }}</span>
     </v-card-title>
     <v-window v-model="step">
       <v-window-item :value="1">
@@ -11,7 +13,7 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  label="Name*"
+                  :label="$t(`name`) + '*'"
                   v-model="model.name"
                   required
                   hint="Required"
@@ -20,7 +22,7 @@
 
               <v-col cols="12" sm="6">
                 <v-autocomplete
-                  label="colors*"
+                  :label="$t(`colors`) + '*'"
                   chips
                   v-model="model.colors"
                   persistent-hint
@@ -34,7 +36,7 @@
 
               <v-col cols="12" sm="6">
                 <v-autocomplete
-                  label="sizes*"
+                  :label="$t(`sizes`) + '*'"
                   chips
                   v-model="model.sizes"
                   persistent-hint
@@ -49,7 +51,7 @@
               <v-col cols="12" sm="6"
                 ><v-textarea
                   clearable
-                  label="Note"
+                  :label="$t(`note`) + '*'"
                   v-model="model.note"
                   prepend-inner-icon="mdi-note-text-outline"
                 ></v-textarea>
@@ -57,7 +59,7 @@
               <v-col cols="12" sm="6"
                 ><v-textarea
                   clearable
-                  label="details"
+                  :label="$t(`details`) + '*'"
                   v-model="model.details"
                   prepend-inner-icon="mdi-note-text-outline"
                 ></v-textarea>
@@ -103,10 +105,12 @@
     </v-window>
 
     <v-card-actions>
-      <v-btn v-if="step > 1" variant="text" @click="step--"> Back </v-btn>
+      <v-btn v-if="step > 1" variant="text" @click="step--" class="border">
+        {{ $t("back") }}
+      </v-btn>
       <v-spacer></v-spacer>
       <v-btn v-if="step < 4" color="primary" variant="flat" @click="steps">
-        Next
+        {{ $t("next") }}
       </v-btn>
       <v-btn
         color="green-darken-1"
@@ -114,7 +118,7 @@
         @click="add"
         v-if="step === 4"
       >
-        Add
+        {{ $t("tabs.add") }}
       </v-btn>
     </v-card-actions>
   </v-card>
