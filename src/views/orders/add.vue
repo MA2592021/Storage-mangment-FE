@@ -48,7 +48,7 @@
           </v-col>
         </v-row>
       </v-container>
-      <small>*indicates required field</small> {{ order }}
+      <small>*indicates required field</small>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -60,7 +60,7 @@
 
 <script>
 import axios from "axios";
-import sweetalert from "sweetalert";
+import swal from "sweetalert";
 export default {
   data: () => ({
     order: {
@@ -97,7 +97,7 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err);
+          swal("error", response.data.errors[0].msg, "error");
         });
     },
   },

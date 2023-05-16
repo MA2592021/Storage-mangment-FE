@@ -331,7 +331,7 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal("success", "done", "success");
               this.propertiesload();
               this.dialog2 = false;
             }
@@ -348,7 +348,7 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal("success", "done", "success");
               this.propertiesload();
               this.dialog2 = false;
             }
@@ -368,7 +368,7 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal("success", "done", "success");
               this.materialsload();
               this.dialog2 = false;
             }
@@ -385,7 +385,7 @@ export default {
             if (response.data.errors) {
               swal("error", response.data.errors[0].msg, "errors");
             } else {
-              swal("success", "yayyy", "success");
+              swal("success", "done", "success");
               this.materialsload();
               this.dialog2 = false;
             }
@@ -422,7 +422,7 @@ export default {
           .patch("/api/materialEmployee/note/" + value.id, {
             note: value.note,
           })
-          .then(swal("success", "yayyy", "success"))
+          .then(swal("success", "done", "success"))
           .then(() => {
             this.dialog2 = false;
             this.materialsload();
@@ -432,7 +432,7 @@ export default {
           .patch("/api/custodyEmployee/note/" + value.id, {
             note: value.note,
           })
-          .then(swal("success", "yayyy", "success"))
+          .then(swal("success", "done", "success"))
           .then(() => {
             this.dialog2 = false;
             this.propertiesload();

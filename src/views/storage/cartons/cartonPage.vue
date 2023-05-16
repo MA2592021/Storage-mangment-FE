@@ -29,30 +29,6 @@
         ></v-text-field>
       </v-col>
 
-      <v-col cols="12" sm="6">
-        <v-autocomplete
-          label="colors "
-          v-model="carton.colors"
-          variant="underlined"
-          :readonly="dis === true"
-          chips
-          multiple
-          :items="colors"
-          item-title="name"
-        ></v-autocomplete>
-      </v-col>
-      <v-col cols="12" sm="6">
-        <v-autocomplete
-          label="sizes "
-          v-model="carton.sizes"
-          variant="underlined"
-          :readonly="dis === true"
-          chips
-          multiple
-          :items="sizes"
-          item-title="name"
-        ></v-autocomplete>
-      </v-col>
       <v-col cols="12" sm="6"
         ><v-textarea
           :clearable="dis === false"
@@ -97,7 +73,7 @@ import swal from "sweetalert";
 export default {
   data() {
     return {
-      carton: {},
+      carton: { model: { name: "" } },
       sizes: [],
       colors: [],
       orgcarton: {},

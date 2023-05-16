@@ -214,7 +214,19 @@ export default {
       // value
       //   ]
       // })
-      console.log("cartons", value);
+      console.log(value);
+      axios
+        .patch("/api/shipment/addCartons/" + this.$route.params.id, {
+          cartons: value,
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "cartons updated successfully", "success");
+            this.shipmentload();
+          }
+        });
     },
     approve() {
       swal({

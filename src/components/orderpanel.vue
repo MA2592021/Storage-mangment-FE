@@ -32,7 +32,7 @@
           <v-col cols="6" xs="12"
             ><v-autocomplete
               label="select color"
-              :items="selected ? selected.color : ''"
+              :items="selected ? selected.colors : ''"
               item-title="name"
               v-model="color"
               :disabled="dis"
@@ -42,7 +42,7 @@
           <v-col cols="6" xs="12"
             ><v-autocomplete
               label="select size"
-              :items="selected ? selected.size : ''"
+              :items="selected ? selected.sizes : ''"
               item-title="name"
               v-model="size"
               :disabled="dis"
@@ -73,7 +73,7 @@
               <template v-slot:item="{ item }">
                 <tr v-ripple>
                   <td>
-                    {{ item.columns.name }}
+                    {{ item.raw.id.name }}
                   </td>
                   <td>
                     {{ item.columns.size.name }}
@@ -82,7 +82,7 @@
                     {{ item.columns.color.name }}
                   </td>
                   <td>
-                    {{ item.columns.qty }}
+                    {{ item.columns.quantity }}
                   </td>
                   <td>
                     <v-btn
@@ -138,28 +138,21 @@
             <v-data-table
               v-model:items-per-page="itemsPerPage"
               :headers="headers1"
-              :items="reqmodel"
+              :items="ship1"
               item-value="name"
               class="elevation-1"
             >
-              <template v-slot:item="{ item }">
-                <tr v-ripple @click="dosomething(item.raw)">
-                  <td>
-                    {{ item.columns.name }}
-                  </td>
-                </tr>
-              </template></v-data-table
-            ></v-col
-          >
+            </v-data-table
+          ></v-col>
         </v-row>
-      </v-expansion-panel-text>
-    </v-expansion-panel></v-expansion-panels
-  >
+      </v-expansion-panel-text> </v-expansion-panel
+  ></v-expansion-panels>
 </template>
 
 <script>
 import axios from "axios";
 import swal from "sweetalert";
+import moment from "moment";
 export default {
   data() {
     return {
@@ -178,7 +171,7 @@ export default {
         },
         { title: "size", key: "size" },
         { title: "color", key: "color" },
-        { title: "quantity", key: "qty" },
+        { title: "quantity", key: "quantity" },
       ],
       headers1: [
         {
@@ -187,9 +180,16 @@ export default {
           sortable: false,
           key: "name",
         },
+        {
+          title: "date",
+          align: "start",
+          sortable: false,
+          key: "date",
+        },
       ],
       model: [],
       qty: "",
+      ship1: [],
     };
   },
   methods: {
@@ -252,10 +252,18 @@ export default {
   created() {
     this.loadmodel();
     console.log(this.reqmodel);
+    this.ship.forEach((element) => {
+      const x = {};
+      x.name = element.name;
+      x.date = moment(element.createdAt).calendar();
+      console.log(x);
+      this.ship1.push(x);
+    });
   },
   props: {
     name: String,
     reqmodel: Array,
+    ship: Array,
   },
 };
 </script>

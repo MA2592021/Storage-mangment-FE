@@ -70,7 +70,9 @@
     class="mt-2"
     v-bind:name="order.name"
     v-bind:reqmodel="order.models"
+    v-bind:ship="order.shipments"
     @models="updatemodels"
+    v-if="x === 1"
   />
 </template>
 
@@ -86,6 +88,7 @@ export default {
       clients: [],
       orgorder: {},
       dis: true,
+      x: 0,
     };
   },
   created() {
@@ -99,6 +102,7 @@ export default {
         console.log(response);
         this.orgorder = response.data.data;
         this.clone();
+        this.x = 1;
       });
     },
     clientsload() {

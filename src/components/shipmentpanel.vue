@@ -152,7 +152,7 @@ export default {
       const cartons = [];
       this.reqcarton.forEach((element) => {
         const x = {};
-        x.carton = element._id;
+        x.id = element._id;
         x.quantity = element.qty;
         cartons.push(x);
       });
