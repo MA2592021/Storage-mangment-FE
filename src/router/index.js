@@ -482,6 +482,39 @@ const router = createRouter({
         },
       ],
     },
+    //machine type routes
+    {
+      path: "/utils/machinetype/",
+      name: "machinet-land",
+
+      component: () => import("../views/utils/machinetype/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "machinet-dash",
+
+          component: () => import("../views/utils/machinetype/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "machinet-add",
+
+          component: () => import("../views/utils/machinetype/add.vue"),
+        },
+        {
+          path: "all",
+          name: "machinet-all",
+
+          component: () => import("../views/utils/machinetype/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "machinet-page",
+
+          component: () => import("../views/utils/machinetype/machinePage.vue"),
+        },
+      ],
+    },
     //stage routes
     {
       path: "/utils/stage/",

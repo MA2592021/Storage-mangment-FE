@@ -8,27 +8,37 @@
       v-for="(stage, index) in stages"
       :key="stage"
     >
-      <div class="text-overline mb-1">
-        {{ $t("models.stageNo") }} {{ index + 1 }}
-      </div>
-      <v-autocomplete
-        v-model="selected"
-        :items="data"
-        item-title="name"
-        :label="$t(`models.stageSelect`)"
-        return-object
-        @update:modelValue="dosomthing(selected, stage.id)"
-      ></v-autocomplete>
+
+      <div class="text-overline mb-1">stage number {{ index + 1 }}</div>
+      <v-row
+        ><v-col cols="12" sm="9"
+          ><v-autocomplete
+            v-model="selected"
+            :items="data"
+            item-title="name"
+            label="select stage"
+            return-object
+            @update:modelValue="dosomthing(selected, stage.id)"
+          ></v-autocomplete></v-col
+        ><v-col cols="12" sm="3"
+          ><v-autocomplete
+            v-model="selectedmt"
+            :items="machinetypes"
+            item-title="name"
+            label="select machine type"
+            return-object
+            @update:modelValue="dosomthingmachine(selectedmt, stage.id)"
+          ></v-autocomplete></v-col
+      ></v-row>
+
 
       <h2 class="text-h5 mb-6">{{ stage.name }}</h2>
 
       <p class="mb-4 text-medium-emphasis text-body-2">
-        {{ stage.desc }}
+        stage machien type : {{ stage.machine ? stage.machine.name : "" }}
 
         <br />
 
-        Stage ID is : {{ stage._id }}
-        <br />
         id {{ stage.id }}
       </p>
 
@@ -93,14 +103,23 @@ export default {
       realstages: [],
       id: 0,
       selected: null,
+      selectedmt: { name: "" },
       data: [],
+      machinetypes: [],
     };
   },
 
   created() {
-    axios.get("/api/stage/").then((response) => {
-      this.data = response.data.data;
-    });
+    axios
+      .get("/api/stage/")
+      .then((response) => {
+        this.data = response.data.data;
+      })
+      .then(() => {
+        axios.get("/api/machineType").then((response) => {
+          this.machinetypes = response.data.data;
+        });
+      });
   },
   methods: {
     addstage() {
@@ -145,22 +164,30 @@ export default {
     },
     dosomthing(selected, index) {
       console.log("im alive");
-      console.log(selected);
+      //console.log(selected);
       console.log(this.stages.find((m) => m.id === index));
       this.stages.find((m) => m.id === index).name = selected.name;
-      this.stages.find((m) => m.id === index).desc = selected.desc;
+      this.stages.find((m) => m.id === index).note = selected.note;
       this.stages.find((m) => m.id === index)._id = selected._id;
       this.selected = null;
     },
+    dosomthingmachine(selected, index) {
+      console.log("im alive");
+      //console.log(selected);
+      console.log(this.stages.find((m) => m.id === index));
+      this.stages.find((m) => m.id === index).machine = selected;
+
+      this.selectedmt = null;
+    },
     save() {
-      let counter = 0;
+      let counter = 1;
 
       this.realstages = [];
       this.stages.forEach((element) => {
         const x = {};
-
+        x.machineType = element.machine._id;
         x.id = element._id;
-        x.piriority = counter;
+        x.priority = counter;
         this.realstages.push(x);
         counter += 1;
       });

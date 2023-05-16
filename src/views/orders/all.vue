@@ -41,6 +41,7 @@ export default {
       response.data.data.forEach((element) => {
         console.log(element);
         const x = {};
+        x._id = element._id;
         x.name = element.name;
         x.client = element.client.name;
         x.time = moment(element.createdAt).calendar();

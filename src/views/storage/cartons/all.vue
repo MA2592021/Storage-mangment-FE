@@ -49,7 +49,7 @@ export default {
       // console.log(value);
       // console.log(this.carton.employee);
       this.$router.push({
-        path: `/utils/carton/${value._id}`,
+        path: `/storage/carton/${value._id}`,
       });
     },
   },

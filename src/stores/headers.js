@@ -69,11 +69,11 @@ export const useheaders = defineStore("headers", {
     model_header: [
       {
         align: "start",
-        key: "_id",
+        key: "name",
         sortable: false,
-        title: "ID",
+        title: "name",
       },
-      { title: "name", key: "name" },
+
       { title: "details", key: "details" },
     ],
     request_header: [
@@ -117,6 +117,7 @@ export const useheaders = defineStore("headers", {
       { title: "model", key: "model" },
     ],
     type_header: [{ title: "name", key: "type" }],
+    machinetype_header: [{ title: "name", key: "name" }],
     stage_header: [
       {
         align: "start",

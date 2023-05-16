@@ -32,23 +32,21 @@
           <v-col cols="6" xs="12"
             ><v-autocomplete
               label="select colors"
-              :items="model"
+              :items="selected ? selected.colors : ''"
               item-title="name"
-              v-model="selected"
+              v-model="colors"
               :disabled="dis"
-              @update:modelValue="this.qty = ''"
-              return-object
+              item-value="_id"
             ></v-autocomplete
           ></v-col>
           <v-col cols="6" xs="12"
             ><v-autocomplete
               label="select sizes"
-              :items="model"
+              :items="selected ? selected.sizes : ''"
               item-title="name"
-              v-model="selected"
+              v-model="sizes"
               :disabled="dis"
-              @update:modelValue="this.qty = ''"
-              return-object
+              item-value="_id"
             ></v-autocomplete></v-col
           ><v-col cols="3" xs="6"
             ><v-text-field
@@ -81,7 +79,12 @@
                     <h4>{{ item.raw.qty }} {{ item.raw.type }}</h4>
                   </td>
                   <td>
-                    <v-btn color="red" :disabled="dis">Delete</v-btn>
+                    <v-btn
+                      color="red"
+                      :disabled="dis"
+                      @click="deleteitem(item.raw._id)"
+                      >Delete</v-btn
+                    >
                   </td>
                 </tr>
               </template></v-data-table
@@ -157,6 +160,8 @@ export default {
       selectedtype: null,
       selected: null,
       itemsPerPage: 5,
+      colors: [],
+      sizes: [],
       dis: true,
       headers: [
         {
@@ -177,15 +182,13 @@ export default {
           key: "name",
         },
       ],
-
       model: [],
-
       qty: "",
     };
   },
   methods: {
     appendtable() {
-      const found = this.reqmodel.find(
+      const found = this.model.find(
         (element) => element._id === this.selected._id
       );
 
@@ -200,7 +203,9 @@ export default {
           x.qty = this.qty;
           x.name = this.selected.name;
           x._id = this.selected._id;
-          this.reqmodel.push(x);
+          x.sizes = this.sizes;
+          x.colors = this.colors;
+          this.model.push(x);
           this.resett();
         }
       }
@@ -213,24 +218,28 @@ export default {
       this.qty = "";
     },
     deleteitem(id) {
-      const index = this.reqmodel.findIndex((element) => element._id === id);
-      this.reqmodel.splice(index, 1);
+      const index = this.model.findIndex((element) => element._id === id);
+      this.model.splice(index, 1);
+    },
+    appendreq() {
+      const models = [];
+      this.model.forEach((element) => {
+        const x = {};
+        x.model = element._id;
+        x.quantity = element.qty;
+        models.push(x);
+      });
+      this.$emit("models", models);
+    },
+    loadmodel() {
+      axios.get("/api/model/").then((response) => {
+        this.model = response.data.data;
+      });
     },
   },
-  appendreq() {
-    const models = [];
-    this.reqmodel.forEach((element) => {
-      const x = {};
-      x.model = element._id;
-      x.quantity = element.qty;
-      models.push(x);
-    });
-    this.$emit("models", models);
-  },
+
   created() {
-    axios.get("/api/model/").then((response) => {
-      this.model = response.data.data;
-    });
+    this.loadmodel();
   },
   props: {
     name: String,
