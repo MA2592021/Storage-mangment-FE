@@ -144,14 +144,15 @@ export default {
     image: null,
     model: {
       name: "",
-      details: "",
+      details: "    ",
       colors: null,
       sizes: null,
       img: "",
       stages: null,
       consumption: null,
-      note: "",
+      note: "    ",
     },
+    temp_id: "",
     materials: [
       { name: "zorar", id: "232" },
       { name: "white 2omash ", id: "231" },
@@ -173,9 +174,37 @@ export default {
           note: this.model.note,
         })
         .then((response) => {
-          axios.patch("/api/model/stages/add/" + response.data.data._id, {
-            stages: this.model.stages,
-          });
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            console.log("im adding stages");
+            console.log(response.data);
+            this.temp_id = response.data.data._id;
+            axios
+              .patch("/api/model/stages/add/" + this.temp_id, {
+                stages: this.model.stages,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  console.log(response);
+                  console.log("im adding consumptions");
+                  axios
+                    .patch("/api/model/consumptions/add/" + this.temp_id, {
+                      consumptions: this.model.consumption,
+                    })
+                    .then((r) => {
+                      if (r.data.errors) {
+                        swal("error", r.data.errors[0].msg, "error");
+                      } else {
+                        swal("success", "model added successfully", "success");
+                        this.$router.push({ path: "/model/all" });
+                      }
+                    });
+                }
+              });
+          }
         });
     },
     sizeload() {
@@ -214,7 +243,7 @@ export default {
     },
     stagethings(value) {
       this.model.stages = value;
-      console.log(this.model.stages);
+      console.log("model stages", this.model.stages);
     },
     materialthings(value) {
       this.model.consumption = value;

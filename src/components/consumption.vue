@@ -28,6 +28,7 @@
           v-model="colorselect[index]"
           chips
           multiple
+          item-value="_id"
         ></v-autocomplete
       ></v-col>
       <v-col cols="12" sm="2"
@@ -38,6 +39,7 @@
           v-model="sizeselect[index]"
           chips
           multiple
+          item-value="_id"
         ></v-autocomplete
       ></v-col>
       <v-col cols="12" sm="1"
@@ -52,6 +54,7 @@
     >
     <v-btn class="mt-2" color="success" @click="save()">save</v-btn>
   </v-col>
+  {{ colorselect[0] }}
 </template>
 
 <script>

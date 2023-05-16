@@ -22,19 +22,11 @@
             <v-data-table
               v-model:items-per-page="itemsPerPage"
               :headers="headers1"
-              :items="reqmodel"
-              item-value="name"
+              :items="stages"
               class="elevation-1"
             >
-              <template v-slot:item="{ item }">
-                <tr v-ripple @click="dosomething(item.raw)">
-                  <td>
-                    {{ item.columns.name }}
-                  </td>
-                </tr>
-              </template></v-data-table
-            ></v-col
-          >
+            </v-data-table
+          ></v-col>
         </v-row>
       </v-expansion-panel-text> </v-expansion-panel
     ><v-expansion-panel>
@@ -79,7 +71,7 @@
       <v-expansion-panel-title>
         <template v-slot:default="{ expanded }">
           <v-row no-gutters>
-            <v-col cols="4" class="d-flex justify-start"> materials </v-col>
+            <v-col cols="4" class="d-flex justify-start"> consumptions </v-col>
             <v-col cols="8" class="text-grey">
               <v-fade-transition leave-absolute>
                 <span v-if="expanded" key="0">
@@ -146,7 +138,19 @@ export default {
           title: "name",
           align: "start",
           sortable: false,
-          key: "name",
+          key: "id",
+        },
+        {
+          title: "machine type",
+          align: "start",
+          sortable: false,
+          key: "machineType",
+        },
+        {
+          title: "priority",
+          align: "start",
+          sortable: false,
+          key: "priority",
         },
       ],
 
@@ -205,9 +209,8 @@ export default {
     });
   },
   props: {
-    name: String,
-    reqmodel: Array,
-    status: String,
+    stages: Array,
+    consumption: Array,
   },
 };
 </script>

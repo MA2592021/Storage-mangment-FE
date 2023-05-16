@@ -28,15 +28,6 @@
           required
         ></v-text-field>
       </v-col>
-      <v-col cols="12" sm="6" md="6">
-        <v-text-field
-          label="shipment"
-          variant="underlined"
-          :readonly="dis === true"
-          v-model="carton.shipment"
-          required
-        ></v-text-field>
-      </v-col>
 
       <v-col cols="12" sm="6">
         <v-autocomplete

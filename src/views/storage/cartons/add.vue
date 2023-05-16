@@ -34,6 +34,7 @@
               hint="Required"
               :items="models"
               item-title="name"
+              item-value="_id"
             ></v-autocomplete
           ></v-col>
           <v-col cols="12" sm="6">
@@ -46,6 +47,7 @@
               hint="Required"
               :items="sizes"
               item-title="name"
+              item-value="_id"
             ></v-autocomplete
           ></v-col>
           <v-col cols="12" sm="6">
@@ -58,6 +60,7 @@
               multiple
               :items="colors"
               item-title="name"
+              item-value="_id"
             ></v-autocomplete
           ></v-col>
           <v-col cols="12" sm="6" md="6">
@@ -89,7 +92,6 @@ export default {
       name: "",
       quantity: "",
       model: null,
-      shipment: "",
       colors: null,
       sizes: null,
       note: "    ",
@@ -126,10 +128,10 @@ export default {
       axios
         .post("/api/carton", {
           name: this.carton.name,
-          code: this.carton.code,
-          type: this.carton.type,
-          rate: this.carton.rate,
-          price: this.carton.price,
+          quantity: this.carton.quantity,
+          model: this.carton.model,
+          size: this.carton.size,
+          color: this.carton.color,
           note: this.carton.note,
         })
         .then((response) => {
@@ -137,7 +139,7 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success");
+            swal("success", "carton added successfully", "success");
           }
         })
         .catch((err) => {

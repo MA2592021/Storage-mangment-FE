@@ -3,41 +3,41 @@
     <v-col cols="12" class="text-center mt-4"
       ><span
         ><v-icon
-          icon=" mdi-hanger"
-          style="color: #fbc02d"
+          icon=" mdi-format-list-bulleted-type"
+          style="size: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="color: #fbc02d">All Models</span></span
+        <span class="text-h5" style="size: #fbc02d">All types</span></span
       ></v-col
     >
 
     <v-col cols="12">
       <tt
-        v-bind:data="models"
-        v-bind:header="headers.model_header"
+        v-bind:data="types"
+        v-bind:header="headers.machinetype_header"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>
 </template>
 
 <script>
-import tt from "../../components/table.vue";
+import tt from "../../../components/table.vue";
+import { useheaders } from "../../../stores/headers";
 import axios from "axios";
-import { useheaders } from "../../stores/headers";
-
 export default {
   components: {
     tt,
   },
   data() {
     return {
-      models: [],
+      types: [],
     };
   },
   created() {
-    //Get route here
-    axios.get("/api/model/").then((response) => {
-      this.models = response.data.data;
+    //Get route
+    axios.get("/api/machineType/").then((response) => {
+      console.log(response);
+      this.types = response.data.data;
     });
   },
   setup() {
@@ -46,10 +46,10 @@ export default {
   },
   methods: {
     tableClicked(value) {
-      console.log(value);
-      // console.log(this.employees.employee);
+      // console.log(value);
+      // console.log(this.types.employee);
       this.$router.push({
-        path: `/model/${value._id}`,
+        path: `/utils/machinetype/${value._id}`,
       });
     },
   },

@@ -197,7 +197,7 @@ export default {
         {
           icon: "mdi-sitemap",
           text: this.$t("navbar.machinetypes"),
-          route: "/utils/Stage/dashboard",
+          route: "/utils/machinetype/dashboard",
         },
       ],
     };
