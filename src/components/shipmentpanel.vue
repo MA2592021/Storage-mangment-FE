@@ -61,7 +61,9 @@
                     <h4>{{ item.raw.qty }} {{ item.raw.type }}</h4>
                   </td>
                   <td>
-                    <v-btn color="red" :disabled="dis">Delete</v-btn>
+                    <v-btn color="red" @click="deleteitem()" :disabled="dis"
+                      >Delete</v-btn
+                    >
                   </td>
                 </tr>
               </template></v-data-table
@@ -146,18 +148,20 @@ export default {
       const index = this.reqcarton.findIndex((element) => element._id === id);
       this.reqcarton.splice(index, 1);
     },
+    appendreq() {
+      const cartons = [];
+      this.reqcarton.forEach((element) => {
+        const x = {};
+        x.carton = element._id;
+        x.quantity = element.qty;
+        cartons.push(x);
+      });
+      this.dis = true;
+      this.$emit("cartons", cartons);
+      console.log("emited");
+    },
   },
-  appendreq() {
-    const cartons = [];
-    this.reqcarton.forEach((element) => {
-      const x = {};
-      x.carton = element._id;
-      x.quantity = element.qty;
-      cartons.push(x);
-    });
-    this.dis = true;
-    this.$emit("cartons", cartons);
-  },
+
   created() {
     axios.get("/api/carton").then((response) => {
       this.carton = response.data.data;

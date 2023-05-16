@@ -28,7 +28,7 @@
               multiple
               label="sizes"
               item-title="name"
-              :readonly="dis"
+              readonly
             ></v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6" md="6">
@@ -39,7 +39,7 @@
               multiple
               label="colors"
               item-title="name"
-              :readonly="dis"
+              readonly
             ></v-autocomplete>
           </v-col>
 
@@ -72,9 +72,18 @@
       <v-btn
         class="ml-auto"
         :disabled="dis === true || isEditing === true"
+        prepend-icon="mdi-delete-circle"
+        color="red"
+        @click="deletee()"
+      >
+        Delete
+      </v-btn>
+      <v-btn
+        class="ml-auto"
+        :disabled="dis === true || isEditing === true"
         prepend-icon="mdi-check-outline"
         color="green"
-        @click="dialog = !dialog"
+        @click="save()"
       >
         Save
       </v-btn>
@@ -83,7 +92,7 @@
   <v-card class="mt-3" style="width: 100%">
     <modelpanel
       v-bind:stages="model.stages"
-      v-bind:consumption="model.consumptions"
+      v-bind:consumption="model.consumption"
     />
   </v-card>
 </template>
@@ -159,10 +168,40 @@ export default {
       this.clone();
     },
     save() {
-      this.dis = !this.dis;
-      this.dialog = false;
+      axios
+        .patch("/api/model/" + this.$route.params.id, {
+          note: this.model.note,
+          details: this.model.details,
+          name: this.model.name,
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "model updated successfully", "success");
+            this.modelload();
+            this.dis = true;
+          }
+        });
 
       //save route here
+    },
+    deletee() {
+      swal({
+        title: "Are you sure?",
+        text: "Are you sure that you want to delete this model?",
+        icon: "warning",
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          axios
+            .delete("/api/model/" + this.$route.params.id)
+            .then((response) => {
+              swal("success", "model deleted successfully", "success");
+              this.$router.push({ path: "/model/all" });
+            });
+        }
+      });
     },
   },
 };

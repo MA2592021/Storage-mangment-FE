@@ -171,11 +171,21 @@ export default {
   methods: {
     add() {
       // this.url = URL.createObjectURL(this.employee.img);
+      const temp_colors = [];
+      const temp_sizes = [];
+      this.model.colors.forEach((element) => {
+        temp_colors.push(element._id);
+      });
+      this.model.sizes.forEach((element) => {
+        temp_sizes.push(element._id);
+      });
       axios
         .post("/api/model", {
           name: this.model.name,
           details: this.model.details,
           note: this.model.note,
+          colors: temp_colors,
+          sizes: temp_sizes,
         })
         .then((response) => {
           if (response.data.errors) {

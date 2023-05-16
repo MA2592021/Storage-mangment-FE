@@ -24,7 +24,7 @@
           label="model"
           variant="underlined"
           :readonly="dis === true"
-          v-model="carton.model"
+          v-model="carton.model.name"
           required
         ></v-text-field>
       </v-col>

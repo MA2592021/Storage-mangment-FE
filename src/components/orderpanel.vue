@@ -31,22 +31,22 @@
           ></v-col>
           <v-col cols="6" xs="12"
             ><v-autocomplete
-              label="select colors"
-              :items="selected ? selected.colors : ''"
+              label="select color"
+              :items="selected ? selected.color : ''"
               item-title="name"
-              v-model="colors"
+              v-model="color"
               :disabled="dis"
-              item-value="_id"
+              return-object
             ></v-autocomplete
           ></v-col>
           <v-col cols="6" xs="12"
             ><v-autocomplete
-              label="select sizes"
-              :items="selected ? selected.sizes : ''"
+              label="select size"
+              :items="selected ? selected.size : ''"
               item-title="name"
-              v-model="sizes"
+              v-model="size"
               :disabled="dis"
-              item-value="_id"
+              return-object
             ></v-autocomplete></v-col
           ><v-col cols="3" xs="6"
             ><v-text-field
@@ -76,7 +76,13 @@
                     {{ item.columns.name }}
                   </td>
                   <td>
-                    <h4>{{ item.raw.qty }} {{ item.raw.type }}</h4>
+                    {{ item.columns.size.name }}
+                  </td>
+                  <td>
+                    {{ item.columns.color.name }}
+                  </td>
+                  <td>
+                    {{ item.columns.qty }}
                   </td>
                   <td>
                     <v-btn
@@ -160,8 +166,8 @@ export default {
       selectedtype: null,
       selected: null,
       itemsPerPage: 5,
-      colors: [],
-      sizes: [],
+      color: null,
+      size: null,
       dis: true,
       headers: [
         {
@@ -170,8 +176,8 @@ export default {
           sortable: false,
           key: "name",
         },
-        { title: "sizes", key: "sizes" },
-        { title: "colors", key: "colors" },
+        { title: "size", key: "size" },
+        { title: "color", key: "color" },
         { title: "quantity", key: "qty" },
       ],
       headers1: [
@@ -188,26 +194,26 @@ export default {
   },
   methods: {
     appendtable() {
-      const found = this.model.find(
-        (element) => element._id === this.selected._id
-      );
-
-      if (found) {
-        swal("error", "you cant append same item twice in request", "error");
+      if (
+        this.qty === "" ||
+        this.qty === "0" ||
+        this.color === null ||
+        this.color === "" ||
+        this.size === null ||
+        this.size === ""
+      ) {
+        swal("error", "please enter the information", "error");
       } else {
-        if (this.qty === "" || this.qty === "0") {
-          swal("error", "please enter the quantity", "error");
-        } else {
-          const x = {};
+        const x = {};
 
-          x.qty = this.qty;
-          x.name = this.selected.name;
-          x._id = this.selected._id;
-          x.sizes = this.sizes;
-          x.colors = this.colors;
-          this.model.push(x);
-          this.resett();
-        }
+        x.qty = this.qty;
+        x.name = this.selected.name;
+        x._id = this.selected._id;
+        x.size = this.size;
+        x.color = this.color;
+        console.log(x);
+        this.reqmodel.push(x);
+        this.resett();
       }
     },
     dosomething(value) {
@@ -215,18 +221,22 @@ export default {
     },
     resett() {
       this.selected = null;
+      this.color = null;
+      this.size = null;
       this.qty = "";
     },
     deleteitem(id) {
-      const index = this.model.findIndex((element) => element._id === id);
-      this.model.splice(index, 1);
+      const index = this.reqmodel.findIndex((element) => element._id === id);
+      this.reqmodel.splice(index, 1);
     },
     appendreq() {
       const models = [];
-      this.model.forEach((element) => {
+      this.reqmodel.forEach((element) => {
         const x = {};
-        x.model = element._id;
+        x.id = element._id;
         x.quantity = element.qty;
+        x.size = element.size._id;
+        x.color = element.color._id;
         models.push(x);
       });
       this.$emit("models", models);
@@ -234,17 +244,18 @@ export default {
     loadmodel() {
       axios.get("/api/model/").then((response) => {
         this.model = response.data.data;
+        console.log(this.model);
       });
     },
   },
 
   created() {
     this.loadmodel();
+    console.log(this.reqmodel);
   },
   props: {
     name: String,
     reqmodel: Array,
-    status: String,
   },
 };
 </script>

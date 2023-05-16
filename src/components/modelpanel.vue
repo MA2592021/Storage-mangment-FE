@@ -50,17 +50,25 @@
           <v-col col="6" xs="12" align="center">
             <v-data-table
               v-model:items-per-page="itemsPerPage"
-              :headers="headers1"
-              :items="reqmodel"
+              :headers="headers2"
+              :items="orders"
               item-value="name"
               class="elevation-1"
             >
-              <template v-slot:item="{ item }">
-                <tr v-ripple @click="dosomething(item.raw)">
-                  <td>
-                    {{ item.columns.name }}
-                  </td>
-                </tr>
+              <template v-slot:item.color="{ item }">
+                <h4 v-for="model in item.raw.models" :key="model">
+                  {{ model.color.name }}
+                </h4>
+              </template>
+              <template v-slot:item.size="{ item }">
+                <h4 v-for="model in item.raw.models" :key="model">
+                  {{ model.size.name }}
+                </h4>
+              </template>
+              <template v-slot:item.quantity="{ item }">
+                <h4 v-for="model in item.raw.models" :key="model">
+                  {{ model.quantity }}
+                </h4>
               </template></v-data-table
             ></v-col
           >
@@ -88,19 +96,22 @@
           <v-col col="6" xs="12" align="center">
             <v-data-table
               v-model:items-per-page="itemsPerPage"
-              :headers="headers1"
-              :items="reqmodel"
+              :headers="headers"
+              :items="consumption"
               item-value="name"
               class="elevation-1"
             >
-              <template v-slot:item="{ item }">
-                <tr v-ripple @click="dosomething(item.raw)">
-                  <td>
-                    {{ item.columns.name }}
-                  </td>
-                </tr>
-              </template></v-data-table
-            ></v-col
+              <template v-slot:item.colors="{ item }">
+                <h4 v-for="color in item.raw.colors" :key="color">
+                  {{ color.name }}
+                </h4>
+              </template>
+              <template v-slot:item.sizes="{ item }">
+                <h4 v-for="size in item.raw.sizes" :key="size">
+                  {{ size.name }}
+                </h4>
+              </template>
+            </v-data-table></v-col
           >
         </v-row>
       </v-expansion-panel-text>
@@ -118,33 +129,31 @@ export default {
   },
   data() {
     return {
-      selectedtype: null,
-      selected: null,
       itemsPerPage: 5,
       dis: true,
       headers: [
         {
-          title: "name",
+          title: "material name",
           align: "start",
           sortable: false,
-          key: "name",
+          key: "material.name",
         },
-        { title: "sizes", key: "sizes" },
+        { title: "quantity", key: "quantity" },
         { title: "colors", key: "colors" },
-        { title: "quantity", key: "qty" },
+        { title: "sizes", key: "sizes" },
       ],
       headers1: [
         {
           title: "name",
           align: "start",
           sortable: false,
-          key: "id",
+          key: "id.name",
         },
         {
           title: "machine type",
           align: "start",
           sortable: false,
-          key: "machineType",
+          key: "machineType.name",
         },
         {
           title: "priority",
@@ -153,59 +162,40 @@ export default {
           key: "priority",
         },
       ],
-
-      model: [],
-
-      qty: "",
+      headers2: [
+        {
+          title: "name",
+          align: "start",
+          sortable: false,
+          key: "name",
+        },
+        {
+          title: "quantity",
+          align: "start",
+          sortable: false,
+          key: "quantity",
+        },
+        {
+          title: "size",
+          align: "start",
+          sortable: false,
+          key: "size",
+        },
+        {
+          title: "color",
+          align: "start",
+          sortable: false,
+          key: "color",
+        },
+      ],
+      orders: [],
     };
   },
-  methods: {
-    appendtable() {
-      const found = this.reqmodel.find(
-        (element) => element._id === this.selected._id
-      );
 
-      if (found) {
-        swal("error", "you cant append same item twice in request", "error");
-      } else {
-        if (this.qty === "" || this.qty === "0") {
-          swal("error", "please enter the quantity", "error");
-        } else {
-          const x = {};
-
-          x.qty = this.qty;
-          x.name = this.selected.name;
-          x._id = this.selected._id;
-          this.reqmodel.push(x);
-          this.resett();
-        }
-      }
-    },
-    dosomething(value) {
-      this.$router.push({ path: "/shipment/" + value._id });
-    },
-    resett() {
-      this.selected = null;
-      this.qty = "";
-    },
-    deleteitem(id) {
-      const index = this.reqmodel.findIndex((element) => element._id === id);
-      this.reqmodel.splice(index, 1);
-    },
-  },
-  appendreq() {
-    const models = [];
-    this.reqmodel.forEach((element) => {
-      const x = {};
-      x.model = element._id;
-      x.quantity = element.qty;
-      models.push(x);
-    });
-    this.$emit("models", models);
-  },
   created() {
-    axios.get("/api/model/").then((response) => {
-      this.model = response.data.data;
+    axios.get("/api/order/model/" + this.$route.params.id).then((response) => {
+      this.orders = response.data.data;
+      console.log(this.orders);
     });
   },
   props: {

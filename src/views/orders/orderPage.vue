@@ -70,6 +70,7 @@
     class="mt-2"
     v-bind:name="order.name"
     v-bind:reqmodel="order.models"
+    @models="updatemodels"
   />
 </template>
 
@@ -136,7 +137,10 @@ export default {
     clone() {
       this.order.id = this.orgorder._id;
       this.order.name = this.orgorder.name;
-
+      this.order.models = this.orgorder.models;
+      this.order.shipments = this.orgorder.shipments;
+      this.order.totalmat = this.orgorder.totalMaterialsRequired;
+      this.totalqty = this.orgorder.totalQuantity;
       this.order.details = this.orgorder.details;
       this.order.client = this.orgorder.client;
       this.order.note = this.orgorder.note;
@@ -169,6 +173,20 @@ export default {
             });
         }
       });
+    },
+    updatemodels(value) {
+      console.log(value);
+      axios
+        .patch("/api/order/models/" + this.$route.params.id, {
+          models: value,
+        })
+        .then((response) => {
+          if (response.data.errors) {
+            swal("error", response.data.errors[0].msg, "error");
+          } else {
+            swal("success", "models updated successfully", "success");
+          }
+        });
     },
   },
 };
