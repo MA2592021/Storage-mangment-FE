@@ -156,7 +156,7 @@ const router = createRouter({
       path: "/storage/carton/",
       name: "carton-land",
 
-      component: () => import("../views/storage/cartons/landpage.vue"),
+      component: () => import("../views/storage/cartons/landPage.vue"),
       children: [
         {
           path: "dashboard",
@@ -321,7 +321,7 @@ const router = createRouter({
       path: "/order/",
       name: "order-land",
 
-      component: () => import("../views/orders/landpage.vue"),
+      component: () => import("../views/orders/landPage.vue"),
       children: [
         {
           path: "dashboard",
@@ -354,7 +354,7 @@ const router = createRouter({
       path: "/utils/color/",
       name: "color-land",
 
-      component: () => import("../views/utils/colors/landpage.vue"),
+      component: () => import("../views/utils/colors/landPage.vue"),
       children: [
         {
           path: "dashboard",
@@ -388,7 +388,7 @@ const router = createRouter({
       path: "/utils/size/",
       name: "size-land",
 
-      component: () => import("../views/utils/sizes/landpage.vue"),
+      component: () => import("../views/utils/sizes/landPage.vue"),
       children: [
         {
           path: "dashboard",
@@ -421,7 +421,7 @@ const router = createRouter({
       path: "/utils/role/",
       name: "role-land",
 
-      component: () => import("../views/utils/roles/landpage.vue"),
+      component: () => import("../views/utils/roles/landPage.vue"),
       children: [
         {
           path: "dashboard",
@@ -454,7 +454,7 @@ const router = createRouter({
       path: "/utils/type/",
       name: "type-land",
 
-      component: () => import("../views/utils/types/landpage.vue"),
+      component: () => import("../views/utils/types/landPage.vue"),
       children: [
         {
           path: "dashboard",
@@ -487,7 +487,7 @@ const router = createRouter({
       path: "/utils/stage/",
       name: "stage-land",
 
-      component: () => import("../views/utils/stages/landpage.vue"),
+      component: () => import("../views/utils/stages/landPage.vue"),
       children: [
         {
           path: "dashboard",

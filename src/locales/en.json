@@ -41,6 +41,12 @@
   "totalqty": "Total Quantity",
   "lastdate": "Last Date",
   "append": "Append",
+  "colors": "Colors",
+  "sizes": "Sizes",
+  "image": "Image",
+  "pickImage": "Pick up image",
+  "next": "Next",
+  "back": "Back",
   "employees": {
     "employees": "Employees",
     "all": "All Employees",
@@ -49,5 +55,15 @@
 
     "p1": "Properties with",
     "p2": "MAterials with"
+  },
+  "models": {
+    "allModels": "All Models",
+    "addModel": "Add A Model",
+
+    "stageNo": "Stages Number",
+    "stageSelect": "Stage select",
+    "addStage": "Add Stage",
+    "up": "Up",
+    "down": "Down"
   }
 }

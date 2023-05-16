@@ -8,12 +8,14 @@
       v-for="(stage, index) in stages"
       :key="stage"
     >
-      <div class="text-overline mb-1">stage number {{ index + 1 }}</div>
+      <div class="text-overline mb-1">
+        {{ $t("models.stageNo") }} {{ index + 1 }}
+      </div>
       <v-autocomplete
         v-model="selected"
         :items="data"
         item-title="name"
-        label="select stage"
+        :label="$t(`models.stageSelect`)"
         return-object
         @update:modelValue="dosomthing(selected, stage.id)"
       ></v-autocomplete>
@@ -41,7 +43,7 @@
             width="90"
             @click="deletee(stage.id)"
           >
-            Delete
+            {{ $t("delete") }}
           </v-btn>
         </v-col>
         <v-col cols="6">
@@ -50,30 +52,32 @@
             color="warning"
             rounded
             variant="flat"
-            width="90"
+            width="110"
             @click="up(stage.id)"
           >
-            &uarr; up
+            &uarr; {{ $t("models.up") }}
           </v-btn>
           <v-btn
             class="text-none ma-1"
             color="warning"
             rounded
             variant="flat"
-            width="90"
+            width="110"
             @click="down(stage.id)"
           >
-            &darr; down
+            &darr; {{ $t("models.down") }}
           </v-btn>
         </v-col></v-row
       >
     </v-sheet></transition-group
   >
   <v-col class="mx-auto" align="center">
-    <v-btn class="mt-2 mr-2" color="warning" @click="addstage()"
-      >Add Stage</v-btn
-    >
-    <v-btn class="mt-2" color="success" @click="save()">save</v-btn></v-col
+    <v-btn class="mt-2 mr-2" color="warning" @click="addstage()">{{
+      $t("models.addStage")
+    }}</v-btn>
+    <v-btn class="mt-2" color="success" @click="save()">{{
+      $t("save")
+    }}</v-btn></v-col
   >
 </template>
 

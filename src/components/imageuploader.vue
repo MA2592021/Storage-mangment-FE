@@ -9,11 +9,11 @@
       <v-file-input
         v-model="image"
         accept="image/png, image/jpeg, image/bmp"
-        placeholder="Pick an image"
+        :placeholder="$t(`pickImage`)"
         prepend-icon="mdi-camera"
         @change="selectImage"
         @click:clear="clearImagePreview()"
-        label="Image"
+        :label="$t(`image`)"
       ></v-file-input>
     </v-card-text>
   </v-card>
