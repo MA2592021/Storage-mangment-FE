@@ -29,7 +29,8 @@
       <v-row align="center" class="ma-10">
         <v-col align="center">
           <v-avatar image="/arkan_logo-no-text.png" class="ma-1"></v-avatar>
-          <p class="text-subtitle-1">username</p>
+          <p class="text-subtitle-1">{{ username }}</p>
+          <p class="text-subtitle-1">{{ rolename }}</p>
         </v-col>
 
         <v-switch
@@ -45,15 +46,16 @@
 
       <v-list>
         <v-list-item
-          v-for="link in links"
+          v-for="link in filteredItems"
           :key="link.text"
           :title="link.text"
           :prepend-icon="link.icon"
           router
           :to="link.route"
-        ></v-list-item>
+        >
+        </v-list-item>
 
-        <v-list-group value="Storage">
+        <v-list-group value="Storage" v-if="look(storageview)">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
@@ -71,7 +73,7 @@
             :to="link.route"
           ></v-list-item>
         </v-list-group>
-        <v-list-group value="utils">
+        <v-list-group value="utils" v-if="look(utilsview)">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
@@ -95,59 +97,81 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   setup() {
     return {};
   },
   data() {
     return {
+      username: localStorage.getItem("username"),
+      rolename: localStorage.getItem("rolename"),
       model: "english",
       drawer: false,
       links: [
-        { icon: "mdi-login", text: "login(test)", route: "/login" },
+        {
+          icon: "mdi-login",
+          text: "login(test)",
+          route: "/login",
+          view: "users",
+        },
+
         {
           icon: "mdi-view-dashboard",
           text: this.$t("navbar.dashboard"),
           route: "/",
+          view: "dashboard",
         },
-
+        {
+          icon: "mdi-badge-account",
+          text: this.$t("navbar.users"),
+          view: "users",
+          route: "/user/dashboard",
+        },
         {
           icon: "mdi-account-group",
           text: this.$t("navbar.employees"),
           route: "/employee/dashboard",
+          view: "employees",
         },
 
         {
           icon: "mdi-hanger",
           text: this.$t("navbar.models"),
           route: "/model/dashboard",
+          view: "models",
         },
         {
           icon: "mdi-cart",
           text: this.$t("navbar.orders"),
           route: "/order/dashboard",
+          view: "orders",
         },
 
         {
           icon: "mdi-ticket-account",
           text: this.$t("navbar.suppliers"),
           route: "/supplier/dashboard",
+          view: "suppliers",
         },
         {
           icon: "mdi-account-tie",
           text: this.$t("navbar.clients"),
           route: "/client/dashboard",
+          view: "clients",
         },
 
         {
           icon: "mdi-truck",
           text: this.$t("navbar.shipments"),
           route: "/shipment/dashboard",
+          view: "shipments",
         },
         {
           icon: "mdi-note-multiple",
           text: this.$t("navbar.requests"),
           route: "/request/dashboard",
+          view: "requests",
         },
       ],
 
@@ -168,6 +192,7 @@ export default {
           route: "/storage/carton/dashboard",
         },
       ],
+      storageview: "storage",
       Utils: [
         {
           icon: "mdi mdi-palette",
@@ -185,9 +210,9 @@ export default {
           route: "/utils/role/dashboard",
         },
         {
-          icon: "mdi-format-list-bulleted-type",
-          text: this.$t("navbar.types"),
-          route: "/utils/type/dashboard",
+          icon: "mdi-badge-account-horizontal",
+          text: this.$t("navbar.user_role"),
+          route: "/utils/user_role/dashboard",
         },
         {
           icon: "mdi-sitemap",
@@ -195,17 +220,29 @@ export default {
           route: "/utils/Stage/dashboard",
         },
         {
+          icon: "mdi-format-list-bulleted-type",
+          text: this.$t("navbar.types"),
+          route: "/utils/type/dashboard",
+        },
+        {
           icon: "mdi-sitemap",
           text: this.$t("navbar.machinetypes"),
           route: "/utils/machinetype/dashboard",
         },
       ],
+      utilsview: "utils",
+      priv: localStorage.getItem("privileges")
+        ? localStorage.getItem("privileges")
+        : [],
     };
   },
   methods: {
     signout: function () {
-      this.$router.push({
-        path: "/login",
+      axios.get("/api/auth/logout").then(() => {
+        localStorage.clear();
+        this.$router.push({
+          path: "/login",
+        });
       });
     },
     test() {
@@ -216,27 +253,38 @@ export default {
         this.$i18n.locale = "en";
       }
     },
+    look(value) {
+      return this.priv.includes(value);
+    },
   },
   watch: {
     "$i18n.locale"(newLocale) {
       // Perform logic when the i18n locale changes
       this.links[1].text = this.$t("navbar.dashboard");
-      this.links[2].text = this.$t("navbar.employees");
-      this.links[3].text = this.$t("navbar.models");
-      this.links[4].text = this.$t("navbar.orders");
-      this.links[5].text = this.$t("navbar.suppliers");
-      this.links[6].text = this.$t("navbar.clients");
-      this.links[7].text = this.$t("navbar.shipments");
-      this.links[8].text = this.$t("navbar.requests");
+      this.links[2].text = this.$t("navbar.users");
+      this.links[3].text = this.$t("navbar.employees");
+      this.links[4].text = this.$t("navbar.models");
+      this.links[5].text = this.$t("navbar.orders");
+      this.links[6].text = this.$t("navbar.suppliers");
+      this.links[7].text = this.$t("navbar.clients");
+      this.links[8].text = this.$t("navbar.shipments");
+      this.links[9].text = this.$t("navbar.requests");
       this.storagelinks[0].text = this.$t("navbar.properties");
       this.storagelinks[1].text = this.$t("navbar.materials");
       this.storagelinks[2].text = this.$t("navbar.cartons");
       this.Utils[0].text = this.$t("navbar.colors");
       this.Utils[1].text = this.$t("navbar.sizes");
       this.Utils[2].text = this.$t("navbar.roles");
-      this.Utils[3].text = this.$t("navbar.types");
+      this.Utils[3].text = this.$t("navbar.user_role");
+
       this.Utils[4].text = this.$t("navbar.stages");
-      this.Utils[5].text = this.$t("navbar.machinetypes");
+      this.Utils[5].text = this.$t("navbar.types");
+      this.Utils[6].text = this.$t("navbar.machinetypes");
+    },
+  },
+  computed: {
+    filteredItems() {
+      return this.links.filter((item) => this.priv.includes(item.view));
     },
   },
 };

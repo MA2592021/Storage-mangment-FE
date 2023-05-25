@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-
+import swal from "sweetalert";
+import axios from "axios";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -8,6 +9,9 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/login",
@@ -21,7 +25,9 @@ const router = createRouter({
     {
       path: "/employee/",
       name: "emp-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/employee/landpage.vue"),
       children: [
         {
@@ -50,12 +56,48 @@ const router = createRouter({
         },
       ],
     },
+    // user routes
+    {
+      path: "/user/",
+      name: "user-land",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/users/landpage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "user-dash",
 
+          component: () => import("../views/users/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "user-add",
+
+          component: () => import("../views/users/add.vue"),
+        },
+        {
+          path: "all",
+          name: "user-all",
+
+          component: () => import("../views/users/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "user-page",
+
+          component: () => import("../views/users/userPage.vue"),
+        },
+      ],
+    },
     // models routes
     {
       path: "/model/",
       name: "model-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/models/landpage.vue"),
       children: [
         {
@@ -88,7 +130,9 @@ const router = createRouter({
     {
       path: "/storage/material/",
       name: "material-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/storage/material/landpage.vue"),
       children: [
         {
@@ -121,7 +165,9 @@ const router = createRouter({
     {
       path: "/storage/property/",
       name: "property-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/storage/properties/landpage.vue"),
       children: [
         {
@@ -155,7 +201,9 @@ const router = createRouter({
     {
       path: "/storage/carton/",
       name: "carton-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/storage/cartons/landPage.vue"),
       children: [
         {
@@ -188,7 +236,9 @@ const router = createRouter({
     {
       path: "/supplier/",
       name: "supplier-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/suppliers/landpage.vue"),
       children: [
         {
@@ -221,7 +271,9 @@ const router = createRouter({
     {
       path: "/client/",
       name: "client-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/clients/landpage.vue"),
       children: [
         {
@@ -254,7 +306,9 @@ const router = createRouter({
     {
       path: "/request/",
       name: "request-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/requests/landpage.vue"),
       children: [
         {
@@ -287,7 +341,9 @@ const router = createRouter({
     {
       path: "/shipment/",
       name: "shipment-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/shipment/landpage.vue"),
       children: [
         {
@@ -320,7 +376,9 @@ const router = createRouter({
     {
       path: "/order/",
       name: "order-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/orders/landPage.vue"),
       children: [
         {
@@ -353,7 +411,9 @@ const router = createRouter({
     {
       path: "/utils/color/",
       name: "color-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/utils/colors/landPage.vue"),
       children: [
         {
@@ -387,7 +447,9 @@ const router = createRouter({
     {
       path: "/utils/size/",
       name: "size-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/utils/sizes/landPage.vue"),
       children: [
         {
@@ -420,7 +482,9 @@ const router = createRouter({
     {
       path: "/utils/role/",
       name: "role-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/utils/roles/landPage.vue"),
       children: [
         {
@@ -449,11 +513,49 @@ const router = createRouter({
         },
       ],
     },
+    //user roles routes
+    {
+      path: "/utils/user_role/",
+      name: "user_roles-land",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/user_roles/landPage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "user_roles-dash",
+
+          component: () => import("../views/utils/user_roles/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "user_roles-add",
+
+          component: () => import("../views/utils/user_roles/add.vue"),
+        },
+        {
+          path: "all",
+          name: "user_roles-all",
+
+          component: () => import("../views/utils/user_roles/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "user_roles-page",
+
+          component: () =>
+            import("../views/utils/user_roles/user_rolePage.vue"),
+        },
+      ],
+    },
     //type routes
     {
       path: "/utils/type/",
       name: "type-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/utils/types/landPage.vue"),
       children: [
         {
@@ -486,7 +588,9 @@ const router = createRouter({
     {
       path: "/utils/machinetype/",
       name: "machinet-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/utils/machinetype/landpage.vue"),
       children: [
         {
@@ -519,7 +623,9 @@ const router = createRouter({
     {
       path: "/utils/stage/",
       name: "stage-land",
-
+      meta: {
+        requiresAuth: true,
+      },
       component: () => import("../views/utils/stages/landPage.vue"),
       children: [
         {
@@ -552,3 +658,29 @@ const router = createRouter({
 });
 
 export default router;
+router.beforeEach((to, from, next) => {
+  async function name() {
+    const isLoggedIn = await axios
+      .post("/api/auth/test", {
+        refreshToken: localStorage.getItem("refreshToken"),
+      })
+      .then((response) => {
+        if (response.data.errors) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+    if (to.meta.requiresAuth && !isLoggedIn) {
+      // User is not logged in and the route requires authentication
+      next("/login"); // Redirect the user to the login page or another appropriate route
+    } else if (to.path === "/login" && isLoggedIn) {
+      swal("success", "you're already logged in", "success");
+      next("/");
+    } else {
+      // User is logged in or the route does not require authentication
+      next(); // Continue to the intended route
+    }
+  }
+  name();
+});

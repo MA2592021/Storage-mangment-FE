@@ -240,7 +240,7 @@ export default {
       this.reqmaterial.forEach((element) => {
         const x = {};
         x.name = element.id.name;
-        x._id = element._id;
+        x._id = element.id._id;
         x.id = element.id._id;
         x.quantity = element.quantity;
         // console.log(x);
@@ -250,7 +250,7 @@ export default {
       this.reqproperty.forEach((element) => {
         const x = {};
         x.name = element.id.name;
-        x._id = element._id;
+        x._id = element.id._id;
         x.id = element.id._id;
         x.quantity = element.quantity;
         console.log(x);

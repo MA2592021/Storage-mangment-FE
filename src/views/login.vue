@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import swal from "sweetalert";
 export default {
   data: () => ({
     code: "",
@@ -61,9 +63,24 @@ export default {
   }),
   methods: {
     login: function () {
-      this.$router.push({
-        path: "/",
-      });
+      axios
+        .post("/api/auth/login", {
+          code: this.code,
+          password: this.password,
+        })
+        .then((res) => {
+          if (res.data.errors) {
+            swal("error", res.data.errors[0].msg, "error");
+          } else {
+            localStorage.setItem("accessToken", res.data.accessToken);
+            localStorage.setItem("refreshToken", res.data.refreshToken);
+            localStorage.setItem("username", res.data.user.name);
+            localStorage.setItem("privileges", res.data.user.role.privileges);
+            localStorage.setItem("rolename", res.data.user.role.title);
+            swal("success", "Welcome Back", "success");
+            this.$router.push({ path: "/" });
+          }
+        });
     },
     async validate() {
       const { valid } = await this.$refs.form.validate();

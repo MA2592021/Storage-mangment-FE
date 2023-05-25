@@ -228,7 +228,7 @@ export default {
         }
       });
     },
-    appendproperty(value) {
+    appendproperty(value, ind) {
       // axios.patch('/api/buyRequest/materials/add/'+this.$route.params.id,{
       // materials: [value];
       // })
@@ -243,13 +243,16 @@ export default {
             swal("error", response.data.errors[0].msg, "error");
           } else {
             swal("success", "request updated successfully");
-            this.deliverbbe();
+            if (ind) {
+              this.deliverbbe();
+            }
+
             this.requestload();
           }
         });
       console.log("property", value);
     },
-    appendmaterial(value, property) {
+    appendmaterial(value, property, ind) {
       console.log(value);
       // axios.patch('/api/buyRequest/custodies/add/'+this.$route.params.id,{
       //   custodies:[
@@ -266,7 +269,12 @@ export default {
           } else {
             swal("success", "request updated successfully");
             console.log(response);
-            this.appendproperty(property);
+            if (property) {
+              this.appendproperty(property, ind);
+            } else {
+              console.log("testo successo");
+            }
+
             this.requestload();
           }
         });
@@ -326,7 +334,7 @@ export default {
       console.log("material", material);
       console.log("property", property);
 
-      await this.appendmaterial(material, property);
+      await this.appendmaterial(material, property, true);
     },
     deliverbbe() {
       axios

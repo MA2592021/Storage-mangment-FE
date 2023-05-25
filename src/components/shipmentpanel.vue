@@ -55,10 +55,12 @@
               <template v-slot:item="{ item }">
                 <tr v-ripple>
                   <td>
-                    {{ item.columns.name }}
+                    {{ item.raw.id ? item.raw.id.name : item.columns.name }}
                   </td>
                   <td>
-                    <h4>{{ item.raw.qty }} {{ item.raw.type }}</h4>
+                    <h4>
+                      {{ item.raw.quantity ? item.raw.quantity : item.raw.qty }}
+                    </h4>
                   </td>
                   <td>
                     <v-btn color="red" @click="deleteitem()" :disabled="dis"

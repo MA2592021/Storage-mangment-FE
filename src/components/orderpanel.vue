@@ -73,7 +73,7 @@
               <template v-slot:item="{ item }">
                 <tr v-ripple>
                   <td>
-                    {{ item.raw.id.name }}
+                    {{ item.raw.id ? item.raw.id.name : item.raw.name }}
                   </td>
                   <td>
                     {{ item.columns.size.name }}
@@ -82,7 +82,7 @@
                     {{ item.columns.color.name }}
                   </td>
                   <td>
-                    {{ item.columns.quantity }}
+                    {{ item.raw.quantity ? item.raw.quantity : item.raw.qty }}
                   </td>
                   <td>
                     <v-btn
@@ -115,6 +115,7 @@
             Append models
           </v-btn></v-row
         >
+        {{ selected }}
       </v-expansion-panel-text> </v-expansion-panel
     ><v-expansion-panel>
       <v-expansion-panel-title>
@@ -202,7 +203,7 @@ export default {
         this.size === null ||
         this.size === ""
       ) {
-        swal("error", "please enter the information", "error");
+        swal("error", "please fill all  information", "error");
       } else {
         const x = {};
 
@@ -233,8 +234,8 @@ export default {
       const models = [];
       this.reqmodel.forEach((element) => {
         const x = {};
-        x.id = element._id;
-        x.quantity = element.qty;
+        x.id = element.id ? element.id._id : element._id;
+        x.quantity = element.quantity ? element.quantity : element.qty;
         x.size = element.size._id;
         x.color = element.color._id;
         models.push(x);
@@ -244,7 +245,7 @@ export default {
     loadmodel() {
       axios.get("/api/model/").then((response) => {
         this.model = response.data.data;
-        console.log(this.model);
+        //console.log(this.model);
       });
     },
   },

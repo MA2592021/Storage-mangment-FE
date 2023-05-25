@@ -45,7 +45,6 @@ export default {
         pageCount: 5,
       },
       search: "",
-
       page: 1,
       itemsPerPage: 5,
     };

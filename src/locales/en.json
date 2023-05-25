@@ -6,8 +6,10 @@
     "add": "Add"
   },
   "navbar": {
+    "user_role": "User Roles",
     "dashboard": "Dashboard",
     "employees": "Employees",
+    "users": "Users",
     "models": "Models",
     "orders": "Orders",
     "suppliers": "Suppliers",
@@ -26,6 +28,7 @@
     "stages": "Stages",
     "machinetypes": "Machine types"
   },
+  "password": "Password",
   "code": "Code",
   "name": "Name",
   "role": "Role",
@@ -55,6 +58,12 @@
 
     "p1": "Properties with",
     "p2": "MAterials with"
+  },
+  "users": {
+    "users": "Users",
+    "all": "All Users",
+    "add": "Add Users",
+    "addedfrom": "added from"
   },
   "models": {
     "allModels": "All Models",
