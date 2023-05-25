@@ -79,6 +79,14 @@ const i18n = createI18n({
   },
 });
 
+if ("serviceWorker" in navigator) {
+  swal("supp");
+  console.log("Service workers are supported");
+} else {
+  swal("not supp");
+  console.log("Service workers are not supported");
+}
+
 createApp(App)
   .use(router, axios)
   .use(pinia)
