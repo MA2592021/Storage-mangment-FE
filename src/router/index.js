@@ -654,6 +654,15 @@ const router = createRouter({
         },
       ],
     },
+    //print routes
+    {
+      path: "/print",
+      name: "print",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/prints/mainPrint.vue"),
+    },
   ],
 });
 

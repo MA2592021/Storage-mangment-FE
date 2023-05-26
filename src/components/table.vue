@@ -35,6 +35,9 @@
       </tr>
     </template>
   </v-data-table>
+  <div align="center">
+    <v-btn class="mx-auto" color="info" @click="printo()">print</v-btn>
+  </div>
 </template>
 <script>
 export default {
@@ -69,6 +72,7 @@ export default {
       console.log(obj);
       this.$emit("tableClicked", obj);
     },
+    printo() {},
   },
 };
 </script>

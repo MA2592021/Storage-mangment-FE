@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <navbarVue v-if="routePath !== '/login'" />
+    <navbarVue v-if="routePath" />
     <v-main class="ma-4">
       <router-view />
     </v-main>
@@ -22,7 +22,11 @@ export default {
   },
   computed: {
     routePath() {
-      return this.$route.path;
+      if (this.$route.path === "/login" || this.$route.path === "/print") {
+        return false;
+      } else {
+        return true;
+      }
     },
   },
 };
