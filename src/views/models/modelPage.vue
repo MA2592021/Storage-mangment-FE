@@ -13,7 +13,7 @@
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Name "
+              :label="$t(`name`) + '*'"
               required
               :readonly="dis === true"
               v-model="model.name"
@@ -26,7 +26,7 @@
               :items="sizes"
               chips
               multiple
-              label="sizes"
+              :label="$t(`sizes`) + '*'"
               item-title="name"
               readonly
             ></v-autocomplete>
@@ -37,7 +37,7 @@
               :items="colors"
               chips
               multiple
-              label="colors"
+              :label="$t(`colors`) + '*'"
               item-title="name"
               readonly
             ></v-autocomplete>
@@ -46,7 +46,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="Note"
+              :label="$t(`note`) + '*'"
               v-model="model.note"
               :readonly="dis"
               prepend-inner-icon="mdi-note-text-outline"
@@ -55,7 +55,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="details"
+              :label="$t(`details`) + '*'"
               v-model="model.details"
               :readonly="dis"
               prepend-inner-icon="mdi-note-text-outline"
@@ -67,7 +67,7 @@
         @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t("edit") : $t("cancel") }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -76,7 +76,7 @@
         color="red"
         @click="deletee()"
       >
-        Delete
+        {{ $t("delete") }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -85,7 +85,7 @@
         color="green"
         @click="save()"
       >
-        Save
+        {{ $t("save") }}
       </v-btn>
     </v-card-actions>
   </v-card>

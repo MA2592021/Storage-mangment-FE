@@ -7,7 +7,9 @@
           style="size: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="size: #fbc02d">All orders</span></span
+        <span class="text-h5" style="size: #fbc02d">{{
+          $t("orders.allOrders")
+        }}</span></span
       ></v-col
     >
 

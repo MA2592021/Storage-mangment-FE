@@ -51,7 +51,9 @@
   "pickImage": "اختار صورة",
   "next": "التالي",
   "back": "رجوع",
+  "close": "اغلاق",
   "quantity": "الكمية",
+  "client": "العميل",
   "employees": {
     "employees": "العمال",
     "all": "كل العمال",
@@ -81,5 +83,9 @@
     "selectColors": "اختار الألوان",
     "selectSizes": "اختار المقاسات",
     "addMaterial": "اضافة خامة انتاج"
+  },
+  "orders": {
+    "allOrders": "كل الاوردرات",
+    "addOrders": "اضافة اوردر"
   }
 }

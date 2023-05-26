@@ -52,6 +52,7 @@
   "back": "Back",
   "close": "close",
   "quantity": "Quantity",
+  "client": "Client",
   "employees": {
     "employees": "Employees",
     "all": "All Employees",
@@ -81,5 +82,9 @@
     "selectColors": "Select colors",
     "selectSizes": "Select sizes",
     "addMaterial": "Add material"
+  },
+  "orders": {
+    "allOrders": "All order",
+    "addOrders": "Add order"
   }
 }
