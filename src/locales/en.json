@@ -50,6 +50,8 @@
   "pickImage": "Pick up image",
   "next": "Next",
   "back": "Back",
+  "close": "close",
+  "quantity": "Quantity",
   "employees": {
     "employees": "Employees",
     "all": "All Employees",
@@ -73,6 +75,11 @@
     "stageSelect": "Stage select",
     "addStage": "Add Stage",
     "up": "Up",
-    "down": "Down"
+    "down": "Down",
+
+    "selectMaterial": "Select Materials",
+    "selectColors": "Select colors",
+    "selectSizes": "Select sizes",
+    "addMaterial": "Add material"
   }
 }

@@ -591,7 +591,7 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
-      component: () => import("../views/utils/machinetype/landpage.vue"),
+      component: () => import("../views/utils/machinetype/landPage.vue"),
       children: [
         {
           path: "dashboard",

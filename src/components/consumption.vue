@@ -6,7 +6,7 @@
       >
       <v-col cols="12" sm="4"
         ><v-autocomplete
-          label="select material"
+          :label="$t(`models.selectMaterial`) + '*'"
           :items="materials"
           v-model="materialselect[index]"
           return-object
@@ -15,14 +15,14 @@
       ></v-col>
       <v-col cols="12" sm="3"
         ><v-text-field
-          label="quantity"
+          :label="$t(`quantity`) + '*'"
           :suffix="materialselect[index] ? materialselect[index].unit : ''"
           v-model="qty[index]"
         ></v-text-field
       ></v-col>
       <v-col cols="12" sm="2"
         ><v-autocomplete
-          label="select colors"
+          :label="$t(`models.selectColors`) + '*'"
           :items="colors"
           item-title="name"
           v-model="colorselect[index]"
@@ -33,7 +33,7 @@
       ></v-col>
       <v-col cols="12" sm="2"
         ><v-autocomplete
-          label="select sizes"
+          :label="$t(`models.selectSizes`) + '*'"
           item-title="name"
           :items="sizes"
           v-model="sizeselect[index]"
@@ -49,10 +49,10 @@
     </v-row>
   </transition-group>
   <v-col class="mx-auto" align="center">
-    <v-btn class="mt-2 mr-2" color="warning" @click="addmaterial()"
-      >Add Material</v-btn
-    >
-    <v-btn class="mt-2" color="success" @click="save()">save</v-btn>
+    <v-btn class="mt-2 mr-2" color="warning" @click="addmaterial()">{{
+      $t("models.addMaterial")
+    }}</v-btn>
+    <v-btn class="mt-2" color="success" @click="save()">{{ $t("save") }}</v-btn>
   </v-col>
   {{ colorselect[0] }}
 </template>

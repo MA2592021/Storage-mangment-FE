@@ -51,6 +51,7 @@
   "pickImage": "اختار صورة",
   "next": "التالي",
   "back": "رجوع",
+  "quantity": "الكمية",
   "employees": {
     "employees": "العمال",
     "all": "كل العمال",
@@ -74,6 +75,11 @@
     "stageSelect": "اختار المرحلة",
     "addStage": "اضافة مرحلة",
     "up": "تحريك لأعلى",
-    "down": "تحريك لأسفل"
+    "down": "تحريك لأسفل",
+
+    "selectMaterial": "اختار خامة الانتاج",
+    "selectColors": "اختار الألوان",
+    "selectSizes": "اختار المقاسات",
+    "addMaterial": "اضافة خامة انتاج"
   }
 }
