@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" persistent>
+  <v-dialog :value="value" persistent fullscreen>
     <v-card>
       <v-card-title class="text-h5"> {{ title }} </v-card-title>
       <v-card-text>

@@ -32,7 +32,9 @@
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
-          <v-col cols="12" sm="12"> </v-col>
+          <v-col cols="12" sm="12">
+            <imageuploader @image="imageup"></imageuploader
+          ></v-col>
         </v-row>
       </v-container>
       <small>*indicates required field</small>
@@ -46,13 +48,18 @@
 
 <script>
 import axios from "axios";
+import imageuploader from "../../components/imageuploader.vue";
 import swal from "sweetalert";
 export default {
+  components: {
+    imageuploader,
+  },
   data: () => ({
     request: {
       name: "",
       details: "",
       note: "    ",
+      img: null,
     },
   }),
 
@@ -63,7 +70,7 @@ export default {
         .post("/api/buyRequest/", {
           name: this.request.name,
           details: this.request.details,
-
+          image: this.request.img,
           note: this.request.note,
         })
         .then((response) => {
@@ -78,6 +85,9 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    imageup(image) {
+      this.requset.img = image;
     },
   },
 };

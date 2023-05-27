@@ -46,7 +46,7 @@
           </v-col>
 
           <v-col cols="12" sm="12">
-            <imageuploader @selected="imageup" />
+            <imageuploader @image="imageup" />
           </v-col>
         </v-row>
       </v-container>
@@ -72,8 +72,8 @@ export default {
         return (
           !value ||
           !value.length ||
-          value[0].size < 2000000 ||
-          "Avatar size should be less than 2 MB!"
+          value[0].size < 10000000 ||
+          "Avatar size should be less than 10 MB!"
         );
       },
     ],
@@ -95,7 +95,6 @@ export default {
 
   methods: {
     add() {
-      // this.url = URL.createObjectURL(this.user.img);
       console.log("im alive");
       axios
         .post("/api/user/", {
@@ -103,6 +102,7 @@ export default {
           code: this.user.code,
           role: this.user.role._id,
           password: this.user.password,
+          image: this.user.img,
         })
         .then((response) => {
           if (response.data.errors) {
@@ -121,7 +121,8 @@ export default {
     },
 
     imageup(image) {
-      this.user.img = image[0];
+      this.user.img = image;
+      console.log(this.user.img);
     },
   },
 };

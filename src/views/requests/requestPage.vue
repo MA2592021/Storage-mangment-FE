@@ -2,75 +2,87 @@
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row class="ma-3"
       ><v-col cols="12" align="center" class="text-h4"> requests </v-col>
-      <v-col cols="12" sm="6" md="6">
-        <v-text-field
-          label="Name "
-          required
-          :readonly="dis === true"
-          v-model="request.name"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="3" md="3">
-        <v-text-field
-          label="status "
-          required
-          readonly
-          v-model="request.status"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="3" md="3">
-        <v-text-field
-          label="created at "
-          required
-          readonly
-          v-model="request.time"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="6"
-        ><v-textarea
-          :clearable="dis === false"
-          label="details"
-          v-model="request.details"
-          :readonly="dis === true"
-          prepend-icon="mdi-note-text-outline"
-        ></v-textarea>
-      </v-col>
-      <v-col cols="12" sm="6"
-        ><v-textarea
-          :clearable="dis === false"
-          label="Note"
-          v-model="request.note"
-          :readonly="dis === true"
-          prepend-icon="mdi-note-text-outline"
-        ></v-textarea>
-      </v-col>
-      <v-col cols="12"
-        ><v-timeline side="end" align="start">
-          <v-timeline-item
-            :dot-color="
-              h.state === 'Approved'
-                ? 'teal-lighten-3'
-                : h.state === 'Delivered'
-                ? 'green'
-                : 'pink'
-            "
-            size="small"
-            v-for="h in request.history"
-            :key="h"
+      <v-col cols="3" sm="2"
+        ><v-img
+          class="bg-white"
+          width="300"
+          :aspect-ratio="1"
+          :src="request.img ? request.img : '/arkan_logo-no-text.png'"
+          cover
+        ></v-img></v-col
+      ><v-col cols="9" sm="10">
+        <v-row>
+          <v-col cols="12" sm="6" md="6">
+            <v-text-field
+              label="Name "
+              required
+              :readonly="dis === true"
+              v-model="request.name"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="3" md="3">
+            <v-text-field
+              label="status "
+              required
+              readonly
+              v-model="request.status"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="3" md="3">
+            <v-text-field
+              label="created at "
+              required
+              readonly
+              v-model="request.time"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6"
+            ><v-textarea
+              :clearable="dis === false"
+              label="details"
+              v-model="request.details"
+              :readonly="dis === true"
+              prepend-icon="mdi-note-text-outline"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12" sm="6"
+            ><v-textarea
+              :clearable="dis === false"
+              label="Note"
+              v-model="request.note"
+              :readonly="dis === true"
+              prepend-icon="mdi-note-text-outline"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12"
+            ><v-timeline side="end" align="start">
+              <v-timeline-item
+                :dot-color="
+                  h.state === 'Approved'
+                    ? 'teal-lighten-3'
+                    : h.state === 'Delivered'
+                    ? 'green'
+                    : 'pink'
+                "
+                size="small"
+                v-for="h in request.history"
+                :key="h"
+              >
+                <div class="d-flex">
+                  <strong class="me-4">{{ moment(h.date) }}</strong>
+                  <div>
+                    <strong>{{ h.state }}</strong>
+                  </div>
+                </div>
+              </v-timeline-item>
+            </v-timeline></v-col
           >
-            <div class="d-flex">
-              <strong class="me-4">{{ moment(h.date) }}</strong>
-              <div>
-                <strong>{{ h.state }}</strong>
-              </div>
-            </div>
-          </v-timeline-item>
-        </v-timeline></v-col
-      >
-    </v-row>
+        </v-row></v-col
+      ></v-row
+    >
     <v-card-actions class="mx-auto">
       <v-btn
         @click="cancel()"
@@ -110,7 +122,7 @@
         :disabled="dis === true"
         prepend-icon="mdi-package-check"
         color="green"
-        @click="dialog = !dialog"
+        @click="dialog1 = !dialog1"
       >
         Save
       </v-btn>
@@ -140,7 +152,7 @@
   <requestdeliver
     v-model="dialog"
     v-if="dialog"
-    v-bind:title="content"
+    v-bind:title="title"
     v-bind:materials="request.materials"
     v-bind:properties="request.properties"
     @append="deliverd"
@@ -168,9 +180,8 @@ export default {
   components: { requestdeliver, popuptest, check, requestpanel },
   //test
   data: () => ({
-    content:
-      "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
-    title: "are you sure ? ",
+    content: "Incorrect changes can lead to system problems in the future.",
+    title: "Incorrect info can lead to system problems in the future.",
 
     link_property: { get: "/api/custody/" },
     dialog: false,

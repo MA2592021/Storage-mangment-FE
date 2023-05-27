@@ -8,7 +8,7 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="employee.img"
+          :src="employee.img ? employee.img : '/arkan_logo-no-text.png'"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">

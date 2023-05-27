@@ -30,9 +30,23 @@ export default {
   },
 
   methods: {
-    selectImage() {
+    async selectImage() {
       this.imagePreview = URL.createObjectURL(this.image[0]);
-      this.$emit("selected", this.image);
+      // this.$emit("selected", this.image);
+      const x = await this.convertToBase64(this.image[0]);
+      this.$emit("image", x);
+    },
+    convertToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => {
+          resolve(fileReader.result);
+        };
+        fileReader.onerror = (error) => {
+          reject(error);
+        };
+      });
     },
 
     clearImagePreview() {

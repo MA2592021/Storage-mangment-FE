@@ -1,48 +1,45 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%">
     <v-row class="ma-3">
-      <v-col cols="12">
-        <v-text-field
-          label="Name "
-          required
-          :readonly="dis"
-          v-model="user.title"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12">
-        <v-text-field
-          label="priority "
-          required
-          :readonly="dis"
-          v-model="user.number"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12">
-        <v-autocomplete
-          label="select privileges"
-          v-model="user.privileges"
-          multiple
-          chips
-          closable-chips
-          :disabled="dis"
-          :items="[
-            'dashboard',
-            'storage',
-            'utils',
-            'users',
-            'orders',
-            'shipments',
-            'models',
-            'employees',
-            'suppliers',
-            'clients',
-            'requests',
-          ]"
-        ></v-autocomplete
-      ></v-col>
-    </v-row>
+      <v-col cols="3" sm="2"
+        ><v-img
+          class="bg-white"
+          width="300"
+          :aspect-ratio="1"
+          :src="user.image ? user.image.data : '/arkan_logo-no-text.png'"
+          cover
+        ></v-img></v-col
+      ><v-col cols="9" sm="10">
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              label="Name "
+              required
+              :readonly="dis"
+              v-model="user.name"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              label="priority "
+              required
+              :readonly="dis"
+              v-model="user.code"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="role"
+              v-model="user.role"
+              chips
+              :disabled="dis"
+              return-object
+              :items="roles"
+            ></v-autocomplete>
+          </v-col> </v-row></v-col
+    ></v-row>
     <v-card-actions class="mx-auto">
       <v-btn
         @click="cancel()"
@@ -81,11 +78,13 @@ export default {
       user: {},
       orguser: {},
       dis: true,
+      roles: "",
     };
   },
   created() {
     //Get route
     this.loaduser();
+    this.loadroles();
   },
   methods: {
     deletee() {
@@ -121,18 +120,23 @@ export default {
         this.orguser.code = this.user.code;
       });
     },
+    loadroles() {
+      axios.get("/api/userRole/").then((response) => {
+        this.roles = response.data.data;
+      });
+    },
     cancel() {
       this.dis = !this.dis;
       this.user.title = this.orguser.title;
       this.user.pirority = this.orguser.pirority;
-      this.user.privileges = this.orguser.privileges;
+      this.user.role = this.orguser.role;
     },
     save() {
       axios
-        .patch("/api/useruser/" + this.$route.params.id, {
+        .patch("/api/user/" + this.$route.params.id, {
           title: this.user.title,
           pirority: this.user.pirority,
-          privileges: this.user.privileges,
+          role: this.user.role._id,
         })
         .then((response) => {
           if (response.data.errors) {

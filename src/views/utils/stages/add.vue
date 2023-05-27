@@ -31,8 +31,20 @@
               v-model="stage.type"
               persistent-hint
               hint="Required"
-              :items="types"
+              :items="['prepairs', 'production', 'finishing']"
               item-title="type"
+            ></v-autocomplete
+          ></v-col>
+          <v-col cols="12" sm="6">
+            <v-autocomplete
+              label="machine type*"
+              chips
+              v-model="stage.machinetype"
+              persistent-hint
+              hint="Required"
+              :items="types"
+              item-value="_id"
+              item-title="name"
             ></v-autocomplete
           ></v-col>
           <v-col cols="12" sm="6" md="6">
@@ -51,7 +63,7 @@
               hint="Required"
             ></v-text-field
           ></v-col>
-          <v-col cols="12" sm="6" md="6">
+          <v-col cols="12">
             <v-textarea
               clearable
               label="Note"
@@ -73,7 +85,7 @@
 
 <script>
 import axios from "axios";
-import sweetalert from "sweetalert";
+import swal from "sweetalert";
 export default {
   data: () => ({
     stage: {
@@ -88,7 +100,7 @@ export default {
   }),
   created() {
     axios
-      .get("/api/materialType/")
+      .get("/api/machineType/")
       .then((response) => (this.types = response.data.data));
   },
   methods: {
@@ -103,6 +115,7 @@ export default {
           rate: this.stage.rate,
           price: this.stage.price,
           note: this.stage.note,
+          machineType: this.stage.machinetype,
         })
         .then((response) => {
           if (response.data.errors) {

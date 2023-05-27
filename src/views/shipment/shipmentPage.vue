@@ -2,75 +2,87 @@
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row class="ma-3"
       ><v-col cols="12" align="center" class="text-h4"> shipments </v-col>
-      <v-col cols="12" sm="6" md="6">
-        <v-text-field
-          label="Name "
-          required
-          :readonly="dis === true"
-          v-model="shipment.name"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="3" md="3">
-        <v-text-field
-          label="status "
-          required
-          readonly
-          v-model="shipment.status"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="3" md="3">
-        <v-text-field
-          label="created at "
-          required
-          readonly
-          v-model="shipment.time"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="6"
-        ><v-textarea
-          :clearable="dis === false"
-          label="details"
-          v-model="shipment.details"
-          :readonly="dis === true"
-          prepend-icon="mdi-note-text-outline"
-        ></v-textarea>
-      </v-col>
-      <v-col cols="12" sm="6"
-        ><v-textarea
-          :clearable="dis === false"
-          label="Note"
-          v-model="shipment.note"
-          :readonly="dis === true"
-          prepend-icon="mdi-note-text-outline"
-        ></v-textarea>
-      </v-col>
-      <v-col cols="12"
-        ><v-timeline side="end" align="start">
-          <v-timeline-item
-            :dot-color="
-              h.state === 'Approved'
-                ? 'teal-lighten-3'
-                : h.state === 'Shipped'
-                ? 'green'
-                : 'pink'
-            "
-            size="small"
-            v-for="h in shipment.history"
-            :key="h"
+      <v-col cols="3" sm="2"
+        ><v-img
+          class="bg-white"
+          width="300"
+          :aspect-ratio="1"
+          :src="shipment.img ? shipment.img : '/arkan_logo-no-text.png'"
+          cover
+        ></v-img></v-col
+      ><v-col cols="9" sm="10">
+        <v-row>
+          <v-col cols="12" sm="6" md="6">
+            <v-text-field
+              label="Name "
+              required
+              :readonly="dis === true"
+              v-model="shipment.name"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="3" md="3">
+            <v-text-field
+              label="status "
+              required
+              readonly
+              v-model="shipment.status"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="3" md="3">
+            <v-text-field
+              label="created at "
+              required
+              readonly
+              v-model="shipment.time"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6"
+            ><v-textarea
+              :clearable="dis === false"
+              label="details"
+              v-model="shipment.details"
+              :readonly="dis === true"
+              prepend-icon="mdi-note-text-outline"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12" sm="6"
+            ><v-textarea
+              :clearable="dis === false"
+              label="Note"
+              v-model="shipment.note"
+              :readonly="dis === true"
+              prepend-icon="mdi-note-text-outline"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12"
+            ><v-timeline side="end" align="start">
+              <v-timeline-item
+                :dot-color="
+                  h.state === 'Approved'
+                    ? 'teal-lighten-3'
+                    : h.state === 'Shipped'
+                    ? 'green'
+                    : 'pink'
+                "
+                size="small"
+                v-for="h in shipment.history"
+                :key="h"
+              >
+                <div class="d-flex">
+                  <strong class="me-4">{{ moment(h.date) }}</strong>
+                  <div>
+                    <strong>{{ h.state }}</strong>
+                  </div>
+                </div>
+              </v-timeline-item>
+            </v-timeline></v-col
           >
-            <div class="d-flex">
-              <strong class="me-4">{{ moment(h.date) }}</strong>
-              <div>
-                <strong>{{ h.state }}</strong>
-              </div>
-            </div>
-          </v-timeline-item>
-        </v-timeline></v-col
-      >
-    </v-row>
+        </v-row></v-col
+      ></v-row
+    >
     <v-card-actions class="mx-auto">
       <v-btn
         @click="cancel()"
@@ -101,9 +113,15 @@
         :disabled="dis === true || shipment.status !== 'Approved'"
         prepend-icon="mdi-truck"
         color="green"
-        @click="deliver()"
       >
         Ship
+        <v-dialog v-model="dialog5" activator="parent" width="auto">
+          <v-card>
+            <v-card-text>
+              <imageuploader @image="deliver"></imageuploader>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -148,17 +166,18 @@ import check from "../../components/checkpopup.vue";
 import shipmentpanel from "../../components/shipmentpanel.vue";
 import axios from "axios";
 import moment from "moment";
+import imageuploader from "../../components/imageuploader.vue";
 import { useheaders } from "../../stores/headers";
 import swal from "sweetalert";
 
 export default {
-  components: { popuptest, check, shipmentpanel },
+  components: { imageuploader, popuptest, check, shipmentpanel },
   //test
   data: () => ({
     content:
       "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?",
     title: "are you sure ? ",
-
+    dialog5: false,
     dialog: false,
     dialog1: false,
     closedtitle: "cartons in",
@@ -261,7 +280,8 @@ export default {
         }
       });
     },
-    deliver() {
+    deliver(image) {
+      this.shipment.image = iamge;
       swal({
         title: "Are you sure?",
         text: "Are you sure that you want to ship this shipment?",
@@ -277,15 +297,25 @@ export default {
             })
             .then(() => {
               axios
-                .patch("/api/shipment/shipped/" + this.$route.params.id)
-                .then((response) => {
-                  if (response.data.errors) {
-                    swal("error", response.data.errors[0].msg, "error");
-                  } else {
-                    swal("success", "shipment shipped successfully", "success");
-                    this.dis = true;
-                    this.shipmentload();
-                  }
+                .patch("/api/shipment" + this.$route.params.id, {
+                  exitPermission: this.shipment.image,
+                })
+                .then(() => {
+                  axios
+                    .patch("/api/shipment/shipped/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "shipment shipped successfully",
+                          "success"
+                        );
+                        this.dis = true;
+                        this.shipmentload();
+                      }
+                    });
                 });
             });
         }

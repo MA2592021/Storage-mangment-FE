@@ -6,7 +6,7 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="model.img"
+          :src="model.img ? model.img : '/arkan_logo-no-text.png'"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">

@@ -63,7 +63,7 @@
             ></v-textarea>
           </v-col>
           <v-col cols="12" sm="12">
-            <imageuploader @selected="imageup" />
+            <imageuploader @image="imageup" />
           </v-col>
         </v-row>
       </v-container>
@@ -89,8 +89,8 @@ export default {
         return (
           !value ||
           !value.length ||
-          value[0].size < 2000000 ||
-          "Avatar size should be less than 2 MB!"
+          value[0].size < 10000000 ||
+          "image size should be less than 10 MB!"
         );
       },
     ],
@@ -125,6 +125,7 @@ export default {
           phoneNo: this.employee.phone,
           NID: this.employee.nid,
           note: this.employee.note,
+          image: this.employee.image,
         })
         .then((response) => {
           if (response.data.errors) {
@@ -143,7 +144,7 @@ export default {
     },
 
     imageup(image) {
-      this.employee.img = image[0];
+      this.employee.img = image;
     },
   },
 };

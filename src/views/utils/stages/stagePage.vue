@@ -40,11 +40,23 @@
 
       <v-col cols="12" sm="6">
         <v-autocomplete
+          label="machine type "
+          v-model="stage.machineType"
+          variant="underlined"
+          :readonly="dis === true"
+          :items="types"
+          item-title="name"
+          item-value="name"
+        ></v-autocomplete>
+      </v-col>
+
+      <v-col cols="12" sm="6">
+        <v-autocomplete
           label="type "
           v-model="stage.type"
           variant="underlined"
           :readonly="dis === true"
-          :items="types"
+          :items="['prepairs', 'production', 'finishing']"
           item-title="type"
         ></v-autocomplete>
       </v-col>
@@ -112,7 +124,7 @@ export default {
       });
     },
     typesload() {
-      axios.get("/api/materialType").then((response) => {
+      axios.get("/api/machineType").then((response) => {
         this.types = response.data.data;
       });
     },
@@ -133,6 +145,7 @@ export default {
               rate: this.stage.rate,
               type: this.stage.type,
               note: this.stage.note,
+              machineType: this.stage.machineType,
             })
             .then((response) => {
               if (response.data.errors) {
@@ -153,6 +166,7 @@ export default {
       this.stage.rate = this.orgstage.rate;
       this.stage.type = this.orgstage.type;
       this.stage.note = this.orgstage.note;
+      this.stage.machineType = this.orgstage.machineType.name;
     },
     cancel() {
       this.dis = !this.dis;
