@@ -186,7 +186,7 @@ export default {
           note: this.model.note,
           colors: temp_colors,
           sizes: temp_sizes,
-          image: this.mmodel.img,
+          image: this.model.img,
         })
         .then((response) => {
           if (response.data.errors) {
