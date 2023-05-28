@@ -8,7 +8,9 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="employee.img ? employee.img : '/arkan_logo-no-text.png'"
+          :src="
+            employee.image ? employee.image.data : '/arkan_logo-no-text.png'
+          "
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -232,6 +234,7 @@ export default {
         if (response.data.errors) {
           swal("error", response.data.errors[0].msg, "error");
         } else {
+          console.log(response.data);
           this.orgemployee = response.data.data;
           this.clone();
         }
@@ -454,7 +457,7 @@ export default {
       this.employee.id = this.orgemployee._id;
       this.employee.name = this.orgemployee.name;
       this.employee.code = this.orgemployee.code;
-      this.employee.img = this.orgemployee.img;
+      this.employee.image = this.orgemployee.image;
       this.employee.nid = this.orgemployee.NID;
       this.employee.role = this.orgemployee.role;
       this.employee.note = this.orgemployee.note;

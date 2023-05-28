@@ -7,7 +7,9 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="shipment.img ? shipment.img : '/arkan_logo-no-text.png'"
+          :src="
+            shipment.image ? shipment.image.data : '/arkan_logo-no-text.png'
+          "
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -224,6 +226,7 @@ export default {
           x.cartons = response.data.data.cartons;
           x.client = response.data.data.client;
           x.note = response.data.data.note;
+          x.image = response.data.data.image;
           x.details = response.data.data.details;
           console.log(x);
           this.orgshipment = x;
@@ -341,6 +344,7 @@ export default {
       this.shipment.history = this.orgshipment.history;
       this.shipment.cartons = this.orgshipment.cartons;
       this.shipment.note = this.orgshipment.note;
+      this.shipment.image = this.orgshipment.image;
       this.shipment.client = this.orgshipment.client;
       this.shipment.time = this.orgshipment.time;
     },

@@ -6,7 +6,7 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="model.img ? model.img : '/arkan_logo-no-text.png'"
+          :src="model.image ? model.image.data : '/arkan_logo-no-text.png'"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -158,7 +158,7 @@ export default {
       console.log("im cloning");
       this.model.name = this.orgmodel.name;
       this.model.sizes = this.orgmodel.sizes;
-      this.model.img = this.orgmodel.img;
+      this.model.image = this.orgmodel.image;
       this.model.colors = this.orgmodel.colors;
       this.model.stages = this.orgmodel.stages;
       this.model.orders = this.orgmodel.orders;

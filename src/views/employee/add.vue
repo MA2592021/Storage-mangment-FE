@@ -44,7 +44,7 @@
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              :label="$t(`quantity`) + '*'"
+              :label="$t(`role`) + '*'"
               chips
               v-model="employee.role"
               persistent-hint
@@ -127,7 +127,7 @@ export default {
           phoneNo: this.employee.phone,
           NID: this.employee.nid,
           note: this.employee.note,
-          image: this.employee.image,
+          image: this.employee.img,
         })
         .then((response) => {
           if (response.data.errors) {

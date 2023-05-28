@@ -6,7 +6,9 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="property.img ? property.img : '/arkan_logo-no-text.png'"
+          :src="
+            property.image ? property.image.data : '/arkan_logo-no-text.png'
+          "
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -392,6 +394,7 @@ export default {
       this.property.unit = this.orgproperty.unit;
       this.property.details = this.orgproperty.details;
       this.property.employees = this.orgproperty.employees;
+      this.property.image = this.orgproperty.image;
       this.property.max = this.orgproperty.max;
       this.property.min = this.orgproperty.min;
     },

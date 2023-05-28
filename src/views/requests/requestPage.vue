@@ -7,7 +7,7 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="request.img ? request.img : '/arkan_logo-no-text.png'"
+          :src="request.image ? request.image.data : '/arkan_logo-no-text.png'"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -230,6 +230,7 @@ export default {
           x.time = moment(response.data.data.createdAt).calendar();
           x.history = response.data.data.history;
           x.materials = response.data.data.materials;
+          x.image = response.data.data.image;
           x.properties = response.data.data.custodies;
           this.orgrequest = x;
           console.log(x);
@@ -373,6 +374,7 @@ export default {
       this.request.materials = this.orgrequest.materials;
       this.request.properties = this.orgrequest.properties;
       this.request.note = this.orgrequest.note;
+      this.request.image = this.orgrequest.image;
       this.request.details = this.orgrequest.details;
       this.request.status = this.orgrequest.status;
       this.request.time = this.orgrequest.time;

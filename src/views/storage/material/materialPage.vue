@@ -7,7 +7,9 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="material.img ? material.img : '/arkan_logo-no-text.png'"
+          :src="
+            material.image ? material.image.data : '/arkan_logo-no-text.png'
+          "
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -415,6 +417,7 @@ export default {
       this.material.unit = this.orgmaterial.unit;
       this.material.details = this.orgmaterial.details;
       this.material.employees = this.orgmaterial.employees;
+      this.material.image = this.orgmaterial.image;
       this.material.max = this.orgmaterial.max;
       this.material.min = this.orgmaterial.min;
     },
@@ -424,20 +427,7 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.material.id = this.orgmaterial._id;
-      this.material.name = this.orgmaterial.name;
-      this.material.quantity = this.orgmaterial.quantity;
-      //   this.material.img = this.orgmaterial.img;
-      this.material.available = this.orgmaterial.available;
-      this.material.role = this.orgmaterial.role;
-      this.material.note = this.orgmaterial.note;
-      this.material.unit = this.orgmaterial.unit;
-      this.material.details = this.orgmaterial.details;
-      this.material.employees = this.orgmaterial.employees;
-      this.material.max = this.orgmaterial.max;
-      this.material.min = this.orgmaterial.min;
-      this.content =
-        "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
+      this.clone();
     },
     save() {
       this.dis = !this.dis;
