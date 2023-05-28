@@ -15,6 +15,7 @@
       <tt
         v-bind:data="request"
         v-bind:header="headers.request_header"
+        v-bind:title="'All request'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

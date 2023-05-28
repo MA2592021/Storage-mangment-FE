@@ -17,6 +17,7 @@
       <tt
         v-bind:data="order"
         v-bind:header="headers.order_header"
+        v-bind:title="$t(`orders.allOrders`)"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

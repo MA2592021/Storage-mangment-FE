@@ -15,6 +15,7 @@
       <tt
         v-bind:data="types"
         v-bind:header="headers.type_header"
+        v-bind:title="'All types'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

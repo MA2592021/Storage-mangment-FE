@@ -7,7 +7,7 @@
           style="color: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="color: #fbc02d">All shipment</span></span
+        <span class="text-h5" style="color: #fbc02d">All shipments</span></span
       ></v-col
     >
 
@@ -15,6 +15,7 @@
       <tt
         v-bind:data="shipment"
         v-bind:header="headers.shipment_header"
+        v-bind:title="$t(`'all shipments'`)"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

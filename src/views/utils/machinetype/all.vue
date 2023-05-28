@@ -7,7 +7,9 @@
           style="size: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="size: #fbc02d">All types</span></span
+        <span class="text-h5" style="size: #fbc02d"
+          >All machine types</span
+        ></span
       ></v-col
     >
 
@@ -15,6 +17,7 @@
       <tt
         v-bind:data="types"
         v-bind:header="headers.machinetype_header"
+        v-bind:title="'All machine types'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

@@ -15,6 +15,7 @@
       <tt
         v-bind:data="suppliers"
         v-bind:header="headers.supplier_header"
+        v-bind:title="'All Suppliers'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

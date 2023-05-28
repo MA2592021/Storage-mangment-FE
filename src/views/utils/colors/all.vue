@@ -15,6 +15,7 @@
       <tt
         v-bind:data="colors"
         v-bind:header="headers.color_size_header"
+        v-bind:title="'All Colors'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

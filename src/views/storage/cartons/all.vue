@@ -15,6 +15,7 @@
       <tt
         v-bind:data="carton"
         v-bind:header="headers.carton_header"
+        v-bind:title="'all cartons'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

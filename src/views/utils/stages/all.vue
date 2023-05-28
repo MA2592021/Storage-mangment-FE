@@ -15,6 +15,7 @@
       <tt
         v-bind:data="stage"
         v-bind:header="headers.stage_header"
+        v-bind:title="'All Stages'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

@@ -219,6 +219,7 @@ export default {
           swal("error", response.data.errors[0].msg, "error");
         } else {
           const x = {};
+          console.log(response.data);
           x._id = response.data.data._id;
           x.status =
             response.data.data.history[

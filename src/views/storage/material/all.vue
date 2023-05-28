@@ -15,6 +15,7 @@
       <tt
         v-bind:data="materials"
         v-bind:header="headers.mat_header"
+        v-bind:title="'all Materials'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

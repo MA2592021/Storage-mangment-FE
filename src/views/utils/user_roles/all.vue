@@ -15,6 +15,7 @@
       <tt
         v-bind:data="roles"
         v-bind:header="headers.role_header"
+        v-bind:title="'All user Roles'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

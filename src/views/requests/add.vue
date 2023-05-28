@@ -87,7 +87,7 @@ export default {
         });
     },
     imageup(image) {
-      this.requset.img = image;
+      this.request.img = image;
     },
   },
 };

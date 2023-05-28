@@ -17,6 +17,7 @@
       <tt
         v-bind:data="models"
         v-bind:header="headers.model_header"
+        v-bind:title="$t(`models.allModels`)"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

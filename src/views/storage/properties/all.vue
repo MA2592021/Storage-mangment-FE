@@ -15,6 +15,7 @@
       <tt
         v-bind:data="properties"
         v-bind:header="headers.mat_prop_header"
+        v-bind:title="'all Properties'"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

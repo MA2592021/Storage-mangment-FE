@@ -79,7 +79,7 @@ export default {
       this.$emit("tableClicked", obj);
     },
     printo() {
-      this.print_data.title = "testo besto";
+      this.print_data.title = this.title;
       this.print_data.data = this.data;
       this.print_data.header = this.header;
       console.log(this.print_data);

@@ -204,6 +204,7 @@ export default {
         .then((response) => {
           this.materials = [];
           response.data.data.forEach((element) => {
+            console.log("tet", response.data);
             const x = {};
             x.id = element._id;
             x.totalphoneNo = element.totalphoneNo;

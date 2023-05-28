@@ -17,6 +17,7 @@
       <tt
         v-bind:data="employees"
         v-bind:header="headers.employee_header"
+        v-bind:title="$t(`users.all`)"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>
