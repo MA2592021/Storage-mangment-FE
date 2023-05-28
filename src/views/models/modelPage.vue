@@ -87,12 +87,14 @@
       >
         Save
       </v-btn>
+      <v-btn @click="testoo()">test</v-btn>
     </v-card-actions>
   </v-card>
   <v-card class="mt-3" style="width: 100%">
     <modelpanel
       v-bind:stages="model.stages"
       v-bind:consumption="model.consumption"
+      v-bind:name="model.name"
     />
   </v-card>
 </template>
@@ -113,14 +115,15 @@ export default {
     sizes: [],
     colors: [],
     obj: {},
+    temp: [],
   }),
   created() {
     //GEtet route here
-
     this.colorsload();
     this.sizesload();
     this.modelload();
   },
+
   setup() {
     const headers = useheaders();
 
@@ -129,6 +132,11 @@ export default {
     };
   },
   methods: {
+    testoo() {
+      this.temp.push();
+      this.temp.push(this.colors);
+      console.log(this.temp);
+    },
     modelload() {
       axios.get("/api/model/" + this.$route.params.id).then((response) => {
         this.orgmodel = response.data.data;

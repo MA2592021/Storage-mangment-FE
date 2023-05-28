@@ -7,7 +7,6 @@
     class="mt-5"
   ></v-text-field>
   <v-data-table
-    v-model:page="page"
     :headers="header"
     :items="data"
     :search="search"
@@ -36,10 +35,11 @@
     </template>
   </v-data-table>
   <div align="center">
-    <v-btn class="mx-auto" color="info" @click="printo()">print</v-btn>
+    <v-btn class="mx-auto" color="info" @click="printo()">print </v-btn>
   </div>
 </template>
 <script>
+import { usedata } from "../stores/print_data";
 export default {
   data() {
     return {
@@ -47,10 +47,15 @@ export default {
       options: {
         pageCount: 5,
       },
+      dialog: false,
       search: "",
       page: 1,
       itemsPerPage: 5,
     };
+  },
+  setup() {
+    const print_data = usedata();
+    return { print_data };
   },
   computed: {
     pages: function () {
@@ -65,6 +70,7 @@ export default {
     header: {
       type: Array,
     },
+    title: String,
   },
 
   methods: {
@@ -72,7 +78,13 @@ export default {
       console.log(obj);
       this.$emit("tableClicked", obj);
     },
-    printo() {},
+    printo() {
+      this.print_data.title = "testo besto";
+      this.print_data.data = this.data;
+      this.print_data.header = this.header;
+      console.log(this.print_data);
+      this.$router.push({ path: "/print" });
+    },
   },
 };
 </script>

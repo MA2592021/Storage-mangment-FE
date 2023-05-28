@@ -1,33 +1,22 @@
 <template>
-  <v-row>
-    <v-col cols="12" class="text-center mt-4"
-      ><span
-        ><v-icon
-          icon=" mdi-badge-account"
-          style="color: #fbc02d"
-          class="mb-2 mr-2"
-        ></v-icon>
-        <span class="text-h5" style="color: #fbc02d">{{
-          $t("users.all")
-        }}</span></span
-      ></v-col
-    >
-
-    <v-col cols="12">
-      <v-data-table
-        :headers="headers.employee_header"
-        :items="employees"
-        :pagination="false"
-        :items-per-page="employees.length"
-        hide-default-footer
-        item-value="name"
-        class="elevation-1"
-      ></v-data-table> </v-col
-  ></v-row>
+  <h1 align="center">{{ print_data.title }}</h1>
+  <br />
+  <v-data-table
+    :headers="print_data.header"
+    :items="print_data.data"
+    prev-icon="no"
+    next-icon="no"
+    last-icon="ss"
+    first-icon="ss"
+    items-per-page-text=""
+    :items-per-page="print_data.data.length"
+  ></v-data-table>
+  {{ data }}
 </template>
 
 <script>
-import axios from "axios";
+import { usedata } from "../../stores/print_data";
+
 export default {
   mounted() {
     setTimeout(() => {
@@ -35,11 +24,19 @@ export default {
     }, 2000);
   },
 
-  props: {
-    data: Array,
-    headers: Array,
+  created() {
+    console.log(this.data);
+    console.log(this.print_data);
+  },
+  setup() {
+    const print_data = usedata();
+    return { print_data };
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style>
+tbody tr:nth-of-type(odd) {
+  background-color: rgba(248, 0, 0, 0.06) !important;
+}
+</style>

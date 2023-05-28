@@ -22,7 +22,7 @@
           </v-col>
           <v-col cols="12">
             <v-text-field
-              label="priority "
+              label="code "
               required
               :readonly="dis"
               v-model="user.code"
@@ -96,14 +96,14 @@ export default {
       }).then((willDelete) => {
         if (willDelete) {
           axios
-            .delete("/api/useruser/" + this.$route.params.id)
+            .delete("/api/user/" + this.$route.params.id)
             .then((response) => {
               if (response.data.errors) {
                 swal("error", response.data.errors[0].msg, "error");
               } else {
                 swal("success", "user deleted suuccessfully", "success").then(
                   () => {
-                    this.$router.push({ path: "/utils/user_user/all" });
+                    this.$router.push({ path: "/utils/user/all" });
                   }
                 );
               }
@@ -134,7 +134,7 @@ export default {
     save() {
       axios
         .patch("/api/user/" + this.$route.params.id, {
-          title: this.user.title,
+          name: this.user.name,
           pirority: this.user.pirority,
           role: this.user.role._id,
         })

@@ -101,7 +101,7 @@
       </v-btn>
       <v-btn
         class="ml-auto"
-        :disabled="dis === true"
+        :disabled="dis === true || shipment.status !== 'Not approved'"
         prepend-icon="mdi-check-decagram"
         color="teal-lighten-3"
         @click="approve()"
@@ -115,11 +115,17 @@
         color="green"
       >
         Ship
-        <v-dialog v-model="dialog5" activator="parent" width="auto">
+        <v-dialog v-model="dialog5" activator="parent">
           <v-card>
+            <v-card-title>
+              enter Exit Permission image to continue</v-card-title
+            >
             <v-card-text>
               <imageuploader @image="deliver"></imageuploader>
             </v-card-text>
+            <v-card-actions>
+              <v-btn block @click="dialog5 = false">Cancel</v-btn>
+            </v-card-actions>
           </v-card>
         </v-dialog>
       </v-btn>
@@ -281,7 +287,7 @@ export default {
       });
     },
     deliver(image) {
-      this.shipment.image = iamge;
+      this.shipment.image = image;
       swal({
         title: "Are you sure?",
         text: "Are you sure that you want to ship this shipment?",
@@ -297,8 +303,8 @@ export default {
             })
             .then(() => {
               axios
-                .patch("/api/shipment" + this.$route.params.id, {
-                  exitPermission: this.shipment.image,
+                .patch("/api/shipment/" + this.$route.params.id, {
+                  image: this.shipment.image,
                 })
                 .then(() => {
                   axios

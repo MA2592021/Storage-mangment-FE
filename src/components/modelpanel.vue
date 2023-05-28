@@ -201,6 +201,7 @@ export default {
   props: {
     stages: Array,
     consumption: Array,
+    name: String,
   },
 };
 </script>

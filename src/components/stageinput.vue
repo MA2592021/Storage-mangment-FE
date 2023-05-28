@@ -164,7 +164,6 @@ export default {
       this.realstages = [];
       this.stages.forEach((element) => {
         const x = {};
-        x.machineType = element.machine._id;
         x.id = element._id;
         x.priority = counter;
         this.realstages.push(x);
