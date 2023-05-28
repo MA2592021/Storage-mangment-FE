@@ -11,7 +11,7 @@ import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 const pinia = createPinia();
 loadFonts();
-axios.defaults.baseURL = " http://192.168.1.4:5000";
+axios.defaults.baseURL = " http://192.168.1.3:5000";
 axios.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");

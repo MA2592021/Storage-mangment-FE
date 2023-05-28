@@ -3,14 +3,16 @@
   <v-card elevation="0" style="width: 100%">
     <v-card-title class="text-center">
       <v-icon icon="mdi-plus" style="order: #fbc02d" class="mb-2"></v-icon>
-      <span class="text-h5" style="order: #fbc02d">Add order</span>
+      <span class="text-h5" style="order: #fbc02d">{{
+        $t("orders.addOrders")
+      }}</span>
     </v-card-title>
     <v-card-text>
       <v-container>
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Name*"
+              :label="$t(`name`) + '*'"
               v-model="order.name"
               required
               hint="Required"
@@ -19,7 +21,7 @@
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="client*"
+              :label="$t(`client`) + '*'"
               chips
               v-model="order.client"
               persistent-hint
@@ -33,7 +35,7 @@
           <v-col cols="12" sm="6" md="6">
             <v-textarea
               clearable
-              label="details"
+              :label="$t(`details`) + '*'"
               v-model="order.details"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -41,7 +43,7 @@
           <v-col cols="12" sm="6" md="6">
             <v-textarea
               clearable
-              label="Note"
+              :label="$t(`note`) + '*'"
               v-model="order.note"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -52,8 +54,10 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
-      <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
+      <!-- <v-btn color="blue-darken-1" variant="text"> Close </v-btn> -->
+      <v-btn color="green-darken-1" variant="text" @click="add">
+        {{ $t("save") }}
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
