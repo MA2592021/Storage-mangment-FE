@@ -107,7 +107,7 @@
     <v-expansion-panels variant="popout" class="my-4">
       <paneltable
         v-bind:data="materials"
-        v-bind:header="headers.material_hand_header"
+        v-bind:header="headers.supplier_supply"
         v-bind:panelname="'materials'"
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.supplier.name"
@@ -147,7 +147,7 @@ import popuptest from "../../components/popuptest.vue";
 import check from "../../components/checkpopup.vue";
 import history from "../../components/historypopup.vue";
 import axios from "axios";
-
+import moment from "moment";
 import swal from "sweetalert";
 import { useheaders } from "../../stores/headers";
 
@@ -209,12 +209,13 @@ export default {
             console.log("tet", response.data);
             const x = {};
             x.id = element._id;
-            x.lastprice = element.lastPrice;
-            x.lastDate = element.lastDate;
+            x.lastPrice = element.lastPrice;
+            x.lastDate = moment(element.updatedAt).calendar();
+            x.lastQuantity = element.lastQuantity;
             x.name = element.material.name;
             x.material_id = element.material._id;
-            x.totalcost = element.totalCost;
-            x.totalqty = element.totalQuantity;
+            x.totalCost = element.totalCost;
+            x.totalQuantity = element.totalQuantity;
             this.materials.push(x);
           });
           // console.log(this.materials);

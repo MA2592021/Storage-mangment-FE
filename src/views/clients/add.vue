@@ -51,7 +51,7 @@
           </v-col>
 
           <v-col cols="12" sm="12">
-            <imageuploader @selected="imageup" />
+            <imageuploader @image="imageup" />
           </v-col>
         </v-row>
       </v-container>
@@ -105,6 +105,7 @@ export default {
           state: this.client.state,
           address: this.client.address,
           note: this.client.note,
+          image: this.client.img,
         })
         .then((response) => {
           if (response.data.errors) {
@@ -122,7 +123,7 @@ export default {
     },
 
     imageup(image) {
-      this.client.img = image[0];
+      this.client.img = image;
     },
   },
 };

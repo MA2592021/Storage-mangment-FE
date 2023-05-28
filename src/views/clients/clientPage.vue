@@ -7,7 +7,7 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="client.img"
+          :src="client.image ? client.image.data : '/arkan_logo-no-text.png'"
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -312,7 +312,7 @@ export default {
       this.client.id = this.orgclient._id;
       this.client.name = this.orgclient.name;
       this.client.state = this.orgclient.state;
-      //   this.client.img = this.orgclient.img;
+      this.client.image = this.orgclient.image;
       this.client.phoneNo = this.orgclient.phoneNo;
       this.client.note = this.orgclient.note;
       this.client.address = this.orgclient.address;
@@ -323,15 +323,7 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.client.id = this.orgclient._id;
-      this.client.name = this.orgclient.name;
-      this.client.state = this.orgclient.state;
-      //   this.client.img = this.orgclient.img;
-      this.client.phoneNo = this.orgclient.phoneNo;
-      this.client.note = this.orgclient.note;
-      this.client.address = this.orgclient.address;
-      this.content =
-        "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
+      this.clone();
     },
     save() {
       this.dis = !this.dis;

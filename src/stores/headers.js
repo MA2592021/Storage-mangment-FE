@@ -38,6 +38,20 @@ export const useheaders = defineStore("headers", {
       { title: "total quantity", key: "totalQuantity" },
       { title: "last date", key: "lastDate" },
     ],
+    supplier_supply: [
+      {
+        align: "start",
+        key: "name",
+        sortable: false,
+        title: "name",
+      },
+
+      { title: "last Quantity", key: "lastQuantity" },
+      { title: "last Price", key: "lastPrice" },
+      { title: "last Date", key: "lastDate" },
+      { title: "total Quantity", key: "totalQuantity" },
+      { title: "total cost", key: "totalCost" },
+    ],
     historyheader: [
       {
         align: "start",
