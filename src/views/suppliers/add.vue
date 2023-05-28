@@ -51,7 +51,7 @@
           </v-col>
 
           <v-col cols="12" sm="12">
-            <imageuploader @selected="imageup" />
+            <imageuploader @image="imageup" />
           </v-col>
         </v-row>
       </v-container>
@@ -68,7 +68,7 @@
 <script>
 import imageuploader from "../../components/imageuploader.vue";
 import axios from "axios";
-import sweetalert from "sweetalert";
+import swal from "sweetalert";
 export default {
   components: { imageuploader },
   data: () => ({
@@ -101,7 +101,6 @@ export default {
   },
   methods: {
     add() {
-      // this.url = URL.createObjectURL(this.supplier.img);
       console.log("im alive");
       axios
         .post("/api/supplier", {
@@ -110,6 +109,7 @@ export default {
           state: this.supplier.state,
           address: this.supplier.address,
           note: this.supplier.note,
+          image: this.supplier.img,
         })
         .then((response) => {
           if (response.data.errors) {
@@ -127,7 +127,7 @@ export default {
     },
 
     imageup(image) {
-      this.supplier.img = image[0];
+      this.supplier.img = image;
     },
   },
 };

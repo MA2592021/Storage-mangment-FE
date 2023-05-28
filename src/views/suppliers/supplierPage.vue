@@ -7,7 +7,9 @@
           class="bg-white"
           width="300"
           :aspect-ratio="1"
-          :src="supplier.img"
+          :src="
+            supplier.image ? supplier.image.data : '/arkan_logo-no-text.png'
+          "
           cover
         ></v-img></v-col
       ><v-col cols="9" sm="10">
@@ -176,7 +178,7 @@ export default {
   created() {
     //GEtet route here
     this.supplier_load();
-    // this.materials_supplier_load();
+    this.materials_supplier_load();
   },
   setup() {
     const headers = useheaders();
@@ -200,18 +202,19 @@ export default {
     },
     materials_supplier_load() {
       axios
-        .get("/api/suppliermaterial/supplier/" + this.$route.params.id)
+        .get("/api/material/supplier/brief/" + this.$route.params.id)
         .then((response) => {
           this.materials = [];
           response.data.data.forEach((element) => {
             console.log("tet", response.data);
             const x = {};
             x.id = element._id;
-            x.totalphoneNo = element.totalphoneNo;
+            x.lastprice = element.lastPrice;
             x.lastDate = element.lastDate;
-            x.history = element.history;
             x.name = element.material.name;
             x.material_id = element.material._id;
+            x.totalcost = element.totalCost;
+            x.totalqty = element.totalQuantity;
             this.materials.push(x);
           });
           // console.log(this.materials);
@@ -313,7 +316,7 @@ export default {
       this.supplier.id = this.orgsupplier._id;
       this.supplier.name = this.orgsupplier.name;
       this.supplier.state = this.orgsupplier.state;
-      //   this.supplier.img = this.orgsupplier.img;
+      this.supplier.image = this.orgsupplier.image;
       this.supplier.phoneNo = this.orgsupplier.phoneNo;
       this.supplier.note = this.orgsupplier.note;
       this.supplier.address = this.orgsupplier.address;
@@ -324,15 +327,7 @@ export default {
       this.dis = !this.dis;
       this.isEditing = false;
 
-      this.supplier.id = this.orgsupplier._id;
-      this.supplier.name = this.orgsupplier.name;
-      this.supplier.state = this.orgsupplier.state;
-      //   this.supplier.img = this.orgsupplier.img;
-      this.supplier.phoneNo = this.orgsupplier.phoneNo;
-      this.supplier.note = this.orgsupplier.note;
-      this.supplier.address = this.orgsupplier.address;
-      this.content =
-        "Incorrect changes can lead to system problems in the future. Are you sure about the changes you made?";
+      this.clone();
     },
     save() {
       this.dis = !this.dis;
