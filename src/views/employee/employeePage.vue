@@ -132,6 +132,7 @@
         v-bind:openedtitle="$t(`employees.p1`)"
         v-bind:closedtitle="this.employee.name"
         v-bind:link="link_property"
+        v-bind:title="'properties with employee ' + employee.name"
         @clicked="onClickChild_property"
         @appended="property_append"
       />
@@ -141,6 +142,7 @@
         v-bind:panelname="$t(`materials`)"
         v-bind:openedtitle="$t(`employees.p2`)"
         v-bind:closedtitle="this.employee.name"
+        v-bind:title="'materials with employee ' + employee.name"
         v-bind:link="link_material"
         @clicked="onClickChild_material"
         @appended="material_append"

@@ -19,6 +19,7 @@
       <tt
         v-bind:data="data"
         v-bind:header="header"
+        v-bind:title="title"
         @tableClicked="onClickButton"
       />
       <appendpop
@@ -58,6 +59,7 @@ export default {
     link: Object,
     data: Object,
     header: Object,
+    title: String,
   },
   methods: {
     onClickButton(value) {

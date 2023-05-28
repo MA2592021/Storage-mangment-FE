@@ -270,6 +270,7 @@ export default {
         .get("/api/custodyEmployee/custody/" + this.$route.params.id)
         .then((response) => {
           this.employees = [];
+          console.log(response);
           response.data.data.forEach((element) => {
             const x = {};
             x._id = element._id;
@@ -278,7 +279,7 @@ export default {
             x.totalQuantity = element.totalQuantity;
             x.name = element.employee.name;
             x.employee_id = element.employee._id;
-            // console.log(x);
+            console.log(x);
             this.employees.push(x);
           });
         });

@@ -9,7 +9,7 @@
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Name*"
+              :label="$t(`name`) + `*`"
               v-model="material.name"
               required
               hint="Required"
@@ -19,13 +19,13 @@
             <v-text-field
               required
               v-model="material.unit"
-              label="unit*"
+              :label="$t(`unit`) + `*`"
               hint="Required"
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="type*"
+              :label="$t(`type`) + `*`"
               chips
               v-model="material.type"
               persistent-hint
@@ -38,7 +38,7 @@
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="Role*"
+              :label="$t(`role`) + `*`"
               chips
               v-model="material.role"
               persistent-hint
@@ -52,7 +52,7 @@
             <v-text-field
               required
               v-model="material.max"
-              label="max*"
+              :label="$t(`max`) + `*`"
               hint="Required"
             ></v-text-field>
           </v-col>
@@ -60,14 +60,14 @@
             <v-text-field
               required
               v-model="material.min"
-              label="min*"
+              :label="$t(`min`) + `*`"
               hint="Required"
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6"
             ><v-textarea
               clearable
-              label="Note"
+              :label="$t(`note`) + `*`"
               v-model="material.note"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -76,7 +76,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               clearable
-              label="details"
+              :label="$t(`details`) + `*`"
               v-model="material.details"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -90,8 +90,9 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
-      <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
+      <v-btn color="green-darken-1" variant="text" @click="add">
+        {{ $t("save") }}
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>

@@ -10,7 +10,24 @@
     first-icon="ss"
     items-per-page-text=""
     :items-per-page="print_data.data.length"
-  ></v-data-table>
+  >
+    <template v-slot:item.color="{ item }">
+      <h4 v-for="model in item.raw.models" :key="model">
+        {{ model.color.name }}
+      </h4>
+    </template>
+
+    <template v-slot:item.size="{ item }">
+      <h4 v-for="model in item.raw.models" :key="model">
+        {{ model.size.name }}
+      </h4>
+    </template>
+    <template v-slot:item.quantity="{ item }">
+      <h4 v-for="model in item.raw.models" :key="model">
+        {{ model.quantity }}
+      </h4>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -23,6 +40,10 @@ export default {
     }, 2000);
   },
 
+  created() {
+    console.log(this.data);
+    console.log(this.print_data);
+  },
   setup() {
     const print_data = usedata();
     return { print_data };

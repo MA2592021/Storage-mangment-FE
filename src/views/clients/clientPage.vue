@@ -169,6 +169,7 @@ export default {
     },
     orgclient: {},
     materials: [],
+    materialsDetails: [],
     historytype: "",
     obj: {},
     historyobject: {},
@@ -217,7 +218,6 @@ export default {
         });
     },
     onClickChild_material(value) {
-      // console.log(value);
       this.historytype = "material";
       this.historyview(value._id);
     },
@@ -267,6 +267,7 @@ export default {
     },
     savenote(value) {
       console.log(value);
+
       if (this.historytype === "property") {
         this.properties.find((m) => m._id === value.id).note = value.note;
         console.log(this.properties.find((m) => m._id === value.id).note);
@@ -280,7 +281,7 @@ export default {
     },
     historyview(id) {
       // console.log(this.propfind(id));
-
+    
       this.historyobject.title = this.historytype + " history";
       if (this.historytype === "material") {
         this.obj = this.materials.find((m) => m._id === id);

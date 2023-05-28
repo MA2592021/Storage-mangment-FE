@@ -663,6 +663,30 @@ const router = createRouter({
       },
       component: () => import("../views/prints/mainPrint.vue"),
     },
+    {
+      path: "/consumptionPrint",
+      name: "consumptionPrint",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/prints/consumptionPrint.vue"),
+    },
+    {
+      path: "/orderPrint",
+      name: "orderPrint",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/prints/orderPrint.vue"),
+    },
+    {
+      path: "/orderMPrint",
+      name: "orderMPrint",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/prints/orderModelPrint.vue"),
+    },
   ],
 });
 

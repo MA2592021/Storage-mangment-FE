@@ -25,8 +25,13 @@
               :items="stages"
               class="elevation-1"
             >
-            </v-data-table
-          ></v-col>
+            </v-data-table>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo(1)"
+                >print
+              </v-btn>
+            </div></v-col
+          >
         </v-row>
       </v-expansion-panel-text> </v-expansion-panel
     ><v-expansion-panel>
@@ -60,6 +65,7 @@
                   {{ model.color.name }}
                 </h4>
               </template>
+
               <template v-slot:item.size="{ item }">
                 <h4 v-for="model in item.raw.models" :key="model">
                   {{ model.size.name }}
@@ -70,7 +76,12 @@
                   {{ model.quantity }}
                 </h4>
               </template></v-data-table
-            ></v-col
+            >
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo(2)"
+                >print
+              </v-btn>
+            </div></v-col
           >
         </v-row>
       </v-expansion-panel-text>
@@ -111,7 +122,12 @@
                   {{ size.name }}
                 </h4>
               </template>
-            </v-data-table></v-col
+            </v-data-table>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo(3)"
+                >print
+              </v-btn>
+            </div></v-col
           >
         </v-row>
       </v-expansion-panel-text>
@@ -121,12 +137,8 @@
 
 <script>
 import axios from "axios";
-import swal from "sweetalert";
-import stages from "./stageinput.vue";
+import { usedata } from "../stores/print_data";
 export default {
-  components: {
-    stages,
-  },
   data() {
     return {
       itemsPerPage: 5,
@@ -202,6 +214,31 @@ export default {
     stages: Array,
     consumption: Array,
     name: String,
+  },
+  setup() {
+    const print_data = usedata();
+    return { print_data };
+  },
+  methods: {
+    printo(x) {
+      if (x === 1) {
+        this.print_data.title = "stages to produce " + this.name;
+        this.print_data.data = this.stages;
+        this.print_data.header = this.headers1;
+        this.$router.push({ path: "/print" });
+      } else if (x === 2) {
+        this.print_data.title = "orders with " + this.name;
+        this.print_data.data = this.orders;
+        this.print_data.header = this.headers2;
+        console.log(this.print_data);
+        this.$router.push({ path: "/orderPrint" });
+      } else {
+        this.print_data.title = this.name + "  conspumtions";
+        this.print_data.data = this.consumption;
+        this.print_data.header = this.headers;
+        this.$router.push({ path: "/consumptionPrint" });
+      }
+    },
   },
 };
 </script>

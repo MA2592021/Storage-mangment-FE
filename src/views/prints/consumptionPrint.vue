@@ -10,7 +10,18 @@
     first-icon="ss"
     items-per-page-text=""
     :items-per-page="print_data.data.length"
-  ></v-data-table>
+  >
+    <template v-slot:item.colors="{ item }">
+      <h4 v-for="color in item.raw.colors" :key="color">
+        {{ color.name }}
+      </h4>
+    </template>
+    <template v-slot:item.sizes="{ item }">
+      <h4 v-for="size in item.raw.sizes" :key="size">
+        {{ size.name }}
+      </h4>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -23,6 +34,10 @@ export default {
     }, 2000);
   },
 
+  created() {
+    console.log(this.data);
+    console.log(this.print_data);
+  },
   setup() {
     const print_data = usedata();
     return { print_data };

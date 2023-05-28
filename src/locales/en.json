@@ -29,6 +29,12 @@
     "machinetypes": "Machine types"
   },
   "password": "Password",
+  "print": "print",
+  "unit": "unit",
+  "type": "type",
+  "max": "max",
+  "min": "min",
+  "available": "available",
   "code": "Code",
   "name": "Name",
   "role": "Role",

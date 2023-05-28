@@ -54,7 +54,6 @@
     }}</v-btn>
     <v-btn class="mt-2" color="success" @click="save()">{{ $t("save") }}</v-btn>
   </v-col>
-  {{ colorselect[0] }}
 </template>
 
 <script>

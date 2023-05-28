@@ -35,7 +35,9 @@
     </template>
   </v-data-table>
   <div align="center">
-    <v-btn class="mx-auto" color="info" @click="printo()">print </v-btn>
+    <v-btn class="mx-auto" color="info" @click="printo()"
+      >{{ $t("print") }}
+    </v-btn>
   </div>
 </template>
 <script>

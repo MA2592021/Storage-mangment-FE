@@ -1,7 +1,8 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row>
-      <v-col cols="12" align="center" class="text-h4"> materials </v-col
+      <v-col cols="12" align="center" class="text-h4">
+        {{ $t("materials") }} </v-col
       ><v-col cols="3" sm="2"
         ><v-img
           class="bg-white"
@@ -16,7 +17,7 @@
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Name "
+              :label="$t(`name`)"
               required
               :readonly="dis === true"
               v-model="material.name"
@@ -26,7 +27,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="available "
+              :label="$t(`available`)"
               :readonly="dis === true"
               v-model="material.available"
               variant="underlined"
@@ -37,7 +38,7 @@
             <v-text-field
               required
               v-model="material.quantity"
-              label="quantity "
+              :label="$t(`quantity`)"
               :readonly="!isEditing"
               variant="underlined"
               ><template v-slot:append>
@@ -60,7 +61,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="max "
+              :label="$t(`max`)"
               :readonly="dis === true"
               v-model="material.max"
               variant="underlined"
@@ -69,7 +70,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="min "
+              :label="$t(`min`)"
               :readonly="dis === true"
               v-model="material.min"
               variant="underlined"
@@ -78,7 +79,7 @@
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="Role "
+              :label="$t(`role`)"
               v-model="material.role"
               variant="underlined"
               :readonly="dis === true"
@@ -89,7 +90,7 @@
           <v-col cols="12" sm="6">
             <v-text-field
               required
-              label="Unit "
+              :label="$t(`unit`)"
               :readonly="dis === true"
               v-model="material.unit"
               variant="underlined"
@@ -97,7 +98,7 @@
           </v-col>
           <v-col cols="12">
             <v-autocomplete
-              label="type "
+              :label="$t(`type`)"
               v-model="material.type"
               variant="underlined"
               :readonly="dis === true"
@@ -109,7 +110,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="Note"
+              :label="$t(`note`)"
               v-model="material.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -118,7 +119,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="details"
+              :label="$t(`details`)"
               v-model="material.details"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -130,7 +131,7 @@
         @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t("edit") : $t("cancel") }}
       </v-btn>
       <v-btn
         class="ml-auto text-red"
@@ -138,7 +139,7 @@
         :disabled="dis === true"
         prepend-icon="mdi-delete-forever"
       >
-        Delete
+        {{ $t("delete") }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -147,7 +148,7 @@
         color="green"
         @click="dialog = !dialog"
       >
-        Save
+        {{ $t("save") }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -156,7 +157,7 @@
       <paneltable
         v-bind:data="employees"
         v-bind:header="headers.employee_hand_header"
-        v-bind:panelname="'Employees'"
+        v-bind:panelname="$t('employees.employees')"
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.material.name"
         v-bind:link="link"

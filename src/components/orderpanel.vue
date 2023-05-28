@@ -115,7 +115,9 @@
             Append models
           </v-btn></v-row
         >
-        {{ selected }}
+        <div align="center" class="ma-2">
+          <v-btn class="mx-auto" color="info" @click="printo()">print </v-btn>
+        </div>
       </v-expansion-panel-text> </v-expansion-panel
     ><v-expansion-panel>
       <v-expansion-panel-title>
@@ -143,18 +145,30 @@
               item-value="name"
               class="elevation-1"
             >
-            </v-data-table
-          ></v-col>
+            </v-data-table>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo1()"
+                >print
+              </v-btn>
+            </div></v-col
+          >
         </v-row>
-      </v-expansion-panel-text> </v-expansion-panel
-  ></v-expansion-panels>
+      </v-expansion-panel-text>
+    </v-expansion-panel></v-expansion-panels
+  >
 </template>
 
 <script>
 import axios from "axios";
+import { usedata } from "../stores/print_data";
+
 import swal from "sweetalert";
 import moment from "moment";
 export default {
+  setup() {
+    const print_data = usedata();
+    return { print_data };
+  },
   data() {
     return {
       selectedtype: null,
@@ -217,6 +231,18 @@ export default {
         this.resett();
       }
     },
+    printo() {
+      this.print_data.title = "models in order " + this.name;
+      this.print_data.data = this.reqmodel;
+      this.print_data.header = this.headers;
+      this.$router.push({ path: "/orderMPrint" });
+    },
+    printo1() {
+      this.print_data.title = "shipments done in order " + this.name;
+      this.print_data.data = this.ship1;
+      this.print_data.header = this.headers1;
+      this.$router.push({ path: "/print" });
+    },
     dosomething(value) {
       this.$router.push({ path: "/shipment/" + value._id });
     },
@@ -257,7 +283,7 @@ export default {
       const x = {};
       x.name = element.name;
       x.date = moment(element.createdAt).calendar();
-      console.log(x);
+      //console.log(x);
       this.ship1.push(x);
     });
   },

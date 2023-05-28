@@ -112,6 +112,7 @@
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.supplier.name"
         v-bind:link="link"
+        v-bind:title="'materials from supplier ' + supplier.name"
         @clicked="onClickChild_material"
         @appended="material_append"
       />
@@ -222,9 +223,9 @@ export default {
         });
     },
     onClickChild_material(value) {
-      // console.log(value);
+      console.log(value);
       this.historytype = "material";
-      this.historyview(value._id);
+      this.historyview(value.id);
     },
     material_append(value) {
       axios
@@ -285,22 +286,30 @@ export default {
     },
     historyview(id) {
       // console.log(this.propfind(id));
-
-      this.historyobject.title = this.historytype + " history";
-      if (this.historytype === "material") {
-        this.obj = this.materials.find((m) => m._id === id);
-        this.historyobject._id = this.obj.material_id;
-      } else {
-        this.obj = this.suppliers.find((m) => m._id === id);
-      }
-      this.historyobject.id = this.obj.id;
-      this.historyobject.name = this.obj.name;
-      this.historyobject.data = this.obj.history;
-      this.historyobject.qty = this.obj.totalphoneNo;
-      this.historyobject.date = this.obj.lastDate;
-      this.historyobject.note = this.obj.note;
-      this.historyobject.header = this.headers.historyheader;
-      this.dialog2 = true;
+      // const x = [];
+      // axios
+      //   .get("/api/material/supplier/" + this.$route.params.id)
+      //   .then((response) => {
+      //     console.log(response.data);
+      //     x = response.data.data;
+      //   });
+      // console.log(id);
+      // this.historyobject.title = this.historytype + " history";
+      // if (this.historytype === "material") {
+      //   this.obj = this.x.filters((m) => m.materials.id === id);
+      //   console.log("obj", this.obj);
+      //   this.historyobject._id = this.obj.material_id;
+      // } else {
+      //   this.obj = this.suppliers.find((m) => m._id === id);
+      // }
+      // this.historyobject.id = this.obj.id;
+      // this.historyobject.name = this.obj.name;
+      // this.historyobject.data = this.obj.history;
+      // this.historyobject.qty = this.obj.totalphoneNo;
+      // this.historyobject.date = this.obj.lastDate;
+      // this.historyobject.note = this.obj.note;
+      // this.historyobject.header = this.headers.historyheader;
+      // this.dialog2 = true;
     },
     criticalchange() {
       if (this.isEditing === false) {
