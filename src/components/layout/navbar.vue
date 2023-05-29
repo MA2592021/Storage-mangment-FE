@@ -28,7 +28,10 @@
 
       <v-row align="center" class="ma-10">
         <v-col align="center">
-          <v-avatar image="/arkan_logo-no-text.png" class="ma-1"></v-avatar>
+          <v-avatar
+            :image="image ? image : `/arkan_logo-no-text.png`"
+            class="ma-1"
+          ></v-avatar>
           <p class="text-subtitle-1">{{ username }}</p>
           <p class="text-subtitle-1">{{ rolename }}</p>
         </v-col>
@@ -224,10 +227,17 @@ export default {
         },
       ],
       utilsview: "utils",
+      image: null,
       priv: localStorage.getItem("privileges")
         ? localStorage.getItem("privileges")
         : [],
     };
+  },
+  created() {
+    axios.get("/api/user/" + localStorage.getItem("id")).then((res) => {
+      this.image = res.data.data.image.data;
+      console.log(res);
+    });
   },
   methods: {
     signout: function () {
@@ -238,6 +248,7 @@ export default {
         });
       });
     },
+
     test() {
       //console.log("testt");
       if (this.model === "العربية") {

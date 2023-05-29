@@ -118,7 +118,7 @@ export default {
                           "user deleted suuccessfully",
                           "success"
                         ).then(() => {
-                          this.$router.push({ path: "/utils/user/all" });
+                          this.$router.push({ path: "/user/all" });
                         });
                       }
                     });

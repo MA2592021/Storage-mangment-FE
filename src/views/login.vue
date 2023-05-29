@@ -78,6 +78,7 @@ export default {
             localStorage.setItem("privileges", res.data.user.role.privileges);
             localStorage.setItem("rolename", res.data.user.role.title);
             localStorage.setItem("code", res.data.user.code);
+            localStorage.setItem("id", res.data.user._id);
             swal("success", "Welcome Back", "success");
             this.$router.push({ path: "/" });
           }

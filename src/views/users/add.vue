@@ -124,7 +124,6 @@ export default {
 
     imageup(image) {
       this.user.img = image;
-      console.log(this.user.img);
     },
   },
 };

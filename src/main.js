@@ -43,11 +43,10 @@ axios.interceptors.response.use(
       return axios
         .post("/api/auth/token", { refreshToken })
         .then((response) => {
-          const { accessToken, refreshToken } = response.data;
+          const { accessToken } = response.data;
           console.log("token refresh");
           // Update the stored access token and refresh token
           localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
 
           // Update the Authorization header with the new access token
           axios.defaults.headers.common[
@@ -61,6 +60,7 @@ axios.interceptors.response.use(
         .catch((error) => {
           // Handle refresh token request error
           // For example, redirect the user to the login page
+          localStorage.clear();
           router.push("/login");
           swal("error", "sorry you have to login again", "error");
           return Promise.reject(error);

@@ -692,20 +692,13 @@ const router = createRouter({
 
 export default router;
 router.beforeEach((to, from, next) => {
-  async function name() {
-    const isLoggedIn = await axios
-      .post("/api/auth/test", {
-        refreshToken: localStorage.getItem("refreshToken"),
-      })
-      .then((response) => {
-        if (response.data.errors) {
-          return false;
-        } else {
-          return true;
-        }
-      });
+  function name() {
+    const isLoggedIn = localStorage.getItem("code") ? true : false;
     if (to.meta.requiresAuth && !isLoggedIn) {
       // User is not logged in and the route requires authentication
+
+      swal("error", "you have to login first", "error");
+
       next("/login"); // Redirect the user to the login page or another appropriate route
     } else if (to.path === "/login" && isLoggedIn) {
       swal("success", "you're already logged in", "success");
