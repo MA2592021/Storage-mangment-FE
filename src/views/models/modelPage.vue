@@ -202,12 +202,27 @@ export default {
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
-          axios
-            .delete("/api/model/" + this.$route.params.id)
-            .then((response) => {
-              swal("success", "model deleted successfully", "success");
-              this.$router.push({ path: "/model/all" });
-            });
+          swal("enter your password", {
+            content: "input",
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/model/" + this.$route.params.id)
+                    .then((response) => {
+                      swal("success", "model deleted successfully", "success");
+                      this.$router.push({ path: "/model/all" });
+                    });
+                }
+              });
+          });
         }
       });
     },

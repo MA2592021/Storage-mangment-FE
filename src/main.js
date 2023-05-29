@@ -66,7 +66,13 @@ axios.interceptors.response.use(
           return Promise.reject(error);
         });
     }
-    swal("error", error.message, "error");
+    swal(
+      "error",
+      error.response.data.errors
+        ? error.response.data.errors[0].msg
+        : error.message,
+      "error"
+    );
     return Promise.reject(error);
   }
 );

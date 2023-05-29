@@ -388,27 +388,34 @@ export default {
         if (willDelete) {
           swal("enter your password", {
             content: "input",
-          })
-            .then((value) => {
-              swal(`we should check password here : ${value}`);
-            })
-            .then(() => {
-              axios
-                .delete("/api/shipment/" + this.$route.params.id)
-                .then((response) => {
-                  if (response.data.errors) {
-                    swal("error", response.data.errors[0].msg, "error");
-                  } else {
-                    swal(
-                      "success",
-                      "shipment deleted suuccessfully",
-                      "success"
-                    ).then(() => {
-                      this.$router.push({ path: "/shipment/all" });
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/shipment/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "shipment deleted suuccessfully",
+                          "success"
+                        ).then(() => {
+                          this.$router.push({ path: "/shipment/all" });
+                        });
+                      }
                     });
-                  }
-                });
-            });
+                }
+              });
+          });
         }
       });
     },

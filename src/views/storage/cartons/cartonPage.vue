@@ -163,19 +163,36 @@ export default {
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
-          axios
-            .delete("/api/carton/" + this.$route.params.id)
-            .then((response) => {
-              if (response.data.errors) {
-                swal("error", response.data.errors[0].msg, "error");
-              } else {
-                swal("success", "carton deleted suuccessfully", "success").then(
-                  () => {
-                    this.$router.push({ path: "/utils/carton/all" });
-                  }
-                );
-              }
-            });
+          swal("enter your password", {
+            content: "input",
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/carton/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "carton deleted suuccessfully",
+                          "success"
+                        ).then(() => {
+                          this.$router.push({ path: "/utils/carton/all" });
+                        });
+                      }
+                    });
+                }
+              });
+          });
         }
       });
     },

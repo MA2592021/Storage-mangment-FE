@@ -46,19 +46,36 @@ export default {
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
-          axios
-            .delete("/api/materialType/" + this.$route.params.id)
-            .then((response) => {
-              if (response.data.errors) {
-                swal("error", response.data.errors[0].msg, "error");
-              } else {
-                swal("success", "type deleted suuccessfully", "success").then(
-                  () => {
-                    this.$router.push({ path: "/utils/type/all" });
-                  }
-                );
-              }
-            });
+          swal("enter your password", {
+            content: "input",
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/materialType/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "type deleted suuccessfully",
+                          "success"
+                        ).then(() => {
+                          this.$router.push({ path: "/utils/type/all" });
+                        });
+                      }
+                    });
+                }
+              });
+          });
         }
       });
     },

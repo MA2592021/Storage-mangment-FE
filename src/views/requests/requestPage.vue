@@ -303,22 +303,33 @@ export default {
         if (willDelete) {
           swal("enter your password", {
             content: "input",
-          })
-            .then((value) => {
-              swal(`we should check password here : ${value}`);
-            })
-            .then(() => {
-              axios
-                .patch("/api/buyRequest/approve/" + this.$route.params.id)
-                .then((response) => {
-                  if (response.data.errors) {
-                    swal("error", response.data.errors[0].msg, "error");
-                  } else {
-                    swal("success", "request Approved successfully", "success");
-                    this.requestload();
-                  }
-                });
-            });
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .patch("/api/buyRequest/approve/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "request Approved successfully",
+                          "success"
+                        );
+                        this.requestload();
+                      }
+                    });
+                }
+              });
+          });
         }
       });
     },
@@ -332,13 +343,20 @@ export default {
         if (willDelete) {
           swal("enter your password", {
             content: "input",
-          })
-            .then((value) => {
-              swal(`we should check password here : ${value}`);
-            })
-            .then(() => {
-              this.dialog = true;
-            });
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  this.dialog = true;
+                }
+              });
+          });
         }
       });
     },
@@ -419,27 +437,34 @@ export default {
         if (willDelete) {
           swal("enter your password", {
             content: "input",
-          })
-            .then((value) => {
-              swal(`we should check password here : ${value}`);
-            })
-            .then(() => {
-              axios
-                .delete("/api/buyRequest/" + this.$route.params.id)
-                .then((response) => {
-                  if (response.data.errors) {
-                    swal("error", response.data.errors[0].msg, "error");
-                  } else {
-                    swal(
-                      "success",
-                      "request deleted suuccessfully",
-                      "success"
-                    ).then(() => {
-                      this.$router.push({ path: "/request/all" });
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/buyRequest/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "request deleted suuccessfully",
+                          "success"
+                        ).then(() => {
+                          this.$router.push({ path: "/request/all" });
+                        });
+                      }
                     });
-                  }
-                });
-            });
+                }
+              });
+          });
         }
       });
     },

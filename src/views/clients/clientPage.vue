@@ -281,7 +281,7 @@ export default {
     },
     historyview(id) {
       // console.log(this.propfind(id));
-    
+
       this.historyobject.title = this.historytype + " history";
       if (this.historytype === "material") {
         this.obj = this.materials.find((m) => m._id === id);
@@ -365,19 +365,36 @@ export default {
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
-          axios
-            .delete("/api/client/" + this.$route.params.id)
-            .then((response) => {
-              if (response.data.errors) {
-                swal("error", response.data.errors[0].msg, "error");
-              } else {
-                swal("success", "client deleted suuccessfully", "success").then(
-                  () => {
-                    this.$router.push({ path: "/client/all" });
-                  }
-                );
-              }
-            });
+          swal("enter your password", {
+            content: "input",
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/client/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "client deleted suuccessfully",
+                          "success"
+                        ).then(() => {
+                          this.$router.push({ path: "/client/all" });
+                        });
+                      }
+                    });
+                }
+              });
+          });
         }
       });
     },

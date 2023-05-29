@@ -95,19 +95,36 @@ export default {
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
-          axios
-            .delete("/api/user/" + this.$route.params.id)
-            .then((response) => {
-              if (response.data.errors) {
-                swal("error", response.data.errors[0].msg, "error");
-              } else {
-                swal("success", "user deleted suuccessfully", "success").then(
-                  () => {
-                    this.$router.push({ path: "/utils/user/all" });
-                  }
-                );
-              }
-            });
+          swal("enter your password", {
+            content: "input",
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/user/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "user deleted suuccessfully",
+                          "success"
+                        ).then(() => {
+                          this.$router.push({ path: "/utils/user/all" });
+                        });
+                      }
+                    });
+                }
+              });
+          });
         }
       });
     },

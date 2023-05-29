@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import swal from "sweetalert";
 export default {
   data() {
     return {
@@ -40,7 +42,18 @@ export default {
   },
   methods: {
     check() {
-      this.$emit("checked");
+      axios
+        .post("/api/auth/testCredentials", {
+          code: localStorage.getItem("code"),
+          password: this.password,
+        })
+        .then(() => {
+          swal("success", "updated successfully", "success");
+          this.$emit("checked");
+        })
+        .catch(() => {
+          this.$emit("closed");
+        });
     },
   },
   props: {
