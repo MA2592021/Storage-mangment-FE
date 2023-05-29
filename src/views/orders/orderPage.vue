@@ -71,6 +71,10 @@
     v-bind:name="order.name"
     v-bind:reqmodel="order.models"
     v-bind:ship="order.shipments"
+    v-bind:total="order.totalmat"
+    v-bind:clientmat="order.clientMaterial"
+    v-bind:client="order.client._id"
+    v-bind:order="order.id"
     @models="updatemodels"
     v-if="x === 1"
   />
@@ -144,6 +148,7 @@ export default {
       this.order.models = this.orgorder.models;
       this.order.shipments = this.orgorder.shipments;
       this.order.totalmat = this.orgorder.totalMaterialsRequired;
+      this.order.clientMaterial = this.orgorder.clientMaterial;
       this.totalqty = this.orgorder.totalQuantity;
       this.order.details = this.orgorder.details;
       this.order.client = this.orgorder.client;

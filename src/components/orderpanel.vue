@@ -154,17 +154,104 @@
           >
         </v-row>
       </v-expansion-panel-text>
-    </v-expansion-panel></v-expansion-panels
-  >
+    </v-expansion-panel>
+    <v-expansion-panel>
+      <v-expansion-panel-title>
+        <template v-slot:default="{ expanded }">
+          <v-row no-gutters>
+            <v-col cols="4" class="d-flex justify-start"> consumption </v-col>
+            <v-col cols="8" class="text-grey">
+              <v-fade-transition leave-absolute>
+                <span v-if="expanded" key="0">
+                  {{ name }}
+                </span>
+                <span v-else key="1"> consumption in {{ name }} </span>
+              </v-fade-transition>
+            </v-col>
+          </v-row>
+        </template>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-row>
+          <v-col col="6" xs="12" align="center">
+            <v-data-table
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers2"
+              :items="total1"
+              item-value="name"
+              class="elevation-1"
+            >
+            </v-data-table>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo3()"
+                >print
+              </v-btn>
+            </div></v-col
+          >
+        </v-row>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
+    <v-expansion-panel>
+      <v-expansion-panel-title>
+        <template v-slot:default="{ expanded }">
+          <v-row no-gutters>
+            <v-col cols="4" class="d-flex justify-start">
+              Client material
+            </v-col>
+            <v-col cols="8" class="text-grey">
+              <v-fade-transition leave-absolute>
+                <span v-if="expanded" key="0">
+                  {{ name }}
+                </span>
+                <span v-else key="1"> Client material {{ name }} </span>
+              </v-fade-transition>
+            </v-col>
+          </v-row>
+        </template>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-row>
+          <v-col col="6" xs="12" align="center">
+            <v-data-table
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers3"
+              :items="clientmat1"
+              item-value="name"
+              class="elevation-1"
+            >
+            </v-data-table>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="success" @click="dialog = !dialog"
+                >append Material
+              </v-btn>
+            </div>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo2()"
+                >print
+              </v-btn>
+            </div></v-col
+          >
+          <appendpop
+            v-bind:link="link"
+            v-model="dialog"
+            v-if="dialog"
+            @close="dialog = !dialog"
+            @submit="submit"
+          />
+        </v-row>
+      </v-expansion-panel-text> </v-expansion-panel
+  ></v-expansion-panels>
 </template>
 
 <script>
 import axios from "axios";
+import appendpop from "./appendpop.vue";
 import { usedata } from "../stores/print_data";
 
 import swal from "sweetalert";
 import moment from "moment";
 export default {
+  components: { appendpop },
   setup() {
     const print_data = usedata();
     return { print_data };
@@ -177,6 +264,8 @@ export default {
       color: null,
       size: null,
       dis: true,
+      dialog: false,
+      link: { get: "/api/material/" },
       headers: [
         {
           title: "name",
@@ -202,9 +291,57 @@ export default {
           key: "date",
         },
       ],
+      headers2: [
+        {
+          title: "name",
+          align: "start",
+          sortable: false,
+          key: "name",
+        },
+        {
+          title: "total needed",
+          align: "start",
+          sortable: false,
+          key: "quantity",
+        },
+        {
+          title: "available",
+          align: "start",
+          sortable: false,
+          key: "available",
+        },
+      ],
+      headers3: [
+        {
+          title: "name",
+          align: "start",
+          sortable: false,
+          key: "name",
+        },
+        {
+          title: "quantity",
+          align: "start",
+          sortable: false,
+          key: "quantity",
+        },
+        {
+          title: "available",
+          align: "start",
+          sortable: false,
+          key: "available",
+        },
+        {
+          title: "date",
+          align: "start",
+          sortable: false,
+          key: "date",
+        },
+      ],
       model: [],
       qty: "",
       ship1: [],
+      clientmat1: [],
+      total1: [],
     };
   },
   methods: {
@@ -243,6 +380,18 @@ export default {
       this.print_data.header = this.headers1;
       this.$router.push({ path: "/print" });
     },
+    printo2() {
+      this.print_data.title = "Client Material in order " + this.name;
+      this.print_data.data = this.clientmat1;
+      this.print_data.header = this.headers3;
+      this.$router.push({ path: "/print" });
+    },
+    printo3() {
+      this.print_data.title = "Order " + this.name + " Consumptions";
+      this.print_data.data = this.total1;
+      this.print_data.header = this.headers2;
+      this.$router.push({ path: "/print" });
+    },
     dosomething(value) {
       this.$router.push({ path: "/shipment/" + value._id });
     },
@@ -274,6 +423,20 @@ export default {
         //console.log(this.model);
       });
     },
+    submit(value) {
+      console.log(value);
+      this.dialog = !this.dialog;
+      axios
+        .patch("/api/client/updateMaterials/" + this.client, {
+          order: this.order,
+          clientMaterials: [{ material: value._id, quantity: value.qty }],
+        })
+        .then((res) => {
+          console.log(res);
+          swal("success", "material appended successfully", "success");
+          this.$router.go(0);
+        });
+    },
   },
 
   created() {
@@ -286,11 +449,35 @@ export default {
       //console.log(x);
       this.ship1.push(x);
     });
+    const y = [];
+    this.clientmat.forEach((element) => {
+      const x = {};
+      x.name = element.material.name;
+      x.available = element.material.available + " " + element.material.unit;
+      x.quantity = element.quantity + " " + element.material.unit;
+      x.date = moment(element.date).calendar();
+      y.push(x);
+    });
+
+    this.clientmat1 = y;
+    const y2 = [];
+    this.total.forEach((element) => {
+      const x = {};
+      x.name = element.id.name;
+      x.available = element.id.available + " " + element.id.unit;
+      x.quantity = element.quantity + " " + element.id.unit;
+      y2.push(x);
+    });
+    this.total1 = y2;
   },
   props: {
     name: String,
     reqmodel: Array,
     ship: Array,
+    total: Array,
+    clientmat: Array,
+    client: String,
+    order: String,
   },
 };
 </script>

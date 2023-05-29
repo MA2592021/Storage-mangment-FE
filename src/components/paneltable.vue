@@ -30,7 +30,7 @@
         @submit="submit"
       />
       <v-row justify="center" class="mt-4">
-        <v-btn color="primary " @click="dialog = !dialog">
+        <v-btn color="success " @click="dialog = !dialog">
           Append {{ panelname }}
         </v-btn></v-row
       >
