@@ -3,7 +3,7 @@
     ><v-row class="ma-2">
       <v-col cols="12" sm="6" md="6">
         <v-text-field
-          label="Name "
+          :label="$t('name')"
           required
           :readonly="dis === true"
           v-model="carton.name"
@@ -13,7 +13,7 @@
       <v-col cols="12" sm="6" md="6">
         <v-text-field
           required
-          label="quantity "
+          :label="$t('quantity')"
           :readonly="dis === true"
           v-model="carton.quantity"
           variant="underlined"
@@ -21,7 +21,7 @@
       </v-col>
       <v-col cols="12" sm="6" md="6">
         <v-text-field
-          label="model"
+          :label="$t('model')"
           variant="underlined"
           :readonly="dis === true"
           v-model="carton.model.name"
@@ -32,7 +32,7 @@
       <v-col cols="12" sm="6"
         ><v-textarea
           :clearable="dis === false"
-          label="Note"
+          :label="$t('note')"
           v-model="carton.note"
           :readonly="dis === true"
           prepend-icon="mdi-note-text-outline"
@@ -44,7 +44,7 @@
         @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t("edit") : $t("cancel") }}
       </v-btn>
       <v-btn
         @click="deletee()"
@@ -53,7 +53,7 @@
         prepend-icon=" mdi-delete-forever"
         color="red"
       >
-        Delete
+        {{ $t("delete") }}
       </v-btn>
       <v-btn
         :disabled="dis === true"
@@ -61,7 +61,7 @@
         color="green"
         @click="save()"
       >
-        Save
+        {{ $t("save") }}
       </v-btn>
     </v-card-actions>
   </v-card>

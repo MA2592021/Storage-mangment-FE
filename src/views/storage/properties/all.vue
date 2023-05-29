@@ -7,7 +7,9 @@
           style="color: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="color: #fbc02d">All properties</span></span
+        <span class="text-h5" style="color: #fbc02d">{{
+          $t("all_props")
+        }}</span></span
       ></v-col
     >
 
@@ -15,7 +17,7 @@
       <tt
         v-bind:data="properties"
         v-bind:header="headers.mat_prop_header"
-        v-bind:title="'all Properties'"
+        v-bind:title="$t(`all_props`)"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>

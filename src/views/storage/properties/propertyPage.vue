@@ -15,7 +15,7 @@
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Name "
+              :label="$t(`name`)"
               required
               :readonly="dis === true"
               v-model="property.name"
@@ -25,7 +25,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="available "
+              :label="$t(`available`)"
               :readonly="dis === true"
               v-model="property.available"
               :suffix="property.unit"
@@ -37,7 +37,7 @@
             <v-text-field
               required
               v-model="property.quantity"
-              label="quantity "
+              :label="$t(`quantity`)"
               :readonly="!isEditing"
               :suffix="property.unit"
               variant="underlined"
@@ -61,7 +61,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="max "
+              :label="$t(`max`)"
               :readonly="dis === true"
               v-model="property.max"
               :suffix="property.unit"
@@ -71,7 +71,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="min "
+              :label="$t(`min`)"
               :readonly="dis === true"
               v-model="property.min"
               :suffix="property.unit"
@@ -81,7 +81,7 @@
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="Role "
+              :label="$t(`role`)"
               v-model="property.role"
               variant="underlined"
               :readonly="dis === true"
@@ -92,7 +92,7 @@
           <v-col cols="12" sm="6">
             <v-text-field
               required
-              label="Unit "
+              :label="$t(`unit`)"
               :readonly="dis === true"
               v-model="property.unit"
               variant="underlined"
@@ -101,7 +101,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="Note"
+              :label="$t(`note`)"
               v-model="property.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -110,7 +110,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="details"
+              :label="$t(`details`)"
               v-model="property.details"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -122,7 +122,7 @@
         @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t("edit") : $t("cancel") }}
       </v-btn>
       <v-btn
         class="ml-auto text-red"
@@ -130,7 +130,7 @@
         :disabled="dis === true"
         prepend-icon="mdi-delete-forever"
       >
-        Delete
+        {{ $t(`delete`) }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -139,7 +139,7 @@
         color="green"
         @click="dialog = !dialog"
       >
-        Save
+        {{ $t(`save`) }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -148,7 +148,7 @@
       <paneltable
         v-bind:data="employees"
         v-bind:header="headers.employee_hand_header"
-        v-bind:panelname="'Employees'"
+        v-bind:panelname="$t(`employees.employees`)"
         v-bind:openedtitle="openedtitle"
         v-bind:closedtitle="this.property.name"
         v-bind:link="link"

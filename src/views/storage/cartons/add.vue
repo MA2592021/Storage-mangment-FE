@@ -12,7 +12,7 @@
             <v-row>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
-                  label="Name*"
+                  :label="$t('name') + `*`"
                   v-model="carton.name"
                   required
                   hint="Required"
@@ -21,7 +21,7 @@
 
               <v-col cols="12" sm="6">
                 <v-autocomplete
-                  label="model*"
+                  :label="$t('model') + `*`"
                   chips
                   v-model="carton.model"
                   persistent-hint
@@ -35,7 +35,7 @@
               <v-col cols="12" sm="6" md="6">
                 <v-textarea
                   clearable
-                  label="Note"
+                  :label="$t('note')"
                   v-model="carton.note"
                   prepend-inner-icon="mdi-note-text-outline"
                 ></v-textarea>
@@ -64,7 +64,7 @@
         @click="step--"
         v-if="step > 1"
       >
-        back
+        {{ $t("back") }}
       </v-btn>
       <v-btn
         color="green-darken-1"
@@ -72,7 +72,7 @@
         @click="steps()"
         v-if="step < 2"
       >
-        next
+        {{ $t("next") }}
       </v-btn>
       <v-btn
         color="green-darken-1"
@@ -80,7 +80,7 @@
         @click="add"
         v-if="step === 2"
       >
-        Save
+        {{ $t("save") }}
       </v-btn>
     </v-card-actions>
   </v-card>

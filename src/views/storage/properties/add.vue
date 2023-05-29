@@ -9,7 +9,7 @@
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Name*"
+              :label="$t(`name`) + `*`"
               v-model="property.name"
               required
               hint="Required"
@@ -19,14 +19,14 @@
             <v-text-field
               required
               v-model="property.unit"
-              label="unit*"
+              :label="$t(`unit`) + `*`"
               hint="Required"
             ></v-text-field>
           </v-col>
 
           <v-col cols="12" sm="6">
             <v-autocomplete
-              label="Role*"
+              :label="$t(`role`) + `*`"
               chips
               v-model="property.role"
               persistent-hint
@@ -40,7 +40,7 @@
             <v-text-field
               required
               v-model="property.max"
-              label="max*"
+              :label="$t(`max`) + `*`"
               hint="Required"
             ></v-text-field>
           </v-col>
@@ -48,14 +48,14 @@
             <v-text-field
               required
               v-model="property.min"
-              label="min*"
+              :label="$t(`min`) + `*`"
               hint="Required"
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6"
             ><v-textarea
               clearable
-              label="Note"
+              :label="$t(`note`) + `*`"
               v-model="property.note"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -64,7 +64,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               clearable
-              label="details"
+              :label="$t(`details`) + `*`"
               v-model="property.details"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>

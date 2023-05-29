@@ -7,7 +7,9 @@
           style="color: #fbc02d"
           class="mb-2 mr-2"
         ></v-icon>
-        <span class="text-h5" style="color: #fbc02d">All Materials</span></span
+        <span class="text-h5" style="color: #fbc02d">{{
+          $t("all_mats")
+        }}</span></span
       ></v-col
     >
 
@@ -15,7 +17,7 @@
       <tt
         v-bind:data="materials"
         v-bind:header="headers.mat_header"
-        v-bind:title="'all Materials'"
+        v-bind:title="$t('all_mats')"
         @tableClicked="tableClicked"
       /> </v-col
   ></v-row>
