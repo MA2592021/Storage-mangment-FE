@@ -131,6 +131,68 @@
           >
         </v-row>
       </v-expansion-panel-text>
+    </v-expansion-panel>
+    <v-expansion-panel>
+      <v-expansion-panel-title>
+        <template v-slot:default="{ expanded }">
+          <v-row no-gutters>
+            <v-col cols="4" class="d-flex justify-start">
+              consumptions calculator
+            </v-col>
+            <v-col cols="8" class="text-grey">
+              <v-fade-transition leave-absolute>
+                <span v-if="expanded" key="0">
+                  {{ name }}
+                </span>
+                <span v-else key="1"> calculate materials in {{ name }} </span>
+              </v-fade-transition>
+            </v-col>
+          </v-row>
+        </template>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-row class="ma-2"
+          ><v-col cols="12" sm="4"
+            ><v-text-field label="quantity" v-model="calcQty"></v-text-field
+          ></v-col>
+          <v-col cols="12" sm="3"
+            ><v-autocomplete
+              label="select color"
+              :items="colors"
+              v-model="calcolor"
+              item-title="name"
+              return-object
+            ></v-autocomplete></v-col
+          ><v-col cols="12" sm="3"
+            ><v-autocomplete
+              label="select size"
+              :items="sizes"
+              v-model="calcsize"
+              item-title="name"
+              return-object
+            ></v-autocomplete></v-col
+          ><v-col cols="12" sm="2" class="mt-2"
+            ><v-btn @click="calc">calculate</v-btn></v-col
+          ></v-row
+        >
+        <v-row>
+          <v-col col="6" xs="12" align="center">
+            <v-data-table
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers4"
+              :items="calcs"
+              item-value="name"
+              class="elevation-1"
+            >
+            </v-data-table>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo(4)"
+                >print
+              </v-btn>
+            </div></v-col
+          >
+        </v-row>
+      </v-expansion-panel-text>
     </v-expansion-panel></v-expansion-panels
   >
 </template>
@@ -141,6 +203,9 @@ import { usedata } from "../stores/print_data";
 export default {
   data() {
     return {
+      calcQty: "",
+      calcsize: null,
+      calcolor: null,
       itemsPerPage: 5,
       dis: true,
       headers: [
@@ -153,6 +218,16 @@ export default {
         { title: "quantity", key: "quantity" },
         { title: "colors", key: "colors" },
         { title: "sizes", key: "sizes" },
+      ],
+      headers4: [
+        {
+          title: "material name",
+          align: "start",
+          sortable: false,
+          key: "name",
+        },
+        { title: "quantity", key: "quantity" },
+        { title: "available", key: "available" },
       ],
       headers1: [
         {
@@ -201,6 +276,7 @@ export default {
         },
       ],
       orders: [],
+      calcs: [],
     };
   },
 
@@ -214,6 +290,9 @@ export default {
     stages: Array,
     consumption: Array,
     name: String,
+    id: String,
+    colors: Array,
+    sizes: Array,
   },
   setup() {
     const print_data = usedata();
@@ -232,12 +311,48 @@ export default {
         this.print_data.header = this.headers2;
         console.log(this.print_data);
         this.$router.push({ path: "/orderPrint" });
-      } else {
+      } else if (x === 3) {
         this.print_data.title = this.name + "  conspumtions";
         this.print_data.data = this.consumption;
         this.print_data.header = this.headers;
         this.$router.push({ path: "/consumptionPrint" });
+      } else {
+        this.print_data.title =
+          this.name +
+          "  conspumtions for " +
+          this.calcQty +
+          " " +
+          this.calcolor.name +
+          " " +
+          this.calcsize.name +
+          " pices";
+        this.print_data.data = this.calcs;
+        this.print_data.header = this.headers4;
+        this.$router.push({ path: "/consumptionPrint" });
       }
+    },
+    calc() {
+      axios
+        .post("/api/order/consumption", {
+          models: [
+            {
+              id: this.id,
+              color: this.calcolor._id,
+              size: this.calcsize._id,
+              quantity: this.calcQty,
+            },
+          ],
+        })
+        .then((res) => {
+          console.log("here", res);
+          res.data.data.forEach((element) => {
+            const x = {};
+            x.name = element.id.name;
+            x.available = element.id.available + " " + element.id.unit;
+            x.quantity = element.quantity + " " + element.id.unit;
+            this.calcs.push(x);
+          });
+        });
     },
   },
 };

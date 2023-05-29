@@ -9,6 +9,8 @@ import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
+import vue3Highlightjs from "vue3-highlightjs";
+import "highlight.js/styles/dracula.css";
 const pinia = createPinia();
 loadFonts();
 axios.defaults.baseURL = " http://192.168.1.4:5000";
@@ -90,4 +92,5 @@ createApp(App)
   .use(pinia)
   .use(i18n)
   .use(vuetify)
+  .use(vue3Highlightjs)
   .mount("#app");

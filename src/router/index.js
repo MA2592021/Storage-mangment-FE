@@ -687,6 +687,13 @@ const router = createRouter({
       },
       component: () => import("../views/prints/orderModelPrint.vue"),
     },
+    //test
+    {
+      path: "/lazysoftware/credits",
+      name: "test",
+
+      component: () => import("../views/test.vue"),
+    },
   ],
 });
 

@@ -95,6 +95,9 @@
       v-bind:stages="model.stages"
       v-bind:consumption="model.consumption"
       v-bind:name="model.name"
+      v-bind:colors="model.colors"
+      v-bind:sizes="model.sizes"
+      v-bind:id="this.$route.params.id"
     />
   </v-card>
 </template>
