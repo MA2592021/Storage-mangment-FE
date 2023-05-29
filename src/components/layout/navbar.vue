@@ -110,13 +110,6 @@ export default {
       drawer: false,
       links: [
         {
-          icon: "mdi-login",
-          text: "login(test)",
-          route: "/login",
-          view: "users",
-        },
-
-        {
           icon: "mdi-view-dashboard",
           text: this.$t("navbar.dashboard"),
           route: "/",
@@ -246,7 +239,7 @@ export default {
       });
     },
     test() {
-      console.log("testt");
+      //console.log("testt");
       if (this.model === "العربية") {
         this.$i18n.locale = "ar";
       } else {
@@ -260,15 +253,15 @@ export default {
   watch: {
     "$i18n.locale"(newLocale) {
       // Perform logic when the i18n locale changes
-      this.links[1].text = this.$t("navbar.dashboard");
-      this.links[2].text = this.$t("navbar.users");
-      this.links[3].text = this.$t("navbar.employees");
-      this.links[4].text = this.$t("navbar.models");
-      this.links[5].text = this.$t("navbar.orders");
-      this.links[6].text = this.$t("navbar.suppliers");
-      this.links[7].text = this.$t("navbar.clients");
-      this.links[8].text = this.$t("navbar.shipments");
-      this.links[9].text = this.$t("navbar.requests");
+      this.links[0].text = this.$t("navbar.dashboard");
+      this.links[1].text = this.$t("navbar.users");
+      this.links[2].text = this.$t("navbar.employees");
+      this.links[3].text = this.$t("navbar.models");
+      this.links[4].text = this.$t("navbar.orders");
+      this.links[5].text = this.$t("navbar.suppliers");
+      this.links[6].text = this.$t("navbar.clients");
+      this.links[7].text = this.$t("navbar.shipments");
+      this.links[8].text = this.$t("navbar.requests");
       this.storagelinks[0].text = this.$t("navbar.properties");
       this.storagelinks[1].text = this.$t("navbar.materials");
       this.storagelinks[2].text = this.$t("navbar.cartons");
