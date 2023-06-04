@@ -92,7 +92,6 @@ const typeEffect2 = () => {
 };
 
 const typeEffect1 = () => {
-  swal;
   if (typeLine1.value.length < codeLine1.length) {
     typeLine1.value += codeLine1.charAt(typeLine1.value.length);
     setTimeout(typeEffect1, 60);
