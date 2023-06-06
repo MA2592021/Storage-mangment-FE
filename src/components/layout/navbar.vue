@@ -76,7 +76,7 @@
             :to="link.route"
           ></v-list-item>
         </v-list-group>
-        <v-list-group value="utils" v-if="look(utilsview)">
+        <v-list-group value="utils">
           <template v-slot:activator="{ props }">
             <v-list-item
               v-bind="props"
@@ -86,7 +86,7 @@
           </template>
 
           <v-list-item
-            v-for="link in Utils"
+            v-for="link in utilsfilteredItems"
             :key="link.text"
             :title="link.text"
             :prepend-icon="link.icon"
@@ -194,39 +194,45 @@ export default {
           icon: "mdi mdi-palette",
           text: this.$t("navbar.colors"),
           route: "/utils/color/dashboard",
+          view: "colors",
         },
         {
           icon: "mdi-size-xl",
           text: this.$t("navbar.sizes"),
           route: "/utils/size/dashboard",
+          view: "sizes",
         },
         {
           icon: "mdi-account-cog-outline",
           text: this.$t("navbar.roles"),
           route: "/utils/role/dashboard",
+          view: "roles",
         },
         {
           icon: "mdi-badge-account-horizontal",
           text: this.$t("navbar.user_role"),
           route: "/utils/user_role/dashboard",
+          view: "user_role",
         },
         {
           icon: "mdi-sitemap",
           text: this.$t("navbar.stages"),
           route: "/utils/Stage/dashboard",
+          view: "stages",
         },
         {
           icon: "mdi-format-list-bulleted-type",
           text: this.$t("navbar.types"),
           route: "/utils/type/dashboard",
+          view: "types",
         },
         {
           icon: "mdi-sitemap",
           text: this.$t("navbar.machinetypes"),
           route: "/utils/machinetype/dashboard",
+          view: "machinetypes",
         },
       ],
-      utilsview: "utils",
       image: null,
       priv: localStorage.getItem("privileges")
         ? localStorage.getItem("privileges")
@@ -234,10 +240,12 @@ export default {
     };
   },
   created() {
-    axios.get("/api/user/" + localStorage.getItem("id")).then((res) => {
-      this.image = res.data.data.image.data;
-      console.log(res);
-    });
+    if (localStorage.getItem("refreshToken")) {
+      axios.get("/api/user/" + localStorage.getItem("id")).then((res) => {
+        this.image = res.data.data.image.data;
+        console.log(res);
+      });
+    }
   },
   methods: {
     signout: function () {
@@ -289,6 +297,9 @@ export default {
   computed: {
     filteredItems() {
       return this.links.filter((item) => this.priv.includes(item.view));
+    },
+    utilsfilteredItems() {
+      return this.Utils.filter((item) => this.priv.includes(item.view));
     },
   },
 };

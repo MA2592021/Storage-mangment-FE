@@ -1,6 +1,7 @@
 <template>
   <tabs v-if="routePath !== '/'" />
   <h1 align="center">Dashboard</h1>
+  <v-btn @click="darko()"> dark</v-btn>
   <br /><br />
   <v-row align="center" justify="space-around" class="ma-4">
     <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
@@ -143,6 +144,10 @@ export default {
     this.loadsupplier();
   },
   methods: {
+    darko() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      console.log(this.$vuetify.theme.dark);
+    },
     loaduser() {
       axios.get("/api/user/").then((response) => {
         console.log(response);

@@ -34,7 +34,6 @@
               :items="[
                 'dashboard',
                 'storage',
-                'utils',
                 'users',
                 'orders',
                 'shipments',
@@ -43,6 +42,13 @@
                 'suppliers',
                 'clients',
                 'requests',
+                'colors',
+                'sizes',
+                'roles',
+                'user_role',
+                'stages',
+                'machinetypes',
+                'types',
               ]"
             ></v-autocomplete
           ></v-col>
