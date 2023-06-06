@@ -60,10 +60,35 @@
               required
               v-model="stage.price"
               label="price/piece*"
+              prefix="£"
               hint="Required"
             ></v-text-field
           ></v-col>
-          <v-col cols="12">
+          <v-col cols="12" sm="6" md="6">
+            <v-row
+              ><v-text-field
+                v-model="textInput"
+                label="Enter a error"
+                @keydown.enter="addString"
+                persistent-hint
+                hint="press enter to add "
+              ></v-text-field></v-row
+            ><v-row>
+              <v-chip
+                v-for="(item, index) in stringArray"
+                :key="index"
+                color="red"
+                class="ma-1"
+                variant="outlined"
+                label
+                closable
+                @click:close="removeString(index)"
+              >
+                {{ item }}
+              </v-chip></v-row
+            >
+          </v-col>
+          <v-col cols="12" sm="6" md="6">
             <v-textarea
               clearable
               label="Note"
@@ -97,6 +122,8 @@ export default {
       note: "    ",
     },
     types: [],
+    textInput: "", // User input string
+    stringArray: [], // Array to store the strings
   }),
   created() {
     axios
@@ -116,6 +143,7 @@ export default {
           price: this.stage.price,
           note: this.stage.note,
           machineType: this.stage.machinetype,
+          stageErrors: this.stringArray,
         })
         .then((response) => {
           if (response.data.errors) {
@@ -129,6 +157,15 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    addString() {
+      if (this.textInput) {
+        this.stringArray.push(this.textInput);
+        this.textInput = ""; // Clear the text field
+      }
+    },
+    removeString(index) {
+      this.stringArray.splice(index, 0);
     },
   },
 };

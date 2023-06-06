@@ -45,6 +45,8 @@
             'stages',
             'machinetypes',
             'types',
+            'assistant',
+            'track',
           ]"
         ></v-autocomplete
       ></v-col>

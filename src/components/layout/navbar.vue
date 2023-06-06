@@ -169,6 +169,12 @@ export default {
           route: "/request/dashboard",
           view: "requests",
         },
+        {
+          icon: "mdi-track-light",
+          text: this.$t("navbar.track"),
+          route: "/track/dashboard",
+          view: "track",
+        },
       ],
 
       storagelinks: [
@@ -232,6 +238,12 @@ export default {
           route: "/utils/machinetype/dashboard",
           view: "machinetypes",
         },
+        {
+          icon: "mdi-assistant",
+          text: this.$t("navbar.assistants"),
+          route: "/utils/assist/dashboard",
+          view: "assistant",
+        },
       ],
       image: null,
       priv: localStorage.getItem("privileges")
@@ -281,6 +293,7 @@ export default {
       this.links[6].text = this.$t("navbar.clients");
       this.links[7].text = this.$t("navbar.shipments");
       this.links[8].text = this.$t("navbar.requests");
+      this.links[9].text = this.$t("navbar.track");
       this.storagelinks[0].text = this.$t("navbar.properties");
       this.storagelinks[1].text = this.$t("navbar.materials");
       this.storagelinks[2].text = this.$t("navbar.cartons");
@@ -292,6 +305,7 @@ export default {
       this.Utils[4].text = this.$t("navbar.stages");
       this.Utils[5].text = this.$t("navbar.types");
       this.Utils[6].text = this.$t("navbar.machinetypes");
+      this.Utils[7].text = this.$t("navbar.assistants");
     },
   },
   computed: {

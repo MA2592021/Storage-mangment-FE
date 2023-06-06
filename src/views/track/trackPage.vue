@@ -57,15 +57,6 @@
         Delete
       </v-btn>
       <v-btn
-        @click="done()"
-        class="mx-auto"
-        :disabled="dis === true"
-        prepend-icon="mdi-check-all"
-        color="cyan"
-      >
-        complete
-      </v-btn>
-      <v-btn
         :disabled="dis === true"
         prepend-icon="mdi-check-outline"
         color="green"
@@ -197,49 +188,6 @@ export default {
                         swal(
                           "success",
                           "order deleted suuccessfully",
-                          "success"
-                        ).then(() => {
-                          this.$router.push({ path: "/order/all" });
-                        });
-                      }
-                    });
-                }
-              });
-          });
-        }
-      });
-    },
-    done() {
-      swal({
-        title: "Are you sure?",
-        text: "Are you sure that you want to complete this order?",
-        icon: "warning",
-        dangerMode: true,
-      }).then((willDelete) => {
-        if (willDelete) {
-          swal("enter your password", {
-            content: "input",
-          }).then((value) => {
-            axios
-              .post("/api/auth/testCredentials", {
-                code: localStorage.getItem("code"),
-                password: value,
-              })
-              .then((response) => {
-                if (response.data.errors) {
-                  swal("error", response.data.errors[0].msg, "error");
-                } else {
-                  axios
-                    .patch("/api/order/" + this.$route.params.id, {
-                      status: true,
-                    })
-                    .then((response) => {
-                      if (response.data.errors) {
-                        swal("error", response.data.errors[0].msg, "error");
-                      } else {
-                        swal(
-                          "success",
-                          "order completed suuccessfully",
                           "success"
                         ).then(() => {
                           this.$router.push({ path: "/order/all" });

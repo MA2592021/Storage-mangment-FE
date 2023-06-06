@@ -407,6 +407,41 @@ const router = createRouter({
         },
       ],
     },
+    // track routes
+    {
+      path: "/track/",
+      name: "track-land",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/track/landPage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "track-dash",
+
+          component: () => import("../views/track/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "track-add",
+
+          component: () => import("../views/track/add.vue"),
+        },
+        {
+          path: "all",
+          name: "track-all",
+
+          component: () => import("../views/track/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "track-page",
+
+          component: () => import("../views/track/trackPage.vue"),
+        },
+      ],
+    },
     //color routes
     {
       path: "/utils/color/",
@@ -679,6 +714,7 @@ const router = createRouter({
       },
       component: () => import("../views/prints/orderPrint.vue"),
     },
+
     {
       path: "/orderMPrint",
       name: "orderMPrint",
@@ -686,6 +722,38 @@ const router = createRouter({
         requiresAuth: true,
       },
       component: () => import("../views/prints/orderModelPrint.vue"),
+    },
+    {
+      path: "/utils/assistant/dashboard",
+      name: "assist",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/assistants/dashboard.vue"),
+    },
+    //assist routes
+    {
+      path: "/utils/assist/",
+      name: "assist-land",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/assistants/landPage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "assist-dash",
+
+          component: () => import("../views/utils/assistants/dashboard.vue"),
+        },
+
+        {
+          path: "all",
+          name: "assist-all",
+
+          component: () => import("../views/utils/assistants/all.vue"),
+        },
+      ],
     },
     //test
     {

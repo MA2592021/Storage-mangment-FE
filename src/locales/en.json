@@ -17,6 +17,8 @@
     "shipments": "Shipments",
     "requests": "Requests",
     "storage": "Storage",
+    "assistants": "assistants",
+    "track": "production follow-up",
     "properties": "Properties",
     "materials": "Materials",
     "cartons": "Cartons",

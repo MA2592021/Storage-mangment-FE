@@ -60,28 +60,6 @@
           item-title="type"
         ></v-autocomplete>
       </v-col>
-      <v-col cols="12" sm="6" md="6">
-        <v-row
-          ><v-text-field
-            v-model="textInput"
-            label="Enter a error"
-            @keydown.enter="addString"
-            :readonly="dis === true"
-            hint="press enter to add "
-          ></v-text-field></v-row
-        ><v-row>
-          <v-chip
-            v-for="(item, index) in stage.errors"
-            :key="index"
-            color="red"
-            class="ma-1"
-            variant="outlined"
-            label
-          >
-            {{ item }}
-          </v-chip></v-row
-        >
-      </v-col>
       <v-col cols="12" sm="6"
         ><v-textarea
           :clearable="dis === false"
@@ -130,7 +108,6 @@ export default {
       types: [],
       orgstage: {},
       dis: true,
-      textInput: "",
     };
   },
   created() {
@@ -169,7 +146,6 @@ export default {
               type: this.stage.type,
               note: this.stage.note,
               machineType: this.stage.machineType,
-              stageErrors: this.stage.errors,
             })
             .then((response) => {
               if (response.data.errors) {
@@ -191,7 +167,6 @@ export default {
       this.stage.type = this.orgstage.type;
       this.stage.note = this.orgstage.note;
       this.stage.machineType = this.orgstage.machineType.name;
-      this.stage.errors = this.orgstage.stageErrors;
     },
     cancel() {
       this.dis = !this.dis;
@@ -238,13 +213,6 @@ export default {
           });
         }
       });
-    },
-
-    addString() {
-      if (this.textInput) {
-        this.stage.errors.push(this.textInput);
-        this.textInput = ""; // Clear the text field
-      }
     },
   },
 };
