@@ -753,6 +753,13 @@ const router = createRouter({
 
           component: () => import("../views/utils/assistants/all.vue"),
         },
+        {
+          path: ":id",
+          name: "assist-page",
+
+          component: () =>
+            import("../views/utils/assistants/assistantPage.vue"),
+        },
       ],
     },
     //test

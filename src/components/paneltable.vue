@@ -29,7 +29,7 @@
         @close="dialog = !dialog"
         @submit="submit"
       />
-      <v-row justify="center" class="mt-4">
+      <v-row justify="center" class="mt-4" v-if="!assist">
         <v-btn color="success " @click="dialog = !dialog">
           Append {{ panelname }}
         </v-btn></v-row
@@ -60,6 +60,7 @@ export default {
     data: Object,
     header: Object,
     title: String,
+    assist: Boolean,
   },
   methods: {
     onClickButton(value) {

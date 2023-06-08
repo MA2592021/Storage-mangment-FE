@@ -1,74 +1,66 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
-    ><v-row class="ma-2">
-      <v-col cols="12" sm="6" md="6">
-        <v-text-field
-          label="Name "
-          required
-          :readonly="dis === true"
-          v-model="stage.name"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="6" md="6">
-        <v-text-field
-          required
-          label="Code "
-          :readonly="dis === true"
-          v-model="stage.code"
-          variant="underlined"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="6" md="6">
-        <v-text-field
-          label="price/p"
-          variant="underlined"
-          :readonly="dis === true"
-          v-model="stage.price"
-          required
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" sm="6" md="6">
-        <v-text-field
-          label="rate/h"
-          variant="underlined"
-          :readonly="dis === true"
-          v-model="stage.rate"
-          required
-        ></v-text-field>
-      </v-col>
+    ><v-row class="ma-2"
+      ><v-col cols="3" sm="2"
+        ><v-img
+          class="bg-white"
+          width="300"
+          :aspect-ratio="1"
+          :src="assist.image ? assist.image.data : '/arkan_logo-no-text.png'"
+          cover
+        ></v-img></v-col
+      ><v-col cols="9" sm="10">
+        <v-row>
+          <v-col cols="12" sm="8" md="8">
+            <v-text-field
+              label="Name "
+              required
+              readonly
+              v-model="assist.name"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="4" md="4">
+            <v-text-field
+              required
+              label="Code "
+              readonly
+              v-model="assist.code"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
 
-      <v-col cols="12" sm="6">
-        <v-autocomplete
-          label="machine type "
-          v-model="stage.machineType"
-          variant="underlined"
-          :readonly="dis === true"
-          :items="types"
-          item-title="name"
-          item-value="name"
-        ></v-autocomplete>
-      </v-col>
+          <v-col cols="12" sm="6">
+            <v-autocomplete
+              label="order"
+              v-model="assist.order"
+              variant="underlined"
+              :readonly="dis === true"
+              :items="types"
+              item-title="name"
+              item-value="name"
+            ></v-autocomplete>
+          </v-col>
 
-      <v-col cols="12" sm="6">
-        <v-autocomplete
-          label="type "
-          v-model="stage.type"
-          variant="underlined"
-          :readonly="dis === true"
-          :items="['prepairs', 'production', 'finishing']"
-          item-title="type"
-        ></v-autocomplete>
-      </v-col>
-      <v-col cols="12" sm="6"
-        ><v-textarea
-          :clearable="dis === false"
-          label="Note"
-          v-model="stage.note"
-          :readonly="dis === true"
-          prepend-icon="mdi-note-text-outline"
-        ></v-textarea>
-      </v-col>
+          <v-col cols="12" sm="6">
+            <v-autocomplete
+              label="model"
+              v-model="assist.model"
+              variant="underlined"
+              :readonly="dis === true"
+              :items="['prepairs', 'production', 'finishing']"
+              item-title="type"
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="12"
+            ><v-textarea
+              :clearable="dis === false"
+              label="Note"
+              v-model="assist.note"
+              :readonly="dis === true"
+              prepend-icon="mdi-note-text-outline"
+            ></v-textarea> </v-col></v-row
+      ></v-col>
     </v-row>
     <v-card-actions class="mx-auto">
       <v-btn
@@ -94,79 +86,134 @@
       >
         Save
       </v-btn>
-    </v-card-actions>
-  </v-card>
+    </v-card-actions> </v-card
+  ><v-expansion-panels variant="popout" class="my-4">
+    <paneltable
+      v-bind:data="assist.cards"
+      v-bind:header="headers"
+      v-bind:panelname="$t(`properties`)"
+      v-bind:openedtitle="$t(`assists.p1`)"
+      v-bind:closedtitle="this.assist.name"
+      v-bind:link="link_property"
+      v-bind:title="'properties with assist ' + assist.name"
+      v-bind:assist="true"
+      @clicked="onClickChild_property"
+      @appended="property_append"
+  /></v-expansion-panels>
 </template>
 
 <script>
+import paneltable from "../../../components/paneltable.vue";
 import axios from "axios";
 import swal from "sweetalert";
 export default {
+  components: { paneltable },
   data() {
     return {
-      stage: {},
-      types: [],
-      orgstage: {},
+      assist: {
+        name: "el gamal",
+        code: "255",
+        order: "dafa1",
+        model: "dafa",
+        cards: [
+          {
+            code: "244",
+            stage: "ta2te3",
+            date: "1 minute ago",
+            order: "dafa1",
+            model: "dafa",
+            qty: "12",
+          },
+          {
+            code: "244",
+            stage: "ta2te3",
+            date: "1 minute ago",
+            order: "dafa1",
+            model: "dafa",
+            qty: "12",
+          },
+          {
+            code: "244",
+            stage: "ta2te3",
+            date: "1 minute ago",
+            order: "dafa1",
+            model: "dafa",
+            qty: "12",
+          },
+          {
+            code: "244",
+            stage: "ta2te3",
+            date: "1 minute ago",
+            order: "dafa1",
+            model: "dafa",
+            qty: "12",
+          },
+        ],
+      },
+      headers: [
+        { title: "code", key: "code" },
+        { title: "order", key: "order" },
+        { title: "model", key: "model" },
+        { title: "stage", key: "stage" },
+        { title: "qty", key: "qty" },
+        { title: "date", key: "date" },
+      ],
+      orgassist: {},
       dis: true,
     };
   },
   created() {
     //Get route
-    this.stageload();
-    this.typesload();
+    this.assistload();
   },
   methods: {
-    stageload() {
-      axios.get("/api/stage/" + this.$route.params.id).then((response) => {
+    assistload() {
+      axios.get("/api/assist/" + this.$route.params.id).then((response) => {
         console.log(response);
-        this.orgstage = response.data.data;
+        this.orgassist = response.data.data;
         this.clone();
       });
     },
-    typesload() {
-      axios.get("/api/machineType").then((response) => {
-        this.types = response.data.data;
-      });
-    },
+
     save() {
       this.dis = !this.dis;
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to edit this stage?",
+        text: "Are you sure that you want to edit this assist?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
         if (willDelete) {
           axios
-            .patch("/api/stage/" + this.$route.params.id, {
-              name: this.stage.name,
-              code: this.stage.code,
-              price: this.stage.price,
-              rate: this.stage.rate,
-              type: this.stage.type,
-              note: this.stage.note,
-              machineType: this.stage.machineType,
+            .patch("/api/assist/" + this.$route.params.id, {
+              name: this.assist.name,
+              code: this.assist.code,
+              price: this.assist.price,
+              rate: this.assist.rate,
+              type: this.assist.type,
+              note: this.assist.note,
+              machineType: this.assist.machineType,
             })
             .then((response) => {
               if (response.data.errors) {
                 swal("error", response.data.errors[0].msg, "error");
               } else {
-                swal("success", "stage updated successfully", "success");
-                this.stageload();
+                swal("success", "assist updated successfully", "success");
+                this.assistload();
               }
             });
         }
       });
     },
     clone() {
-      this.stage.id = this.orgstage._id;
-      this.stage.name = this.orgstage.name;
-      this.stage.code = this.orgstage.code;
-      this.stage.price = this.orgstage.price;
-      this.stage.rate = this.orgstage.rate;
-      this.stage.type = this.orgstage.type;
-      this.stage.note = this.orgstage.note;
-      this.stage.machineType = this.orgstage.machineType.name;
+      this.assist.id = this.orgassist._id;
+      this.assist.name = this.orgassist.name;
+      this.assist.code = this.orgassist.code;
+      this.assist.price = this.orgassist.price;
+      this.assist.rate = this.orgassist.rate;
+      this.assist.type = this.orgassist.type;
+      this.assist.note = this.orgassist.note;
+      this.assist.machineType = this.orgassist.machineType.name;
     },
     cancel() {
       this.dis = !this.dis;
@@ -176,7 +223,7 @@ export default {
     deletee() {
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to delete this stage?",
+        text: "Are you sure that you want to delete this assist?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
@@ -194,17 +241,17 @@ export default {
                   swal("error", response.data.errors[0].msg, "error");
                 } else {
                   axios
-                    .delete("/api/stage/" + this.$route.params.id)
+                    .delete("/api/assist/" + this.$route.params.id)
                     .then((response) => {
                       if (response.data.errors) {
                         swal("error", response.data.errors[0].msg, "error");
                       } else {
                         swal(
                           "success",
-                          "stage deleted suuccessfully",
+                          "assist deleted suuccessfully",
                           "success"
                         ).then(() => {
-                          this.$router.push({ path: "/utils/stage/all" });
+                          this.$router.push({ path: "/utils/assist/all" });
                         });
                       }
                     });
