@@ -58,7 +58,7 @@
             ></v-textarea>
           </v-col>
           <v-col cols="12"
-            ><v-timeline side="end" align="start">
+            ><v-timeline side="start" align="start">
               <v-timeline-item
                 :dot-color="
                   h.state === 'Approved'
@@ -84,48 +84,50 @@
       ></v-row
     >
     <v-card-actions class="mx-auto">
-      <v-btn
-        @click="cancel()"
-        :disabled="request.status === 'Delivered'"
-        :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
+      <v-row>
+        <v-btn
+          @click="cancel()"
+          :disabled="request.status === 'Delivered'"
+          :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
+        >
+          {{ dis ? "edit" : "cancel" }}
+        </v-btn>
+        <v-btn
+          class="ml-auto text-red"
+          @click="deletee()"
+          :disabled="dis === true"
+          prepend-icon="mdi-delete-forever"
+        >
+          Delete
+        </v-btn>
+        <v-btn
+          class="ml-auto"
+          :disabled="dis === true || request.status === 'Approved'"
+          prepend-icon="mdi-check-decagram"
+          color="teal-lighten-3"
+          @click="approve()"
+        >
+          Approve
+        </v-btn>
+        <v-btn
+          class="ml-auto"
+          :disabled="dis === true || request.status !== 'Approved'"
+          prepend-icon="mdi-cash-marker"
+          color="green"
+          @click="deliver()"
+        >
+          deliverd
+        </v-btn>
+        <v-btn
+          class="ml-auto"
+          :disabled="dis === true"
+          prepend-icon="mdi-package-check"
+          color="green"
+          @click="dialog1 = !dialog1"
+        >
+          Save
+        </v-btn></v-row
       >
-        {{ dis ? "edit" : "cancel" }}
-      </v-btn>
-      <v-btn
-        class="ml-auto text-red"
-        @click="deletee()"
-        :disabled="dis === true"
-        prepend-icon="mdi-delete-forever"
-      >
-        Delete
-      </v-btn>
-      <v-btn
-        class="ml-auto"
-        :disabled="dis === true || request.status === 'Approved'"
-        prepend-icon="mdi-check-decagram"
-        color="teal-lighten-3"
-        @click="approve()"
-      >
-        Approve
-      </v-btn>
-      <v-btn
-        class="ml-auto"
-        :disabled="dis === true || request.status !== 'Approved'"
-        prepend-icon="mdi-cash-marker"
-        color="green"
-        @click="deliver()"
-      >
-        deliverd
-      </v-btn>
-      <v-btn
-        class="ml-auto"
-        :disabled="dis === true"
-        prepend-icon="mdi-package-check"
-        color="green"
-        @click="dialog1 = !dialog1"
-      >
-        Save
-      </v-btn>
     </v-card-actions>
   </v-card>
   <v-card class="mt-3" style="width: 100%">

@@ -239,7 +239,7 @@ export default {
           view: "machinetypes",
         },
         {
-          icon: "mdi-assistant",
+          icon: "mdi-hard-hat",
           text: this.$t("navbar.assistants"),
           route: "/utils/assist/dashboard",
           view: "assistant",
