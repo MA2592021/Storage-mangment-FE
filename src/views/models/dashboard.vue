@@ -7,49 +7,32 @@
         :width="15"
         :model-value="100"
         color="pink-darken-4
-  "
+    "
       >
-        {{ 5 }}
+        {{ datalength }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ 5 }} models</p>
+      <p class="text-h5">Arkan have {{ datalength }} Models</p>
     </v-col>
-    <v-col cols="12" md="4"> <barChart v-bind:chartData="chartData" /> </v-col
-  ></v-row>
+  </v-row>
 </template>
 
 <script>
-import barChart from "../../components/barChart.vue";
+import axios from "axios";
 export default {
-  components: {
-    barChart,
+  created() {
+    axios.get("/api/model/").then((response) => {
+      console.log(response);
+      this.data = response.data.data;
+    });
   },
 
   data() {
-    return {
-      chartData: {
-        labels: ["produced cartons"],
-        datasets: [
-          {
-            label: " مناسك ",
-            data: [40],
-            backgroundColor: "#770f30",
-            borderRadius: 10,
-          },
-          {
-            label: " الدفة ",
-            data: [20],
-            backgroundColor: "#FED579",
-            borderRadius: 10,
-          },
-          {
-            label: "ابو الفدا ",
-            data: [14],
-            backgroundColor: "#ABBAC2",
-            borderRadius: 10,
-          },
-        ],
-      },
-    };
+    return { data: [] };
+  },
+  computed: {
+    datalength() {
+      return this.data.length;
+    },
   },
 };
 </script>

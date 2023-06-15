@@ -244,6 +244,12 @@ export default {
           route: "/utils/assist/dashboard",
           view: "assistant",
         },
+        {
+          icon: "mdi-card-bulleted-settings-outline",
+          text: this.$t("navbar.cards"),
+          route: "/utils/cards/dashboard",
+          view: "cards",
+        },
       ],
       image: null,
       priv: localStorage.getItem("privileges")
@@ -254,7 +260,10 @@ export default {
   created() {
     if (localStorage.getItem("refreshToken")) {
       axios.get("/api/user/" + localStorage.getItem("id")).then((res) => {
-        this.image = res.data.data.image.data;
+        if (res.data.data.image) {
+          this.image = res.data.data.image.data;
+        }
+
         console.log(res);
       });
     }
@@ -306,6 +315,7 @@ export default {
       this.Utils[5].text = this.$t("navbar.types");
       this.Utils[6].text = this.$t("navbar.machinetypes");
       this.Utils[7].text = this.$t("navbar.assistants");
+      this.Utils[8].text = this.$t("navbar.cards");
     },
   },
   computed: {

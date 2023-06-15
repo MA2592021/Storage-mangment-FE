@@ -11,7 +11,7 @@
       >
         {{ datalength }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ datalength }} in production orders</p>
+      <p class="text-h5">Arkan have {{ datalength }} Cards</p>
     </v-col>
   </v-row>
 </template>
@@ -20,8 +20,7 @@
 import axios from "axios";
 export default {
   created() {
-    axios.get("/api/order/").then((response) => {
-      console.log(response);
+    axios.get("/api/card/").then((response) => {
       this.data = response.data.data;
     });
   },
@@ -33,12 +32,6 @@ export default {
     datalength() {
       return this.data.length;
     },
-  },
-  created() {
-    let x = localStorage.getItem("rolenum");
-    if (x === "2" || x === "3") {
-      this.$router.push({ path: "/track/add" });
-    }
   },
 };
 </script>

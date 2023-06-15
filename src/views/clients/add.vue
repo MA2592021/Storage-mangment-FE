@@ -112,7 +112,7 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success").then(() =>
+            swal("success", "created successfully", "success").then(() =>
               this.$router.push({ path: "/client/all" })
             );
           }

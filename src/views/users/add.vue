@@ -7,7 +7,15 @@
     <v-card-text>
       <v-container>
         <v-row>
-          <v-col cols="12" sm="6" md="6">
+          <v-col cols="12">
+            <v-checkbox
+              v-model="exist"
+              label="are you creating account for employee"
+              color="#770f30"
+              hide-details
+            ></v-checkbox>
+          </v-col>
+          <v-col cols="12" sm="6" md="6" v-if="exist === false">
             <v-text-field
               :label="$t(`name`) + '*'"
               v-model="user.name"
@@ -15,13 +23,26 @@
               hint="Required"
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6" md="6">
+          <v-col cols="12" sm="6" md="6" v-if="exist === false">
             <v-text-field
               required
               v-model="user.code"
               :label="$t(`code`) + '*'"
               hint="Required"
             ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" v-if="exist === true">
+            <v-autocomplete
+              :label="$t(`employees.employees`) + '*'"
+              chips
+              v-model="selectedEmployee"
+              persistent-hint
+              hint="Required"
+              :items="displayText"
+              item-title="name"
+              return-object
+            ></v-autocomplete>
+            {{ selectedEmployee }}
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
@@ -79,6 +100,7 @@ export default {
         );
       },
     ],
+    exist: false,
     roles: [],
     url: null,
     image: null,
@@ -88,38 +110,79 @@ export default {
       password: "",
       role: null,
     },
+    selectedEmployee: null,
+    employees: [],
   }),
   created() {
     axios.get("/api/userRole/").then((response) => {
       this.roles = response.data.data;
     });
+    axios.get("/api/employee").then((res) => {
+      this.employees = res.data.data;
+      console.log(res.data.data);
+    });
   },
-
+  computed: {
+    displayText() {
+      return this.employees.map((employee) => ({
+        name: `${employee.name} (${employee.code})`,
+        name1: employee.name,
+        id: employee._id,
+        code: employee.code,
+      }));
+    },
+  },
   methods: {
     add() {
-      console.log("im alive");
-      axios
-        .post("/api/user/", {
-          name: this.user.name,
-          code: this.user.code,
-          role: this.user.role._id,
-          password: this.user.password,
-          image: this.user.img,
-        })
-        .then((response) => {
-          if (response.data.errors) {
-            console.log(response);
-            swal("error", response.data.errors[0].msg, "error");
-          } else {
-            swal("success", "user added successfully", "success");
-            this.$router.push({
-              path: "/user/all",
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      if (this.exist === false) {
+        console.log("im alive");
+        axios
+          .post("/api/user/", {
+            name: this.user.name,
+            code: this.user.code,
+            role: this.user.role._id,
+            password: this.user.password,
+            image: this.user.img,
+          })
+          .then((response) => {
+            if (response.data.errors) {
+              console.log(response);
+              swal("error", response.data.errors[0].msg, "error");
+            } else {
+              swal("success", "user added successfully", "success");
+              console.log(response);
+              this.$router.push({
+                path: "/user/all",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        axios
+          .post("/api/user/", {
+            name: this.selectedEmployee.name1,
+            code: this.selectedEmployee.code,
+            role: this.user.role._id,
+            password: this.user.password,
+            image: this.user.img,
+          })
+          .then((res) => {
+            axios
+              .post("/api/userEmployee/", {
+                user: res.data.data._id,
+                employee: this.selectedEmployee.id,
+              })
+              .then((res) => {
+                swal("success", "user added successfully", "success");
+                console.log(response);
+                this.$router.push({
+                  path: "/user/all",
+                });
+              });
+          });
+      }
     },
 
     imageup(image) {

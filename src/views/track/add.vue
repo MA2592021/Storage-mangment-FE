@@ -1,12 +1,12 @@
 <template>
   <v-card style="width: 100%" class="mt-5">
     <v-tabs v-model="tab" grow color="#770f30">
-      <v-tab value="one">Production</v-tab>
-      <v-tab value="two">Quality</v-tab>
+      <v-tab value="one" v-if="rolenum != 2">Production</v-tab>
+      <v-tab value="two" v-if="rolenum != 3">Quality</v-tab>
     </v-tabs>
 
     <v-card-text>
-      <v-window v-model="tab">
+      <v-window v-model="tabs">
         <v-window-item value="one">
           <v-row>
             <v-col cols="12">
@@ -48,7 +48,6 @@
                 item-title="name"
                 label="order"
                 return-object
-                @update:modelValue="loadorder"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
@@ -171,6 +170,7 @@ import axios from "axios";
 
 export default {
   data: () => ({
+    rolenum: localStorage.getItem("rolenum"),
     tab: null,
     error: false,
     errors: [],
@@ -210,12 +210,7 @@ export default {
         this.orders = res.data.data;
       });
     },
-    loadorder() {
-      this.selected_model = null;
-      axios.get("/api/order/" + this.selected_order._id).then((res) => {
-        this.selected_order = res.data.data;
-      });
-    },
+
     loademployee() {
       axios.get("/api/employee").then((res) => {
         this.employees = res.data.data;
@@ -229,10 +224,20 @@ export default {
         id: employee._id,
       }));
     },
+    tabs() {
+      if (this.rolenum === "2") {
+        return "two";
+      } else if (this.rolenum === "3") {
+        return "one";
+      } else {
+        return this.tab;
+      }
+    },
   },
   created() {
     this.loadorders();
     this.loademployee();
+    console.log(this.rolenum);
   },
 };
 </script>

@@ -2,6 +2,23 @@
   <tabs v-if="routePath !== '/'" />
   <h1 align="center">Dashboard</h1>
   <v-btn @click="darko()"> dark</v-btn>
+  <v-card
+    class="mx-auto"
+    color="pink-darken-4"
+    theme="dark"
+    max-width="600"
+    :title="username"
+  >
+    <template v-slot:prepend>
+      <v-avatar
+        :image="image ? image : `/arkan_logo-no-text.png`"
+        class="ma-1"
+      ></v-avatar>
+    </template>
+
+    <v-card-text class="text-h5 py-2" align="center"> Welcome Back</v-card-text>
+    <br /><br />
+  </v-card>
   <br /><br />
   <v-row align="center" justify="space-around" class="ma-4">
     <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
@@ -123,6 +140,7 @@ export default {
   },
   data() {
     return {
+      username: localStorage.getItem("username"),
       user: "",
       employee: "",
       property: "",
@@ -131,6 +149,11 @@ export default {
       order: "",
       supplier: "",
       client: "",
+
+      image: null,
+      priv: localStorage.getItem("privileges")
+        ? localStorage.getItem("privileges")
+        : [],
     };
   },
   created() {
@@ -142,7 +165,16 @@ export default {
     this.loadmodel();
     this.loadclient();
     this.loadsupplier();
+    if (localStorage.getItem("refreshToken")) {
+      axios.get("/api/user/" + localStorage.getItem("id")).then((res) => {
+        if (res.data.data.image) {
+          this.image = res.data.data.image.data;
+        }
+        console.log(res);
+      });
+    }
   },
+
   methods: {
     darko() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;

@@ -689,6 +689,41 @@ const router = createRouter({
         },
       ],
     },
+    //card routes
+    {
+      path: "/utils/cards/",
+      name: "card-land",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/cards/landPage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "card-dash",
+
+          component: () => import("../views/utils/cards/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "card-add",
+
+          component: () => import("../views/utils/cards/add.vue"),
+        },
+        {
+          path: "all",
+          name: "card-all",
+
+          component: () => import("../views/utils/cards/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "card-page",
+
+          component: () => import("../views/utils/cards/cardPage.vue"),
+        },
+      ],
+    },
     //print routes
     {
       path: "/print",
@@ -783,6 +818,10 @@ router.beforeEach((to, from, next) => {
         return true;
       })
       .catch((err) => {
+        if (err.message === "Network Error") {
+          swal("Network Problem", " please check your Connection", "error");
+          console.log(err);
+        }
         return false;
       });
     if (to.meta.requiresAuth && !isLoggedIn) {

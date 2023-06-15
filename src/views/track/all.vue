@@ -131,5 +131,11 @@ export default {
       }
     },
   },
+  created() {
+    let x = localStorage.getItem("rolenum");
+    if (x === "2" || x === "3") {
+      this.$router.push({ path: "/track/add" });
+    }
+  },
 };
 </script>

@@ -77,10 +77,27 @@ export default {
             localStorage.setItem("username", res.data.user.name);
             localStorage.setItem("privileges", res.data.user.role.privileges);
             localStorage.setItem("rolename", res.data.user.role.title);
+            localStorage.setItem("rolenum", res.data.user.role.number);
             localStorage.setItem("code", res.data.user.code);
             localStorage.setItem("id", res.data.user._id);
             swal("success", "Welcome Back", "success");
-            this.$router.push({ path: "/" });
+            console.log("rolenumber", localStorage.getItem("rolenum"));
+            if (
+              localStorage.getItem("rolenum") === "2" ||
+              localStorage.getItem("rolenum") === "3"
+            ) {
+              console.log("test");
+              this.$router.push({ path: "/track/add" });
+            } else {
+              console.log("testss");
+              this.$router.push({ path: "/" });
+            }
+          }
+        })
+        .catch((err) => {
+          if (err.message === "Network Error") {
+            swal("Network Problem", " please check your Connection", "error");
+            console.log(err);
           }
         });
     },

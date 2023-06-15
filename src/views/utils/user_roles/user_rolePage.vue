@@ -26,28 +26,9 @@
           multiple
           chips
           closable-chips
-          :disabled="dis"
-          :items="[
-            'dashboard',
-            'storage',
-            'users',
-            'orders',
-            'shipments',
-            'models',
-            'employees',
-            'suppliers',
-            'clients',
-            'requests',
-            'colors',
-            'sizes',
-            'roles',
-            'user_role',
-            'stages',
-            'machinetypes',
-            'types',
-            'assistant',
-            'track',
-          ]"
+          :items="privs"
+          item-title="name"
+          item-value="key"
         ></v-autocomplete
       ></v-col>
     </v-row>
@@ -89,6 +70,28 @@ export default {
       role: {},
       orgrole: {},
       dis: true,
+      privs: [
+        { name: "Dashboard", key: "dashboard" },
+        { name: "Storage", key: "storage" },
+        { name: "Users", key: "users" },
+        { name: "Orders", key: "orders" },
+        { name: "Shipments", key: "shipments" },
+        { name: "Models", key: "models" },
+        { name: "Employees", key: "employees" },
+        { name: "Suppliers", key: "suppliers" },
+        { name: "Clients", key: "clients" },
+        { name: "Requests", key: "requests" },
+        { name: "Colors", key: "colors" },
+        { name: "Sizes", key: "sizes" },
+        { name: "Roles", key: "roles" },
+        { name: "User Roles", key: "user_role" },
+        { name: "Stages ", key: "stages" },
+        { name: "Machine Types", key: "machinetypes" },
+        { name: "Types ", key: "types" },
+        { name: "Assistant ", key: "assistant" },
+        { name: "Production Follow-up ", key: "track" },
+        { name: "cards ", key: "cards" },
+      ],
     };
   },
   created() {
