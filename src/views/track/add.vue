@@ -10,6 +10,15 @@
         <v-window-item value="one">
           <v-row>
             <v-col cols="12">
+              <v-checkbox
+                v-model="verify"
+                label="verifing error?"
+                color="green"
+                value="green"
+                hide-details
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="12">
               <v-autocomplete
                 v-model="values"
                 :items="displayText"
