@@ -39,7 +39,7 @@
       </v-col>
     </v-row>
     <v-card-actions class="mx-auto">
-      <v-btn @click="deletee()" card="red" prepend-icon=" mdi-delete-forever">
+      <v-btn @click="deletee()" color="red" prepend-icon=" mdi-delete-forever">
         Delete
       </v-btn>
     </v-card-actions>
@@ -97,7 +97,7 @@ export default {
                           "card deleted suuccessfully",
                           "success"
                         ).then(() => {
-                          this.$router.push({ path: "/utils/card/all" });
+                          this.$router.push({ path: "/utils/cards/all" });
                         });
                       }
                     });

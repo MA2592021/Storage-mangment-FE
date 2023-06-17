@@ -1,12 +1,7 @@
 <template>
   <v-row class="mt-5">
     <v-col cols="12">
-      <v-data-table
-        :headers="headers"
-        :items="desserts"
-        :sort-by="[{ key: 'calories', order: 'asc' }]"
-        class="elevation-1"
-      >
+      <v-data-table :headers="headers" :items="assists" class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat>
             <v-toolbar-title align="center">Assistants</v-toolbar-title>
@@ -17,16 +12,20 @@
                     <v-row>
                       <v-col cols="12">
                         <v-autocomplete
-                          v-model="editedItem.order"
+                          v-model="selectedorder"
                           label="select order"
-                          :items="['dafa1', 'dafa2', 'mnask1', 'mnask2']"
+                          :items="order"
+                          item-title="name"
+                          return-object
                         ></v-autocomplete>
                       </v-col>
                       <v-col cols="12">
                         <v-autocomplete
-                          v-model="editedItem.model"
+                          v-model="selectedmodel"
                           label="select model"
-                          :items="['dafa', 'mnask', 'abo elfeda']"
+                          :items="selectedorder.models"
+                          item-title="id.name"
+                          return-object
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -57,10 +56,14 @@
 </template>
 
 <script>
+import axios from "axios";
+import swal from "sweetalert";
+
 export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
+    assists: [],
     headers: [
       { title: "code", key: "code" },
       {
@@ -69,35 +72,18 @@ export default {
         sortable: false,
         key: "name",
       },
-      { title: "order", key: "order" },
-      { title: "model", key: "model" },
+      { title: "order", key: "work.order.name" },
+      { title: "model", key: "work.model.name" },
 
       { title: "Actions", key: "actions", align: "center", sortable: false },
     ],
-    desserts: [
-      {
-        code: "231",
-        name: "el gamal",
-        order: "dafa1",
-        model: "abo el feda",
-      },
-      {
-        code: "106",
-        name: "sherif",
-        order: "dafa2",
-        model: "mnask",
-      },
-      {
-        code: "58",
-        name: "Amir",
-        order: "dafa1",
-        model: "mnask",
-      },
-    ],
+    order: [],
+    selectedorder: "",
+    selectedmodel: "",
     editedIndex: -1,
     editedItem: {
       name: "",
-      order: "0",
+      order: { models: [] },
       model: "0",
     },
     defaultItem: {
@@ -106,7 +92,10 @@ export default {
       model: "",
     },
   }),
-
+  created() {
+    this.loadassist();
+    this.loadorder();
+  },
   watch: {
     dialog(val) {
       val || this.close();
@@ -118,25 +107,43 @@ export default {
 
   methods: {
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.assists.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     close() {
       this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
+    },
+    loadassist() {
+      this.assists = [];
+      axios.get("/api/userEmployee/").then((res) => {
+        res.data.data.forEach((element) => {
+          let x = {};
+          x._id = element._id;
+          x.name = element.employee.name;
+          x.code = element.employee.code;
+          x.work = element.work[element.work.length - 1];
+          this.assists.push(x);
+        });
       });
     },
-
+    loadorder() {
+      axios.get("/api/order").then((res) => {
+        this.order = res.data.data;
+      });
+    },
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
-      } else {
-        this.desserts.push(this.editedItem);
-      }
+      axios
+        .patch("/api/userEmployee/work/" + this.editedItem._id, {
+          order: this.selectedorder._id,
+          model: this.selectedmodel.id._id,
+        })
+        .then((res) => {
+          swal("success", "assistant work updated successfully", "success");
+          this.dialog = false;
+          this.loadassist();
+        });
       this.close();
     },
   },

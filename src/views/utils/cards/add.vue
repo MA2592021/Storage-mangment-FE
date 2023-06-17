@@ -79,6 +79,7 @@ export default {
           quantity: this.card.qty,
           order: this.selectedOrder._id,
           model: this.card.model.id._id,
+          details: "test",
         })
         .then((response) => {
           if (response.data.errors) {

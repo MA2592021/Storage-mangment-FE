@@ -20,7 +20,7 @@
 import axios from "axios";
 export default {
   created() {
-    axios.get("/api/stage/").then((response) => {
+    axios.get("/api/userEmployee/").then((response) => {
       console.log(response);
       this.data = response.data.data;
     });

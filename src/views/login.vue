@@ -72,6 +72,7 @@ export default {
           if (res.data.errors) {
             swal("error", res.data.errors[0].msg, "error");
           } else {
+            console.log(res);
             localStorage.setItem("accessToken", res.data.accessToken);
             localStorage.setItem("refreshToken", res.data.refreshToken);
             localStorage.setItem("username", res.data.user.name);
@@ -80,6 +81,24 @@ export default {
             localStorage.setItem("rolenum", res.data.user.role.number);
             localStorage.setItem("code", res.data.user.code);
             localStorage.setItem("id", res.data.user._id);
+            console.log(res.data.userEmployee);
+            if (res.data.userEmployee) {
+              console.log("im here");
+              localStorage.setItem(
+                "order",
+                res.data.userEmployee.work[
+                  res.data.userEmployee.work.length - 1
+                ].order
+              );
+
+              localStorage.setItem(
+                "model",
+                res.data.userEmployee.work[
+                  res.data.userEmployee.work.length - 1
+                ].model
+              );
+            }
+
             swal("success", "Welcome Back", "success");
             console.log("rolenumber", localStorage.getItem("rolenum"));
             if (

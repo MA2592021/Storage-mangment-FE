@@ -176,7 +176,7 @@ export default {
               })
               .then((res) => {
                 swal("success", "user added successfully", "success");
-                console.log(response);
+                console.log(res);
                 this.$router.push({
                   path: "/user/all",
                 });

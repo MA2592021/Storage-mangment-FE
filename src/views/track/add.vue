@@ -42,6 +42,15 @@
         <v-window-item value="two">
           <v-row>
             <v-col cols="12">
+              <v-checkbox
+                v-model="verify"
+                label="verifing error?"
+                color="green"
+                value="green"
+                hide-details
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="12">
               <v-autocomplete
                 v-model="selected_order"
                 :items="orders"
@@ -57,6 +66,7 @@
                 item-title="id.name"
                 label="model"
                 return-object
+                @update:modelValue="loadmodel()"
               ></v-autocomplete>
             </v-col>
 
@@ -69,12 +79,22 @@
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
+              <v-autocomplete
+                v-model="values"
+                :items="items"
+                inputmode="numeric"
+                label="stage code"
+                v-if="verify"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
               <v-checkbox
                 v-model="error"
                 label="have errors?"
                 color="red"
                 value="red"
                 hide-details
+                v-if="!verify"
               ></v-checkbox>
             </v-col>
             <v-col cols="12" v-if="error">
@@ -126,28 +146,16 @@
                     <v-col cols="12" md="6"
                       ><v-autocomplete
                         v-model="er.error"
-                        :items="[
-                          'California',
-                          'Colorado',
-                          'Florida',
-                          'Georgia',
-                          'Texas',
-                          'Wyoming',
-                        ]"
+                        :items="selected_model.id.stages"
+                        item-title="id.name"
                         label="select stage error"
+                        return-object
                       ></v-autocomplete
                     ></v-col>
                     <v-col cols="12" md="6"
                       ><v-autocomplete
                         v-model="er.desc"
-                        :items="[
-                          'California',
-                          'Colorado',
-                          'Florida',
-                          'Georgia',
-                          'Texas',
-                          'Wyoming',
-                        ]"
+                        :items="test(er)"
                         label="select error decription"
                       ></v-autocomplete></v-col
                     ><v-divider :thickness="1"></v-divider> </v-row
@@ -167,12 +175,13 @@
 
 <script>
 import axios from "axios";
-
+import swal from "sweetalert";
 export default {
   data: () => ({
     rolenum: localStorage.getItem("rolenum"),
     tab: null,
     error: false,
+    verify: false,
     errors: [],
     orders: "",
     selected_order: "",
@@ -184,37 +193,80 @@ export default {
   }),
   methods: {
     increment() {
-      this.errors.push({
-        id: this.c,
-        errors: [{ id: this.d, error: null, desc: null }],
-      });
-      this.c++;
-      this.d++;
+      if (this.selected_model === "") {
+        swal("error", "please select model first", "error");
+      } else {
+        this.errors.push({
+          id: this.c,
+          errors: [{ id: this.d, error: "", desc: null }],
+        });
+        this.c++;
+        this.d++;
+      }
     },
     decrement() {
+      if (this.errors.length < 2) {
+        swal(
+          "danger",
+          "are you sure you want to delete last element",
+          "warning"
+        ).then((val) => {
+          if (val) {
+            this.errors.pop();
+          }
+        });
+      }
       this.errors.pop();
     },
     increment1(index) {
       this.errors[index].errors.push({
         id: this.d,
-        error: null,
+        error: "",
         desc: null,
       });
       this.d++;
     },
     decrement1(index) {
-      this.errors[index].errors.pop();
+      if (
+        this.errors[index].errors[this.errors[index].errors.length - 1]
+          .error === ""
+      ) {
+        this.errors[index].errors.pop();
+      } else {
+        swal(
+          "danger",
+          "are you sure you want to delete last element",
+          "warning"
+        ).then((val) => {
+          if (val) {
+            this.errors[index].errors.pop();
+          }
+        });
+      }
     },
     loadorders() {
       axios.get("/api/order").then((res) => {
         this.orders = res.data.data;
       });
     },
-
+    loadmodel() {
+      axios.get("/api/model/" + this.selected_model.id._id).then((res) => {
+        this.selected_model.id = res.data.data;
+      });
+    },
     loademployee() {
       axios.get("/api/employee").then((res) => {
         this.employees = res.data.data;
       });
+    },
+    test(t) {
+      if (t.error) {
+        if (t.error.id) {
+          return t.error.id.stageErrors;
+        }
+      } else {
+        return [];
+      }
     },
   },
   computed: {

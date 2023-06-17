@@ -55,7 +55,7 @@
           <v-col col="6" xs="12" align="center">
             <v-data-table
               v-model:items-per-page="itemsPerPage"
-              :headers="headers2"
+              :headers="headers"
               :items="orders"
               item-value="name"
               class="elevation-1"
@@ -91,7 +91,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { usedata } from "../stores/print_data";
 export default {
   data() {
@@ -100,14 +99,15 @@ export default {
       dis: true,
       headers: [
         {
-          title: "material name",
+          title: "stage",
           align: "start",
           sortable: false,
-          key: "material.name",
+          key: "stage",
         },
-        { title: "quantity", key: "quantity" },
-        { title: "colors", key: "colors" },
-        { title: "sizes", key: "sizes" },
+        { title: "describtion", key: "desc" },
+        { title: "fixed", key: "fixed" },
+        { title: "Date in", key: "datein" },
+        { title: "Date out", key: "date out" },
       ],
 
       headers1: [
@@ -115,19 +115,22 @@ export default {
           title: "name",
           align: "start",
           sortable: false,
-          key: "id.name",
+          key: "name",
         },
         {
-          title: "machine type",
+          title: "code",
           align: "start",
-          sortable: false,
-          key: "machineType.name",
+          key: "code",
         },
         {
-          title: "priority",
+          title: "employee",
           align: "start",
-          sortable: false,
-          key: "priority",
+          key: "employee",
+        },
+        {
+          title: "time finished",
+          align: "start",
+          key: "date",
         },
       ],
 

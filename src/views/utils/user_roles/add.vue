@@ -21,7 +21,8 @@
               required
               v-model="role.number"
               label="priority*"
-              hint="Required"
+              hint="number 2 reserved for quality and number 3 reserved for assistants "
+              persistent-hint
             ></v-text-field>
           </v-col>
           <v-col cols="12">
