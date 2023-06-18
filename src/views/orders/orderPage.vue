@@ -39,6 +39,11 @@
           prepend-icon="mdi-note-text-outline"
         ></v-textarea>
       </v-col>
+      <v-col cols="12" align="center"
+        ><v-chip :color="order.status === true ? 'green' : 'red'">
+          {{ order.status === true ? "order Finished" : "order in production" }}
+        </v-chip>
+      </v-col>
     </v-row>
     <v-card-actions class="mx-auto">
       <v-btn
@@ -84,6 +89,7 @@
     v-bind:clientmat="order.clientMaterial"
     v-bind:client="order.client._id"
     v-bind:order="order.id"
+    v-bind:done="order.status"
     @models="updatemodels"
     v-if="x === 1"
   />
@@ -162,6 +168,7 @@ export default {
       this.order.details = this.orgorder.details;
       this.order.client = this.orgorder.client;
       this.order.note = this.orgorder.note;
+      this.order.status = this.orgorder.status;
     },
     cancel() {
       this.dis = !this.dis;

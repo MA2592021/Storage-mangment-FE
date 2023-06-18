@@ -17,8 +17,15 @@
         v-bind:header="headers.card_header"
         v-bind:title="'All cards'"
         @tableClicked="tableClicked"
-      /> </v-col
-  ></v-row>
+      />
+    </v-col>
+    <v-col cols="12" align="center"
+      ><v-btn @click="swap()" color="red" v-if="!all">view all cards</v-btn
+      ><v-btn @click="swap()" color="green" v-if="all"
+        >view 100 cards</v-btn
+      ></v-col
+    >
+  </v-row>
 </template>
 
 <script>
@@ -32,21 +39,42 @@ export default {
   data() {
     return {
       cards: [],
+      all: false,
     };
   },
   created() {
     //Get route
-    axios.get("/api/card/").then((response) => {
-      console.log(response);
-
-      this.cards = response.data.data;
-    });
+    this.load100card();
   },
+
   setup() {
     const headers = useheaders();
     return { headers };
   },
   methods: {
+    swap() {
+      if (this.all === false) {
+        this.loadallcard();
+        this.all = true;
+      } else {
+        this.load100card();
+        this.all = false;
+      }
+    },
+    load100card() {
+      axios.get("/api/card/last/100").then((response) => {
+        console.log(response);
+
+        this.cards = response.data.data;
+      });
+    },
+    loadallcard() {
+      axios.get("/api/card/").then((response) => {
+        console.log(response);
+
+        this.cards = response.data.data;
+      });
+    },
     tableClicked(value) {
       // console.log(value);
       // console.log(this.cards.employee);

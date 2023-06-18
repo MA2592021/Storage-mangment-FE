@@ -7,13 +7,9 @@
       <v-tab :value="2" router :to="`${parentPath}all`">{{
         $t("tabs.all")
       }}</v-tab>
-      <v-tab
-        :value="3"
-        router
-        :to="`${parentPath}add`"
-        v-if="parentPath !== '/utils/assist/'"
-        >{{ $t("tabs.add") }}</v-tab
-      >
+      <v-tab :value="3" router :to="`${parentPath}add`" v-if="checkpath">{{
+        $t("tabs.add")
+      }}</v-tab>
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item v-for="n in 3" :key="n" :value="n" disabled>
@@ -35,6 +31,14 @@ export default {
   computed: {
     parentPath() {
       return this.$route.matched[0].path;
+    },
+    checkpath() {
+      if (this.parentPath === "/utils/assist/") {
+        return false;
+      } else if (this.parentPath === "/track/") {
+        return false;
+      }
+      return true;
     },
   },
 };

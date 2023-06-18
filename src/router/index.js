@@ -814,7 +814,7 @@ const router = createRouter({
         requiresAuth: true,
       },
       component: () =>
-        import("../views/utils/productionEntries/qualitycheck.vue"),
+        import("../views/utils/productionEntries/qualityCheck.vue"),
     },
     //test
     {

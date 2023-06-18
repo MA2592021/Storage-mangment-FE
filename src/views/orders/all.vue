@@ -47,6 +47,7 @@ export default {
         x._id = element._id;
         x.name = element.name;
         x.client = element.client.name;
+        x.status = element.status;
         x.time = moment(element.createdAt).calendar();
         console.log(x);
         this.order.push(x);

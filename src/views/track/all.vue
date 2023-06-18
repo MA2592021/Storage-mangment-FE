@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: () => ({
     search: "",
@@ -73,7 +74,7 @@ export default {
         model: "dafa",
         card: "231",
         errors: "1",
-        stage: { name: "ta2te3", type: "prepairs" },
+        stage: { name: "ta2te3", type: "preperation" },
         date: "2023-05-13T20:58:16",
       },
       {
@@ -89,7 +90,7 @@ export default {
         model: "dafa",
         card: "632",
         errors: "2",
-        stage: { name: "ta3leb", type: "finishes" },
+        stage: { name: "ta3leb", type: "finshing" },
         date: "2023-06-5T20:58:16",
       },
       {
@@ -105,7 +106,7 @@ export default {
         model: "abo el feda",
         card: "912",
         errors: "4",
-        stage: { name: "ta3leb", type: "finishes" },
+        stage: { name: "ta3leb", type: "finshing" },
         date: "2023-05-13T21:58:16",
       },
       {
@@ -117,14 +118,15 @@ export default {
         date: "2023-05-13T18:58:16",
       },
     ],
+    cards: [],
   }),
   methods: {
     getChipColor(type) {
-      if (type === "prepairs") {
+      if (type === "preperation") {
         return "pink";
       } else if (type === "production") {
         return "info";
-      } else if (type === "finishes") {
+      } else if (type === "finshing") {
         return "green";
       } else {
         return "default";
@@ -132,10 +134,21 @@ export default {
     },
   },
   created() {
-    let x = localStorage.getItem("rolenum");
-    if (x === "2" || x === "3") {
-      this.$router.push({ path: "/track/add" });
-    }
+    axios.get("/api/card/last/100").then((res) => {
+      this.cards = [];
+      console.log(res.data.data);
+      res.data.data.forEach((element) => {
+        let x = {};
+        x.model = element.model.name;
+        x.order = element.order.name;
+        x.qty = element.quantity;
+        x.currentstage = element.tracking[element.tracking.length - 1];
+        x.errors = element.cardErrors.length;
+        x.date = element.updatedAt;
+        this.cards.push(x);
+      });
+      console.log(this.cards);
+    });
   },
 };
 </script>

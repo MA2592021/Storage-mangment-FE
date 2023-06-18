@@ -54,29 +54,45 @@
         <v-row>
           <v-col col="6" xs="12" align="center">
             <v-data-table
+              :group-by="groupBy"
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
-              :items="orders"
+              :items="errors"
               item-value="name"
               class="elevation-1"
             >
-              <template v-slot:item.color="{ item }">
-                <h4 v-for="model in item.raw.models" :key="model">
-                  {{ model.color.name }}
-                </h4>
+              <template v-slot:item.dateout="{ item }">
+                <v-chip
+                  :color="item.columns.dateout === null ? 'red' : 'green'"
+                >
+                  {{
+                    item.columns.dateout === null
+                      ? "not Fixed yet"
+                      : item.columns.dateout
+                  }}
+                </v-chip>
               </template>
-
-              <template v-slot:item.size="{ item }">
-                <h4 v-for="model in item.raw.models" :key="model">
-                  {{ model.size.name }}
-                </h4>
+              <template v-slot:item.verifiedBy="{ item }">
+                <v-chip
+                  :color="item.columns.verifiedBy === null ? 'red' : 'green'"
+                >
+                  {{
+                    item.columns.verifiedBy === null
+                      ? "not Fixed yet"
+                      : item.columns.verifiedBy
+                  }}
+                </v-chip>
               </template>
-              <template v-slot:item.quantity="{ item }">
-                <h4 v-for="model in item.raw.models" :key="model">
-                  {{ model.quantity }}
-                </h4>
-              </template></v-data-table
-            >
+              <template v-slot:item.doneBy="{ item }">
+                <v-chip :color="item.columns.doneBy === null ? 'red' : 'green'">
+                  {{
+                    item.columns.doneBy === null
+                      ? "not Fixed yet"
+                      : item.columns.doneBy
+                  }}
+                </v-chip>
+              </template>
+            </v-data-table>
             <div align="center" class="ma-2">
               <v-btn class="mx-auto" color="info" @click="printo(2)"
                 >print
@@ -87,11 +103,12 @@
       </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
-  {{ card }}
 </template>
 
 <script>
+import moment from "moment";
 import { usedata } from "../stores/print_data";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -104,28 +121,31 @@ export default {
           sortable: false,
           key: "stage",
         },
-        { title: "describtion", key: "desc" },
-        { title: "fixed", key: "fixed" },
+        { title: "description", key: "description" },
+        { title: "employee", key: "doneBy" },
+        { title: "assistant", key: "assist" },
+        { title: "verifed by", key: "verifiedBy" },
         { title: "Date in", key: "datein" },
-        { title: "Date out", key: "date out" },
+        { title: "Date out", key: "dateout" },
       ],
-
+      groupBy: [{ key: "id", order: "asc" }],
       headers1: [
         {
           title: "name",
           align: "start",
           sortable: false,
-          key: "name",
+          key: "stage[name]",
         },
-        {
-          title: "code",
-          align: "start",
-          key: "code",
-        },
+
         {
           title: "employee",
           align: "start",
           key: "employee",
+        },
+        {
+          title: "assistant name",
+          align: "start",
+          key: "assist",
         },
         {
           title: "time finished",
@@ -134,21 +154,69 @@ export default {
         },
       ],
 
-      orders: [],
-      calcs: [],
+      card: "",
+      stages: "",
+      errors: [],
+      id: 1,
     };
   },
-  mounted() {
-    console.log(this.card);
-  },
-  props: {
-    card: Array,
+  mounted() {},
+
+  created() {
+    this.loadcard();
   },
   setup() {
     const print_data = usedata();
     return { print_data };
   },
   methods: {
+    loadcard() {
+      axios.get("/api/card/" + this.$route.params.id).then((res) => {
+        this.card = res.data.data;
+        this.makethings();
+        this.makeerror();
+      });
+    },
+    makethings() {
+      console.log(this.card);
+      let y = [];
+
+      this.card.tracking.forEach((element) => {
+        let x = {};
+        x.date = moment(element.dateOut).calendar();
+        x.employee = element.employee.name + ` (${element.employee.code})`;
+        x.assist = element.enteredBy.name + ` (${element.enteredBy.code})`;
+        x.stage = element.stage;
+        y.push(x);
+      });
+      this.stages = y;
+      console.log(this.card);
+    },
+    makeerror() {
+      let y = [];
+      this.card.cardErrors.forEach((element) => {
+        element.forEach((el) => {
+          let x = {};
+          x.id = this.id;
+          x.datein = moment(el.dateIn).calendar();
+          x.dateout = el.dateOut ? moment(el.dateOut).calendar() : null;
+          x.description = el.description;
+          x.verifiedBy = el.verifiedBy
+            ? el.verifiedBy.name + ` (${el.verifiedBy.code})`
+            : null;
+
+          x.assist = el.enteredBy
+            ? el.enteredBy.name + ` (${el.enteredBy.code})`
+            : null;
+          x.doneBy = el.doneBy ? el.doneBy.name + ` (${el.doneBy.code})` : null;
+          x.stage = el.stage.name;
+          y.push(x);
+        });
+        this.id++;
+      });
+      this.errors = y;
+      console.log(y);
+    },
     printo(x) {
       if (x === 1) {
         this.print_data.title = "stages to produce " + this.name;

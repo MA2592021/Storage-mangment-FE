@@ -19,13 +19,6 @@
 <script>
 import axios from "axios";
 export default {
-  created() {
-    axios.get("/api/order/").then((response) => {
-      console.log(response);
-      this.data = response.data.data;
-    });
-  },
-
   data() {
     return { data: [] };
   },
@@ -35,10 +28,9 @@ export default {
     },
   },
   created() {
-    let x = localStorage.getItem("rolenum");
-    if (x === "2" || x === "3") {
-      this.$router.push({ path: "/track/add" });
-    }
+    axios.get("/api/order/state/inProduction").then((response) => {
+      this.data = response.data.data;
+    });
   },
 };
 </script>

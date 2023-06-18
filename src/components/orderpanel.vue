@@ -99,11 +99,7 @@
         </v-row>
 
         <v-row justify="center" class="mt-4">
-          <v-btn
-            color="red "
-            @click="dis = !dis"
-            :disabled="status === 'Delivered'"
-          >
+          <v-btn color="red " @click="dis = !dis" :disabled="done === true">
             Edit models
           </v-btn>
           <v-btn
@@ -221,7 +217,11 @@
             >
             </v-data-table>
             <div align="center" class="ma-2">
-              <v-btn class="mx-auto" color="success" @click="dialog = !dialog"
+              <v-btn
+                class="mx-auto"
+                color="success"
+                @click="dialog = !dialog"
+                :disabled="done === true"
                 >append Material
               </v-btn>
             </div>
@@ -478,6 +478,7 @@ export default {
     clientmat: Array,
     client: String,
     order: String,
+    done: Boolean,
   },
 };
 </script>

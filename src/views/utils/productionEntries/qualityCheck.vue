@@ -311,27 +311,55 @@ export default {
         });
         cardErrors.push(y);
       });
-      console.log(cardErrors);
-      console.log(this.errors);
       if (this.error) {
         axios
           .patch("/api/card/" + this.selected_card._id + "/errors/add", {
             cardErrors: cardErrors,
           })
           .then(() => {
-            swal("success", "quality check done", "success");
-            // axios.patch(`/api/card/${this.selected_card._id}/tracking/add`, {});
+            axios
+              .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
+                stage: this.selected_quality.id._id,
+                employee: localStorage.getItem("employee"),
+                enteredBy: localStorage.getItem("id"),
+              })
+              .then(() => {
+                swal("success", "quality check done", "success");
+              });
           });
       } else if (this.verify) {
         axios
           .patch(`/api/card/${this.selected_card._id}/errors/confirm`, {
-            stage: this.selected_stage._id,
+            stage: this.selected_stage.id._id,
             verifiedBy: localStorage.getItem("id"),
             doneBy: this.selected_employee.id,
           })
-          .then((res) => {
-            console.log(res);
+          .then(() => {
+            axios
+              .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
+                stage: this.selected_quality._id,
+                employee: localStorage.getItem("employee"),
+                enteredBy: localStorage.getItem("id"),
+              })
+              .then(() => {
+                swal("success", "quality check done", "success");
+              });
+          })
+          .then(() => {
             swal("success", "verify done", "success");
+          });
+      } else {
+        axios
+          .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
+            stage: this.selected_quality.id._id,
+            employee: localStorage.getItem("employee"),
+            enteredBy: localStorage.getItem("id"),
+          })
+          .then(() => {
+            swal("success", "quality check done", "success");
+          })
+          .then(() => {
+            swal("success", "check done", "success");
           });
       }
     },

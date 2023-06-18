@@ -67,7 +67,7 @@
       </v-btn>
     </v-card-actions>
   </v-card>
-  <cardPanel v-bind:card="card" class="mt-4" />
+  <cardPanel />
 </template>
 
 <script>

@@ -81,7 +81,6 @@ export default {
             localStorage.setItem("rolenum", res.data.user.role.number);
             localStorage.setItem("code", res.data.user.code);
             localStorage.setItem("id", res.data.user._id);
-            console.log(res.data.userEmployee);
             if (res.data.userEmployee) {
               console.log("im here");
               localStorage.setItem(
@@ -90,7 +89,7 @@ export default {
                   res.data.userEmployee.work.length - 1
                 ].order
               );
-
+              localStorage.setItem("employee", res.data.userEmployee.employee);
               localStorage.setItem(
                 "model",
                 res.data.userEmployee.work[
