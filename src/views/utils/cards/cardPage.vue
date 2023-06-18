@@ -15,7 +15,7 @@
           label="order "
           required
           readonly
-          v-model="card.code"
+          v-model="card.order.name"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -24,7 +24,7 @@
           label="model "
           required
           readonly
-          v-model="card.code"
+          v-model="card.model.name"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -33,7 +33,7 @@
           label="current Stage "
           required
           readonly
-          v-model="card.code"
+          v-model="card.tracking[card.tracking.length - 1].stage.name"
           variant="underlined"
         ></v-text-field>
       </v-col>
