@@ -130,7 +130,26 @@ export default {
     },
     loadorder() {
       axios.get("/api/order").then((res) => {
-        this.order = res.data.data;
+        console.log(res.data.data);
+        res.data.data.forEach((element) => {
+          let x = {};
+          let uniqueArray = [];
+
+          // Filter out repeated objects from the array
+          element.models.forEach((obj) => {
+            const foundObject = uniqueArray.find(
+              (item) => item.id._id === obj.id._id
+            );
+            if (!foundObject) {
+              uniqueArray.push(obj);
+            }
+          });
+          x.name = element.name;
+          x._id = element._id;
+          x.models = uniqueArray;
+          this.order.push(x);
+        });
+        console.log(this.orders);
       });
     },
     save() {

@@ -73,8 +73,8 @@ export const useheaders = defineStore("headers", {
     ],
     card_header: [
       { title: "code", key: "code" },
-      { title: "order", key: "order" },
-      { title: "model", key: "model" },
+      { title: "order", key: "order[name]" },
+      { title: "model", key: "model[name]" },
       { title: "quantity", key: "quantity" },
     ],
     role_header: [

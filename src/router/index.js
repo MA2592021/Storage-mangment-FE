@@ -797,6 +797,25 @@ const router = createRouter({
         },
       ],
     },
+    //production entries routes
+    {
+      path: "/utils/prodEntry/",
+      name: "prod-entry",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () =>
+        import("../views/utils/productionEntries/productionEntry.vue"),
+    },
+    {
+      path: "/utils/quality/",
+      name: "quality-check",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () =>
+        import("../views/utils/productionEntries/qualitycheck.vue"),
+    },
     //test
     {
       path: "/lazysoftware/credits",

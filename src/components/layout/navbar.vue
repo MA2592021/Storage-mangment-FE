@@ -94,6 +94,24 @@
             :to="link.route"
           ></v-list-item>
         </v-list-group>
+        <v-list-group value="prod">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              :title="$t(`navbar.prod`)"
+              prepend-icon="mdi-data-matrix-scan"
+            ></v-list-item>
+          </template>
+
+          <v-list-item
+            v-for="link in productionlinks"
+            :key="link.text"
+            :title="link.text"
+            :prepend-icon="link.icon"
+            router
+            :to="link.route"
+          ></v-list-item>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
   </nav>
@@ -192,6 +210,18 @@ export default {
           icon: "mdi-package-variant-closed",
           text: this.$t("navbar.cartons"),
           route: "/storage/carton/dashboard",
+        },
+      ],
+      productionlinks: [
+        {
+          icon: "mdi-wrench-outline",
+          text: this.$t("navbar.stage"),
+          route: "/utils/prodEntry/",
+        },
+        {
+          icon: "mdi-ruler",
+          text: this.$t("navbar.quality"),
+          route: "/utils/quality/",
         },
       ],
       storageview: "storage",
@@ -316,6 +346,8 @@ export default {
       this.Utils[6].text = this.$t("navbar.machinetypes");
       this.Utils[7].text = this.$t("navbar.assistants");
       this.Utils[8].text = this.$t("navbar.cards");
+      this.productionlinks[0].text = this.$t("navbar.stage");
+      this.productionlinks[1].text = this.$t("navbar.quality");
     },
   },
   computed: {

@@ -101,12 +101,10 @@ export default {
 
             swal("success", "Welcome Back", "success");
             console.log("rolenumber", localStorage.getItem("rolenum"));
-            if (
-              localStorage.getItem("rolenum") === "2" ||
-              localStorage.getItem("rolenum") === "3"
-            ) {
+            if (localStorage.getItem("rolenum") === "3") {
               console.log("test");
-              this.$router.push({ path: "/track/add" });
+              this.$router.push({ path: "/utils/prodEntry/" });
+            } else if (localStorage.getItem("rolenum") === "2") {
             } else {
               console.log("testss");
               this.$router.push({ path: "/" });

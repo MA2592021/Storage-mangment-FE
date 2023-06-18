@@ -37,6 +37,29 @@
           variant="underlined"
         ></v-text-field>
       </v-col>
+      <v-col cols="12"
+        ><v-timeline side="start" align="start">
+          <v-timeline-item
+            :dot-color="
+              h.state === 'Approved'
+                ? 'teal-lighten-3'
+                : h.state === 'Shipped'
+                ? 'green'
+                : 'pink'
+            "
+            size="small"
+            v-for="h in card.history"
+            :key="h"
+          >
+            <div class="d-flex">
+              <strong class="me-4">{{ moment(h.date) }}</strong>
+              <div>
+                <strong>{{ h.state }}</strong>
+              </div>
+            </div>
+          </v-timeline-item>
+        </v-timeline></v-col
+      >
     </v-row>
     <v-card-actions class="mx-auto">
       <v-btn @click="deletee()" color="red" prepend-icon=" mdi-delete-forever">
@@ -48,6 +71,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import axios from "axios";
 import swal from "sweetalert";
 import cardPanel from "../../../components/cardPanel.vue";
@@ -66,6 +90,9 @@ export default {
     });
   },
   methods: {
+    moment(date) {
+      return moment(date).calendar();
+    },
     deletee() {
       swal({
         title: "Are you sure?",

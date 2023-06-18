@@ -31,7 +31,7 @@
               v-model="stage.type"
               persistent-hint
               hint="Required"
-              :items="['prepairs', 'production', 'finishing']"
+              :items="['preparations', 'production', 'finishing', 'quality']"
               item-title="type"
             ></v-autocomplete
           ></v-col>

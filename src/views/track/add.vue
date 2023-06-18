@@ -10,40 +10,38 @@
         <v-window-item value="one">
           <v-row>
             <v-col cols="12">
-              <v-checkbox
-                v-model="verify"
-                label="verifing error?"
-                color="green"
-                value="green"
-                hide-details
-              ></v-checkbox>
-            </v-col>
-            <v-col cols="12">
               <v-autocomplete
-                v-model="values"
+                v-model="selected_employee"
                 :items="displayText"
                 item-title="name"
                 inputmode="numeric"
+                return-object
                 label="employee code"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-                v-model="values"
-                :items="items"
+                v-model="selected_card"
+                :items="assist_card"
+                item-title="code"
+                return-object
                 inputmode="numeric"
                 label="card code"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
               <v-autocomplete
-                v-model="values"
-                :items="items"
+                v-model="selected_stage"
+                :items="assist_stages"
+                return-object
+                item-title="id.name"
                 inputmode="numeric"
                 label="stage code"
               ></v-autocomplete> </v-col
             ><v-col cols="12" align="center"
-              ><v-btn outlined color="green">Submit</v-btn></v-col
+              ><v-btn outlined color="green" @click="submitproduction"
+                >Submit</v-btn
+              ></v-col
             ></v-row
           >
         </v-window-item>
@@ -53,6 +51,7 @@
             <v-col cols="12">
               <v-checkbox
                 v-model="verify"
+                @update:modelValue="error = false"
                 label="verifing error?"
                 color="green"
                 value="green"
@@ -82,9 +81,21 @@
             <v-col cols="12">
               <v-autocomplete
                 v-model="values"
-                :items="items"
+                :items="cards"
+                item-title="code"
+                return-object
                 inputmode="numeric"
                 label="card code"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_quality"
+                :items="quality"
+                item-title="id.name"
+                return-object
+                inputmode="numeric"
+                label="quality phase code"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
@@ -137,7 +148,7 @@
                 <v-col class="mt-2" cols="4" align="center">
                   <span>
                     number of errors
-                    <strong>{{ error.errors.length }}</strong> in piece
+                    <strong>{{ error.length }}</strong> in piece
                     <strong>{{ index + 1 }}</strong></span
                   >
                 </v-col>
@@ -147,14 +158,14 @@
                   </v-btn></v-col
                 >
                 <v-col cols="12">
-                  <v-row v-for="(er, index) in error.errors" :key="er">
+                  <v-row v-for="(er, index) in error" :key="er">
                     <v-col cols="12" align="center">
                       <span>error number {{ index + 1 }}</span></v-col
                     >
 
                     <v-col cols="12" md="6"
                       ><v-autocomplete
-                        v-model="er.error"
+                        v-model="er.stage"
                         :items="selected_model.id.stages"
                         item-title="id.name"
                         label="select stage error"
@@ -163,7 +174,7 @@
                     ></v-col>
                     <v-col cols="12" md="6"
                       ><v-autocomplete
-                        v-model="er.desc"
+                        v-model="er.description"
                         :items="test(er)"
                         label="select error decription"
                       ></v-autocomplete></v-col
@@ -173,7 +184,9 @@
               </v-row>
             </v-col>
             <v-col cols="12" align="center"
-              ><v-btn outlined color="green">Submit</v-btn></v-col
+              ><v-btn outlined color="green" @click="submitquality"
+                >Submit</v-btn
+              ></v-col
             >
           </v-row>
         </v-window-item>
@@ -192,25 +205,32 @@ export default {
     error: false,
     verify: false,
     errors: [],
-    orders: "",
+    orders: [],
+    quality: [],
+    cards: [],
+    assist_card: [],
+    assist_stages: [],
     selected_order: "",
     selected_model: "",
     selected_card: "",
+    selected_employee: "",
+    selected_stage: "",
+
     employees: [],
-    c: 0,
-    d: 0,
+    selected_quality: null,
   }),
   methods: {
     increment() {
       if (this.selected_model === "") {
         swal("error", "please select model first", "error");
       } else {
-        this.errors.push({
-          id: this.c,
-          errors: [{ id: this.d, error: "", desc: null }],
-        });
-        this.c++;
-        this.d++;
+        this.errors.push([
+          {
+            stage: "",
+            enteredBy: localStorage.getItem("id"),
+            description: null,
+          },
+        ]);
       }
     },
     decrement() {
@@ -228,17 +248,16 @@ export default {
       this.errors.pop();
     },
     increment1(index) {
-      this.errors[index].errors.push({
-        id: this.d,
-        error: "",
-        desc: null,
+      this.errors[index].push({
+        stage: "",
+        enteredBy: localStorage.getItem("id"),
+        description: null,
       });
-      this.d++;
     },
     decrement1(index) {
       if (
         this.errors[index].errors[this.errors[index].errors.length - 1]
-          .error === ""
+          .stage === ""
       ) {
         this.errors[index].errors.pop();
       } else {
@@ -255,23 +274,128 @@ export default {
     },
     loadorders() {
       axios.get("/api/order").then((res) => {
-        this.orders = res.data.data;
+        console.log(res.data.data);
+        res.data.data.forEach((element) => {
+          let x = {};
+          let uniqueArray = [];
+
+          // Filter out repeated objects from the array
+          element.models.forEach((obj) => {
+            const foundObject = uniqueArray.find(
+              (item) => item.id._id === obj.id._id
+            );
+            if (!foundObject) {
+              uniqueArray.push(obj);
+            }
+          });
+          x.name = element.name;
+          x._id = element._id;
+          x.models = uniqueArray;
+          this.orders.push(x);
+        });
+        console.log(this.orders);
       });
     },
     loadmodel() {
-      axios.get("/api/model/" + this.selected_model.id._id).then((res) => {
-        this.selected_model.id = res.data.data;
+      axios
+        .get("/api/model/" + this.selected_model.id._id)
+        .then((res) => {
+          this.selected_model.id = res.data.data;
+        })
+        .then(() => {
+          this.loadcards();
+          this.loadquality();
+        });
+    },
+    loadquality() {
+      this.selected_model.id.stages.forEach((element) => {
+        if (element.id.type === "quality") {
+          this.quality.push(element);
+        }
+
+        console.log(element.id.type);
       });
+      console.log(this.quality);
+    },
+    loadcards() {
+      axios
+        .get(
+          "/api/card/order/" +
+            this.selected_order._id +
+            "/model/" +
+            this.selected_model.id._id
+        )
+        .then((res) => {
+          console.log(res);
+          this.cards = res.data.data;
+        });
+    },
+    submitquality() {
+      let cardErrors = [];
+      this.errors.forEach((element) => {
+        let x = {};
+        let y = [];
+        element.forEach((el) => {
+          x.enteredBy = el.enteredBy;
+          x.stage = el.stage.id._id;
+          x.description = el.description;
+          y.push(x);
+        });
+        cardErrors.push(y);
+      });
+      console.log(cardErrors);
+      if (error) {
+        axios
+          .patch("/api/card/" + this.selected_card._id + "/errors/add", {
+            cardErrors: cardErrors,
+          })
+          .then(() => {
+            axios.patch(`/api/card/${this.selected_card._id}/tracking/add`, {});
+          });
+      } else {
+      }
+    },
+    submitproduction() {
+      console.log("card", this.selected_card);
+      console.log("employee", this.selected_employee);
+      console.log("model", this.selected_stage);
+      axios
+        .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
+          stage: this.selected_stage.id._id,
+          employee: this.selected_employee.id,
+        })
+        .then((res) => {
+          swal("success", "stages appended successfully", "success").then(
+            () => {
+              this.$router.go(0);
+            }
+          );
+        });
     },
     loademployee() {
       axios.get("/api/employee").then((res) => {
         this.employees = res.data.data;
       });
     },
+    loadassist() {
+      let order = localStorage.getItem("order");
+      let model = localStorage.getItem("model");
+      axios
+        .get(`/api/card/order/${order}/model/${model}`)
+        .then((res) => {
+          this.assist_card = res.data.data;
+          console.log(res.data.data);
+        })
+        .then(() => {
+          axios
+            .get("/api/model/" + model)
+            .then((res) => (this.assist_stages = res.data.data.stages));
+        });
+    },
     test(t) {
-      if (t.error) {
-        if (t.error.id) {
-          return t.error.id.stageErrors;
+      if (t.stage) {
+        if (t.stage.id) {
+          return t.stage.id.stageErrors;
         }
       } else {
         return [];
@@ -296,6 +420,9 @@ export default {
     },
   },
   created() {
+    if (localStorage.getItem("rolenum") === "3") {
+      this.loadassist();
+    }
     this.loadorders();
     this.loademployee();
     console.log(this.rolenum);

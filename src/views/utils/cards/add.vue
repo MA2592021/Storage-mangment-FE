@@ -52,7 +52,6 @@
       <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
   </v-card>
-  {{ card }}
 </template>
 
 <script>
@@ -95,9 +94,27 @@ export default {
         });
     },
     loadorder() {
-      axios.get("/api/order/").then((res) => {
-        console.log(res);
-        this.orders = res.data.data;
+      axios.get("/api/order").then((res) => {
+        console.log(res.data.data);
+        res.data.data.forEach((element) => {
+          let x = {};
+          let uniqueArray = [];
+
+          // Filter out repeated objects from the array
+          element.models.forEach((obj) => {
+            const foundObject = uniqueArray.find(
+              (item) => item.id._id === obj.id._id
+            );
+            if (!foundObject) {
+              uniqueArray.push(obj);
+            }
+          });
+          x.name = element.name;
+          x._id = element._id;
+          x.models = uniqueArray;
+          this.orders.push(x);
+        });
+        console.log(this.orders);
       });
     },
   },

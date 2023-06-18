@@ -56,7 +56,7 @@
           v-model="stage.type"
           variant="underlined"
           :readonly="dis === true"
-          :items="['prepairs', 'production', 'finishing']"
+          :items="['preparations', 'production', 'finishing', 'quality']"
           item-title="type"
         ></v-autocomplete>
       </v-col>

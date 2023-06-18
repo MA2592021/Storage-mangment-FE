@@ -60,7 +60,7 @@
             ></v-textarea>
           </v-col>
           <v-col cols="12"
-            ><v-timeline side="end" align="start">
+            ><v-timeline side="start" align="start">
               <v-timeline-item
                 :dot-color="
                   h.state === 'Approved'
