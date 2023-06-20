@@ -7,6 +7,28 @@
         item-title="name"
         inputmode="numeric"
         return-object
+        label="order"
+        v-if="!assist"
+      ></v-autocomplete>
+    </v-col>
+    <v-col cols="12">
+      <v-autocomplete
+        v-model="selected_employee"
+        :items="displayText"
+        item-title="name"
+        inputmode="numeric"
+        return-object
+        label="model"
+        v-if="!assist"
+      ></v-autocomplete>
+    </v-col>
+    <v-col cols="12">
+      <v-autocomplete
+        v-model="selected_employee"
+        :items="displayText"
+        item-title="name"
+        inputmode="numeric"
+        return-object
         label="employee code"
       ></v-autocomplete>
     </v-col>
@@ -49,6 +71,7 @@ export default {
       cards: [],
       assist_card: [],
       assist_stages: [],
+      assist: true,
     };
   },
   methods: {
@@ -72,7 +95,13 @@ export default {
             .then((res) => (this.assist_stages = res.data.data.stages));
         });
     },
-
+    start() {
+      if (localStorage.getItem("order")) {
+        this.loadassist();
+      } else {
+        this.assist = false;
+      }
+    },
     submitproduction() {
       console.log("card", this.selected_card);
       console.log("employee", this.selected_employee);
@@ -102,7 +131,7 @@ export default {
     },
   },
   created() {
-    this.loadassist();
+    this.start();
     this.loademployee();
   },
 };

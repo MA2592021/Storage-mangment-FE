@@ -24,7 +24,7 @@
       <v-data-table
         :group-by="groupBy"
         :headers="headers"
-        :items="desserts"
+        :items="cards"
         :sort-by="sortBy"
         :search="search"
         multi-sort
@@ -35,24 +35,39 @@
         <template v-slot:item.errors="{ item }">
           <v-chip
             class="ma-2"
-            :color="item.columns.errors === '0' ? `green` : `red`"
+            :color="item.columns.errors === 0 ? `green` : `red`"
             text-color="white"
           >
             {{ item.columns.errors }}
           </v-chip>
         </template>
-        <template v-slot:item.stage.name="{ item }">
-          <v-chip class="ma-2" :color="getChipColor(item.raw.stage.type)">
-            {{ item.columns.stage.name }}
+        <template v-slot:item.stage="{ item }">
+          <v-chip
+            class="ma-2"
+            :color="getChipColor(item.raw.currentstage.type)"
+          >
+            {{
+              item.raw.currentstage.name
+                ? item.raw.currentstage.name
+                : "not started yet"
+            }}
           </v-chip>
         </template>
       </v-data-table>
-    </v-col></v-row
-  >
+    </v-col>
+    <v-col cols="12"
+      ><p style="color: red">* red is for not started yet</p>
+      <p style="color: orange">* yellow is for preperation</p>
+      <p style="color: #42a5f5">* blue is for production</p>
+      <p style="color: purple">* purpule is for quality</p>
+      <p style="color: green">* green is for finishing</p></v-col
+    >
+  </v-row>
 </template>
 
 <script>
 import axios from "axios";
+import moment from "moment";
 export default {
   data: () => ({
     search: "",
@@ -64,72 +79,26 @@ export default {
     headers: [
       { title: "model", key: "model" },
       { title: "card", key: "card" },
+      { title: "quantity", key: "qty" },
       { title: "errors", key: "errors" },
-      { title: "current stage", key: "stage.name" },
+      { title: "current stage", key: "stage" },
       { title: "last stage done", key: "date" },
     ],
-    desserts: [
-      {
-        order: "dafa1",
-        model: "dafa",
-        card: "231",
-        errors: "1",
-        stage: { name: "ta2te3", type: "preperation" },
-        date: "2023-05-13T20:58:16",
-      },
-      {
-        order: "dafa1",
-        model: "abo el feda",
-        card: "510",
-        errors: "0",
-        stage: { name: "geb", type: "production" },
-        date: "2023-05-15T20:58:16",
-      },
-      {
-        order: "dafa1",
-        model: "dafa",
-        card: "632",
-        errors: "2",
-        stage: { name: "ta3leb", type: "finshing" },
-        date: "2023-06-5T20:58:16",
-      },
-      {
-        order: "dafa2",
-        model: "dafa",
-        card: "547",
-        errors: "0",
-        stage: { name: "banda", type: "production" },
-        date: "2023-05-13T20:58:16",
-      },
-      {
-        order: "dafa2",
-        model: "abo el feda",
-        card: "912",
-        errors: "4",
-        stage: { name: "ta3leb", type: "finshing" },
-        date: "2023-05-13T21:58:16",
-      },
-      {
-        order: "dafa2",
-        model: "abo el feda",
-        card: "312",
-        errors: "0",
-        stage: { name: "lol", type: "production" },
-        date: "2023-05-13T18:58:16",
-      },
-    ],
+
     cards: [],
   }),
   methods: {
     getChipColor(type) {
       if (type === "preperation") {
-        return "pink";
+        return "orange";
       } else if (type === "production") {
         return "info";
       } else if (type === "finshing") {
         return "green";
+      } else if (type === "quality") {
+        return "deep-purple-darken-4";
       } else {
-        return "default";
+        return "red";
       }
     },
   },
@@ -139,12 +108,16 @@ export default {
       console.log(res.data.data);
       res.data.data.forEach((element) => {
         let x = {};
+        x._id = element._id;
         x.model = element.model.name;
         x.order = element.order.name;
         x.qty = element.quantity;
-        x.currentstage = element.tracking[element.tracking.length - 1];
+        x.currentstage =
+          element.tracking.length === 0
+            ? ""
+            : element.tracking[element.tracking.length - 1].stage;
         x.errors = element.cardErrors.length;
-        x.date = element.updatedAt;
+        x.date = moment(element.updatedAt).calendar();
         this.cards.push(x);
       });
       console.log(this.cards);
@@ -152,3 +125,14 @@ export default {
   },
 };
 </script>
+<style scoped>
+.green {
+  color: green;
+}
+.red {
+  color: red;
+}
+.pur {
+  color: purple;
+}
+</style>
