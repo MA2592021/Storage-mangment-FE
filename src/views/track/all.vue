@@ -34,6 +34,7 @@
       >
         <template v-slot:item.errors="{ item }">
           <v-chip
+            @click="test(item)"
             class="ma-2"
             :color="item.columns.errors === 0 ? `green` : `red`"
             text-color="white"
@@ -41,16 +42,34 @@
             {{ item.columns.errors }}
           </v-chip>
         </template>
+        <template v-slot:item.model="{ item }">
+          <v-chip @click="model(item.raw.model._id)" class="ma-2">
+            {{ item.columns.model.name }}
+          </v-chip>
+        </template>
+        <template v-slot:item.code="{ item }">
+          <v-chip @click="card(item.raw._id)" class="ma-2">
+            {{ item.columns.code }}
+          </v-chip>
+        </template>
         <template v-slot:item.stage="{ item }">
           <v-chip
             class="ma-2"
             :color="getChipColor(item.raw.currentstage.type)"
+            @click="
+              item.raw.currentstage.name ? stage(item.raw.currentstage._id) : ''
+            "
           >
             {{
               item.raw.currentstage.name
                 ? item.raw.currentstage.name
                 : "not started yet"
             }}
+          </v-chip>
+        </template>
+        <template v-slot:item.date="{ item }">
+          <v-chip class="ma-2" :color="timeago(item.raw.dato)">
+            {{ item.raw.date }}
           </v-chip>
         </template>
       </v-data-table>
@@ -75,19 +94,22 @@ export default {
       { key: "date", order: "dsc" },
       { order: "asc", key: "model" },
     ],
-    groupBy: [{ key: "order", order: "asc" }],
+    groupBy: [{ key: "order[name]", order: "asc" }],
     headers: [
       { title: "model", key: "model" },
-      { title: "card", key: "card" },
-      { title: "quantity", key: "qty" },
+      { title: "card", align: "start", key: "code" },
+      { title: "quantity", align: "center", key: "qty" },
       { title: "errors", key: "errors" },
-      { title: "current stage", key: "stage" },
-      { title: "last stage done", key: "date" },
+      { title: "last stage", key: "stage" },
+      { title: "time finished", key: "date" },
     ],
 
     cards: [],
   }),
   methods: {
+    test(item) {
+      console.log(item);
+    },
     getChipColor(type) {
       if (type === "preperation") {
         return "orange";
@@ -101,38 +123,57 @@ export default {
         return "red";
       }
     },
+    timeago(time) {
+      const currentTime = moment();
+      const inputTime = moment(time);
+      const duration = moment.duration(currentTime.diff(inputTime));
+      const minutesDifference = duration.asMinutes();
+
+      if (minutesDifference < 30) {
+        return "green";
+      }
+      return "red";
+    },
+    model(id) {
+      this.$router.push({ path: "/model/" + id });
+    },
+    card(id) {
+      this.$router.push({ path: "/utils/cards/" + id });
+    },
+    stage(id) {
+      this.$router.push({ path: "/utils/stage/" + id });
+    },
   },
   created() {
     axios.get("/api/card/last/100").then((res) => {
       this.cards = [];
-      console.log(res.data.data);
+      //console.log(res.data.data);
       res.data.data.forEach((element) => {
         let x = {};
         x._id = element._id;
-        x.model = element.model.name;
-        x.order = element.order.name;
+        x.code = element.code;
+        x.model = element.model;
+        x.order = element.order;
         x.qty = element.quantity;
         x.currentstage =
           element.tracking.length === 0
             ? ""
             : element.tracking[element.tracking.length - 1].stage;
         x.errors = element.cardErrors.length;
-        x.date = moment(element.updatedAt).calendar();
+        x.date =
+          element.tracking.length === 0
+            ? "not started yet"
+            : moment(
+                element.tracking[element.tracking.length - 1].dateOut
+              ).fromNow();
+        x.dato =
+          element.tracking.length === 0
+            ? ""
+            : element.tracking[element.tracking.length - 1].dateOut;
         this.cards.push(x);
       });
-      console.log(this.cards);
+      //console.log(this.cards);
     });
   },
 };
 </script>
-<style scoped>
-.green {
-  color: green;
-}
-.red {
-  color: red;
-}
-.pur {
-  color: purple;
-}
-</style>

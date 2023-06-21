@@ -79,6 +79,8 @@ export default {
       { name: "Types ", key: "types" },
       { name: "Assistant ", key: "assistant" },
       { name: "Production Follow-up ", key: "track" },
+      { name: "Production Entry ", key: "prodEntry" },
+      { name: "Quality Check ", key: "quality" },
       { name: "cards ", key: "cards" },
     ],
   }),

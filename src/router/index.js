@@ -24,7 +24,7 @@ const router = createRouter({
     // employee routes
     {
       path: "/employee/",
-      name: "emp-land",
+      name: "employees",
       meta: {
         requiresAuth: true,
       },
@@ -59,7 +59,7 @@ const router = createRouter({
     // user routes
     {
       path: "/user/",
-      name: "user-land",
+      name: "users",
       meta: {
         requiresAuth: true,
       },
@@ -94,7 +94,7 @@ const router = createRouter({
     // models routes
     {
       path: "/model/",
-      name: "model-land",
+      name: "models",
       meta: {
         requiresAuth: true,
       },
@@ -129,7 +129,7 @@ const router = createRouter({
     // material routes
     {
       path: "/storage/material/",
-      name: "material-land",
+      name: "materials",
       meta: {
         requiresAuth: true,
       },
@@ -164,7 +164,7 @@ const router = createRouter({
     // properties routes
     {
       path: "/storage/property/",
-      name: "property-land",
+      name: "properties",
       meta: {
         requiresAuth: true,
       },
@@ -200,7 +200,7 @@ const router = createRouter({
     // cartons routes
     {
       path: "/storage/carton/",
-      name: "carton-land",
+      name: "cartons",
       meta: {
         requiresAuth: true,
       },
@@ -235,7 +235,7 @@ const router = createRouter({
     // supplier routes
     {
       path: "/supplier/",
-      name: "supplier-land",
+      name: "suppliers",
       meta: {
         requiresAuth: true,
       },
@@ -270,7 +270,7 @@ const router = createRouter({
     // client routes
     {
       path: "/client/",
-      name: "client-land",
+      name: "clients",
       meta: {
         requiresAuth: true,
       },
@@ -305,7 +305,7 @@ const router = createRouter({
     // requests routes
     {
       path: "/request/",
-      name: "request-land",
+      name: "requests",
       meta: {
         requiresAuth: true,
       },
@@ -340,7 +340,7 @@ const router = createRouter({
     // shipment routes
     {
       path: "/shipment/",
-      name: "shipment-land",
+      name: "shipments",
       meta: {
         requiresAuth: true,
       },
@@ -375,7 +375,7 @@ const router = createRouter({
     // order routes
     {
       path: "/order/",
-      name: "order-land",
+      name: "orders",
       meta: {
         requiresAuth: true,
       },
@@ -410,7 +410,7 @@ const router = createRouter({
     // track routes
     {
       path: "/track/",
-      name: "track-land",
+      name: "track",
       meta: {
         requiresAuth: true,
       },
@@ -445,7 +445,7 @@ const router = createRouter({
     //color routes
     {
       path: "/utils/color/",
-      name: "color-land",
+      name: "colors",
       meta: {
         requiresAuth: true,
       },
@@ -481,7 +481,7 @@ const router = createRouter({
     //sizes routes
     {
       path: "/utils/size/",
-      name: "size-land",
+      name: "sizes",
       meta: {
         requiresAuth: true,
       },
@@ -516,7 +516,7 @@ const router = createRouter({
     //roles routes
     {
       path: "/utils/role/",
-      name: "role-land",
+      name: "roles",
       meta: {
         requiresAuth: true,
       },
@@ -551,7 +551,7 @@ const router = createRouter({
     //user roles routes
     {
       path: "/utils/user_role/",
-      name: "user_roles-land",
+      name: "user_role",
       meta: {
         requiresAuth: true,
       },
@@ -587,7 +587,7 @@ const router = createRouter({
     //type routes
     {
       path: "/utils/type/",
-      name: "type-land",
+      name: "types",
       meta: {
         requiresAuth: true,
       },
@@ -622,7 +622,7 @@ const router = createRouter({
     //machine type routes
     {
       path: "/utils/machinetype/",
-      name: "machinet-land",
+      name: "machinetypes",
       meta: {
         requiresAuth: true,
       },
@@ -657,7 +657,7 @@ const router = createRouter({
     //stage routes
     {
       path: "/utils/stage/",
-      name: "stage-land",
+      name: "stages",
       meta: {
         requiresAuth: true,
       },
@@ -692,7 +692,7 @@ const router = createRouter({
     //card routes
     {
       path: "/utils/cards/",
-      name: "card-land",
+      name: "cards",
       meta: {
         requiresAuth: true,
       },
@@ -769,7 +769,7 @@ const router = createRouter({
     //assist routes
     {
       path: "/utils/assist/",
-      name: "assist-land",
+      name: "assistant",
       meta: {
         requiresAuth: true,
       },
@@ -800,7 +800,7 @@ const router = createRouter({
     //production entries routes
     {
       path: "/utils/prodEntry/",
-      name: "prod-entry",
+      name: "prodEntry",
       meta: {
         requiresAuth: true,
       },
@@ -809,7 +809,7 @@ const router = createRouter({
     },
     {
       path: "/utils/quality/",
-      name: "quality-check",
+      name: "quality",
       meta: {
         requiresAuth: true,
       },
@@ -823,39 +823,100 @@ const router = createRouter({
 
       component: () => import("../views/test.vue"),
     },
+    //not Auth
+    {
+      path: "/notAuth",
+      name: "danger",
+
+      component: () => import("../views/notAuth.vue"),
+    },
   ],
 });
 
 export default router;
 router.beforeEach((to, from, next) => {
   async function name() {
-    const isLoggedIn = await axios
-      .post("/api/auth/test", {
-        refreshToken: localStorage.getItem("refreshToken"),
-      })
-      .then((response) => {
-        return true;
-      })
-      .catch((err) => {
-        if (err.message === "Network Error") {
-          swal("Network Problem", " please check your Connection", "error");
-          console.log(err);
-        }
-        return false;
-      });
-    if (to.meta.requiresAuth && !isLoggedIn) {
-      // User is not logged in and the route requires authentication
-
-      swal("error", "you have to login ", "error");
-
-      next("/login"); // Redirect the user to the login page or another appropriate route
-    } else if (to.path === "/login" && isLoggedIn) {
-      swal("success", "you're already logged in", "success");
-      next("/");
+    if (to.name === "danger") {
+      next();
     } else {
-      // User is logged in or the route does not require authentication
-      next(); // Continue to the intended route
+      const isLoggedIn = await axios
+        .post("/api/auth/test", {
+          refreshToken: localStorage.getItem("refreshToken"),
+        })
+        .then((response) => {
+          return true;
+        })
+        .catch((err) => {
+          if (err.message === "Network Error") {
+            swal("Network Problem", " please check your Connection", "error");
+            console.log(err);
+          }
+          return false;
+        });
+      if (to.meta.requiresAuth && !isLoggedIn) {
+        // User is not logged in and the route requires authentication
+
+        swal("error", "you have to login ", "error");
+
+        next("/login"); // Redirect the user to the login page or another appropriate route
+      } else if (to.path === "/login" && isLoggedIn) {
+        swal("success", "you're already logged in", "success");
+        next("/");
+      } else {
+        // User is logged in or the route does not require authentication
+        let privs = JSON.parse(localStorage.getItem("privileges"));
+        const parentRouteName = to.matched[0].name;
+        if (privs === null && to.path === "/login") {
+          next();
+        } else {
+          if (privs.includes(parentRouteName)) {
+            console.log("guarded");
+            console.log(privs);
+            console.log(parentRouteName);
+            next();
+          } else if (
+            parentRouteName === "materials" ||
+            parentRouteName === "cartons" ||
+            parentRouteName === "properties"
+          ) {
+            if (privs.includes("storage")) {
+              console.log("guarded");
+              console.log(privs);
+              console.log(parentRouteName);
+              next();
+            }
+          } else if (parentRouteName === "home") {
+            console.log("im home");
+            console.log(privs);
+            console.log(parentRouteName);
+            next();
+          } else {
+            console.log(privs);
+            console.log(parentRouteName);
+            next("/notAuth");
+          }
+        }
+      }
+      //next(); // Continue to the intended route
     }
   }
+
+  // let privs = JSON.parse(localStorage.getItem("privileges"));
+  // const parentRouteName = to.matched[0].name;
+  // if (parentRouteName === "home") {
+  //   console.log("im home");
+  // } else if (
+  //   parentRouteName === "materials" ||
+  //   parentRouteName === "cartons" ||
+  //   parentRouteName === "properties"
+  // ) {
+  //   if (privs.includes("storage")) {
+  //     console.log("guarded");
+  //   }
+  // } else {
+  //   console.log(privs.includes(parentRouteName));
+  //   console.log("Parent Route Name:", parentRouteName);
+  // }
+
   name();
 });

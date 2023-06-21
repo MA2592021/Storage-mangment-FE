@@ -2,8 +2,8 @@
   <v-row>
     <v-col cols="12">
       <v-autocomplete
-        v-model="selected_employee"
-        :items="displayText"
+        v-model="selected_order"
+        :items="orders"
         item-title="name"
         inputmode="numeric"
         return-object
@@ -13,13 +13,14 @@
     </v-col>
     <v-col cols="12">
       <v-autocomplete
-        v-model="selected_employee"
-        :items="displayText"
-        item-title="name"
+        v-model="selected_model"
+        :items="selected_order.models"
+        item-title="id.name"
         inputmode="numeric"
         return-object
         label="model"
         v-if="!assist"
+        @update:modelValue="loadassist()"
       ></v-autocomplete>
     </v-col>
     <v-col cols="12">
@@ -67,11 +68,14 @@ export default {
       selected_card: "",
       selected_employee: "",
       selected_stage: "",
+      selected_order: "",
+      selected_model: "",
       employees: [],
       cards: [],
       assist_card: [],
       assist_stages: [],
       assist: true,
+      orders: [],
     };
   },
   methods: {
@@ -81,8 +85,15 @@ export default {
       });
     },
     loadassist() {
-      let order = localStorage.getItem("order");
-      let model = localStorage.getItem("model");
+      let order = {};
+      let model = {};
+      if (this.assist) {
+        order = localStorage.getItem("order");
+        model = localStorage.getItem("model");
+      } else {
+        order = this.selected_order._id;
+        model = this.selected_model.id._id;
+      }
       axios
         .get(`/api/card/order/${order}/model/${model}`)
         .then((res) => {
@@ -95,10 +106,16 @@ export default {
             .then((res) => (this.assist_stages = res.data.data.stages));
         });
     },
+    loadorder() {
+      axios.get("/api/order").then((res) => {
+        this.orders = res.data.data;
+      });
+    },
     start() {
       if (localStorage.getItem("order")) {
         this.loadassist();
       } else {
+        this.loadorder();
         this.assist = false;
       }
     },

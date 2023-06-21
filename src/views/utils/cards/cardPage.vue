@@ -79,7 +79,11 @@ export default {
   components: { cardPanel },
   data() {
     return {
-      card: {},
+      card: {
+        order: { name: "" },
+        model: { name: "" },
+        tracking: [{ stage: { name: "" } }],
+      },
     };
   },
   created() {
@@ -87,11 +91,26 @@ export default {
     axios.get("/api/card/" + this.$route.params.id).then((response) => {
       console.log(response);
       this.card = response.data.data;
+      console.log(this.card);
     });
   },
   methods: {
     moment(date) {
       return moment(date).calendar();
+    },
+
+    timeago(index) {
+      if (index === this.card.tracking.length) {
+        return "not finished yet";
+      } else {
+        const currentTime = moment(this.card.tracking[index + 1].stage.dateOut);
+        const inputTime = moment(this.card.tracking[index + 1].stage.dateOut);
+        const duration = moment.duration(currentTime.diff(inputTime));
+        const minutesDifference = duration.asMinutes();
+        console.log(minutesDifference);
+        console.log(time);
+        return minutesDifference;
+      }
     },
     deletee() {
       swal({

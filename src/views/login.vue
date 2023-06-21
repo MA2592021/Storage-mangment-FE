@@ -76,7 +76,10 @@ export default {
             localStorage.setItem("accessToken", res.data.accessToken);
             localStorage.setItem("refreshToken", res.data.refreshToken);
             localStorage.setItem("username", res.data.user.name);
-            localStorage.setItem("privileges", res.data.user.role.privileges);
+            localStorage.setItem(
+              "privileges",
+              JSON.stringify(res.data.user.role.privileges)
+            );
             localStorage.setItem("rolename", res.data.user.role.title);
             localStorage.setItem("rolenum", res.data.user.role.number);
             localStorage.setItem("code", res.data.user.code);
@@ -104,6 +107,7 @@ export default {
               console.log("test");
               this.$router.push({ path: "/utils/prodEntry/" });
             } else if (localStorage.getItem("rolenum") === "2") {
+              this.$router.push({ path: "/utils/quality/" });
             } else {
               console.log("testss");
               this.$router.push({ path: "/" });

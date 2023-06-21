@@ -25,6 +25,11 @@
               :items="stages"
               class="elevation-1"
             >
+              <template v-slot:item.duration="{ item }">
+                <v-chip>
+                  {{ item.raw.duration }}
+                </v-chip>
+              </template>
             </v-data-table>
             <div align="center" class="ma-2">
               <v-btn class="mx-auto" color="info" @click="printo(1)"
@@ -152,6 +157,11 @@ export default {
           align: "start",
           key: "date",
         },
+        {
+          title: "duration",
+          align: "start",
+          key: "duration",
+        },
       ],
 
       card: "",
@@ -160,7 +170,6 @@ export default {
       id: 1,
     };
   },
-  mounted() {},
 
   created() {
     this.loadcard();
@@ -177,20 +186,36 @@ export default {
         this.makeerror();
       });
     },
+
+    timeago(index) {
+      console.log(index);
+      if (index + 1 === this.card.tracking.length) {
+        return "not finished yet";
+      } else {
+        const currentTime = moment(this.card.tracking[index + 1].dateOut);
+        const inputTime = moment(this.card.tracking[index].dateOut);
+        const duration = moment.duration(currentTime.diff(inputTime));
+        const minutesDifference = Math.floor(duration.asMinutes());
+
+        return minutesDifference + " minutes";
+      }
+    },
     makethings() {
       console.log(this.card);
       let y = [];
 
-      this.card.tracking.forEach((element) => {
+      this.card.tracking.forEach((element, index) => {
         let x = {};
         x.date = moment(element.dateOut).calendar();
         x.employee = element.employee.name + ` (${element.employee.code})`;
         x.assist = element.enteredBy.name + ` (${element.enteredBy.code})`;
         x.stage = element.stage;
+        x.duration = this.timeago(index);
+
         y.push(x);
       });
       this.stages = y;
-      console.log(this.card);
+      console.log(this.stages);
     },
     makeerror() {
       let y = [];

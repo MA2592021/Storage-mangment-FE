@@ -21,20 +21,33 @@
   </v-card>
   <br /><br />
   <v-row align="center" justify="space-around" class="ma-4">
-    <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    <v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('users')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
         :width="15"
         :model-value="100"
-        color="pink-darken-4
-    "
+        color="pink-darken-4"
       >
         {{ user.length }}
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ user.length }} Users</p></v-col
     >
-    <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    <v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('employees')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
@@ -47,7 +60,14 @@
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ employee.length }} Employees</p></v-col
     >
-    <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    <v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('models')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
@@ -60,7 +80,14 @@
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ model.length }} Models</p></v-col
     >
-    <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    <v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('storage')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
@@ -73,7 +100,14 @@
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ property.length }} Properties</p></v-col
     >
-    <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    <v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('storage')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
@@ -86,7 +120,14 @@
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ material.length }} Materials</p></v-col
     >
-    <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    <v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('clients')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
@@ -98,7 +139,14 @@
         {{ client.length }}
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ client.length }} Clients</p></v-col
-    ><v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    ><v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('suppliers')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
@@ -111,7 +159,14 @@
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ supplier.length }} Suppliers</p></v-col
     >
-    <v-col cols="12" align="center" sm="6" md="3" class="mb-5">
+    <v-col
+      cols="12"
+      align="center"
+      sm="6"
+      md="3"
+      class="mb-5"
+      v-if="look('orders')"
+    >
       <v-progress-circular
         :rotate="360"
         :size="100"
@@ -151,9 +206,7 @@ export default {
       client: "",
 
       image: null,
-      priv: localStorage.getItem("privileges")
-        ? localStorage.getItem("privileges")
-        : [],
+      priv: JSON.parse(localStorage.getItem("privileges")),
     };
   },
   created() {
@@ -173,6 +226,7 @@ export default {
         console.log(res);
       });
     }
+    console.log(this.priv);
   },
 
   methods: {
@@ -227,6 +281,9 @@ export default {
         console.log(response);
         this.client = response.data.data;
       });
+    },
+    look(name) {
+      return this.priv.includes(name);
     },
   },
 };

@@ -104,7 +104,7 @@
           </template>
 
           <v-list-item
-            v-for="link in productionlinks"
+            v-for="link in prodfilteredItems"
             :key="link.text"
             :title="link.text"
             :prepend-icon="link.icon"
@@ -217,11 +217,13 @@ export default {
           icon: "mdi-wrench-outline",
           text: this.$t("navbar.stage"),
           route: "/utils/prodEntry/",
+          view: "prodEntry",
         },
         {
           icon: "mdi-ruler",
           text: this.$t("navbar.quality"),
           route: "/utils/quality/",
+          view: "quality",
         },
       ],
       storageview: "storage",
@@ -356,6 +358,11 @@ export default {
     },
     utilsfilteredItems() {
       return this.Utils.filter((item) => this.priv.includes(item.view));
+    },
+    prodfilteredItems() {
+      return this.productionlinks.filter((item) =>
+        this.priv.includes(item.view)
+      );
     },
   },
 };
