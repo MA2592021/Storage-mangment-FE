@@ -11,9 +11,11 @@ import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 import vue3Highlightjs from "vue3-highlightjs";
 import "highlight.js/styles/dracula.css";
+import Vue3Toasity from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 const pinia = createPinia();
 loadFonts();
-axios.defaults.baseURL = " http://192.168.1.3:5000";
+axios.defaults.baseURL = import.meta.env.VITE_BASEURL;
 axios.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
@@ -93,6 +95,11 @@ const i18n = createI18n({
 
 createApp(App)
   .use(router, axios)
+  .use(Vue3Toasity, {
+    autoClose: 3000,
+    limit: 3,
+    // ...
+  })
   .use(pinia)
   .use(i18n)
   .use(vuetify)

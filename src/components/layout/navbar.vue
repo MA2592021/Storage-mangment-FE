@@ -296,7 +296,7 @@ export default {
           this.image = res.data.data.image.data;
         }
 
-        console.log(res);
+        //console.log(res);
       });
     }
   },

@@ -223,10 +223,9 @@ export default {
         if (res.data.data.image) {
           this.image = res.data.data.image.data;
         }
-        console.log(res);
+        //console.log(res);
       });
     }
-    console.log(this.priv);
   },
 
   methods: {
@@ -236,49 +235,49 @@ export default {
     },
     loaduser() {
       axios.get("/api/user/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.user = response.data.data;
       });
     },
     loademployee() {
       axios.get("/api/employee/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.employee = response.data.data;
       });
     },
     loadproperty() {
       axios.get("/api/custody/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.property = response.data.data;
       });
     },
     loadmaterial() {
       axios.get("/api/material/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.material = response.data.data;
       });
     },
     loadmodel() {
       axios.get("/api/model/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.model = response.data.data;
       });
     },
     loadorder() {
       axios.get("/api/order/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.order = response.data.data;
       });
     },
     loadsupplier() {
       axios.get("/api/supplier/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.supplier = response.data.data;
       });
     },
     loadclient() {
       axios.get("/api/client/").then((response) => {
-        console.log(response);
+        //console.log(response);
         this.client = response.data.data;
       });
     },

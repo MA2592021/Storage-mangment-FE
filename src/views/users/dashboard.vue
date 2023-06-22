@@ -13,17 +13,12 @@
       </v-progress-circular>
       <p class="text-h5">Arkan have {{ datalength }} Users</p>
     </v-col>
-    <v-col cols="12" md="4"> <barChart v-bind:chartData="chartData" /> </v-col
-  ></v-row>
+  </v-row>
 </template>
 
 <script>
-import barChart from "../../components/barChart.vue";
 import axios from "axios";
 export default {
-  components: {
-    barChart,
-  },
   created() {
     axios.get("/api/user/").then((response) => {
       console.log(response);

@@ -816,6 +816,7 @@ const router = createRouter({
       component: () =>
         import("../views/utils/productionEntries/qualityCheck.vue"),
     },
+
     //test
     {
       path: "/lazysoftware/credits",
@@ -830,10 +831,17 @@ const router = createRouter({
 
       component: () => import("../views/notAuth.vue"),
     },
+    {
+      path: "/testo",
+      name: "testo",
+
+      component: () => import("../views/testo.vue"),
+    },
   ],
 });
 
 export default router;
+
 router.beforeEach((to, from, next) => {
   async function name() {
     if (to.name === "danger") {
@@ -866,13 +874,12 @@ router.beforeEach((to, from, next) => {
         // User is logged in or the route does not require authentication
         let privs = JSON.parse(localStorage.getItem("privileges"));
         const parentRouteName = to.matched[0].name;
-        if (privs === null && to.path === "/login") {
+        if ((privs === null && to.path === "/login") || to.path === "/testo") {
           next();
         } else {
           if (privs.includes(parentRouteName)) {
             console.log("guarded");
-            console.log(privs);
-            console.log(parentRouteName);
+
             next();
           } else if (
             parentRouteName === "materials" ||
@@ -881,18 +888,14 @@ router.beforeEach((to, from, next) => {
           ) {
             if (privs.includes("storage")) {
               console.log("guarded");
-              console.log(privs);
-              console.log(parentRouteName);
+
               next();
             }
           } else if (parentRouteName === "home") {
             console.log("im home");
-            console.log(privs);
-            console.log(parentRouteName);
+
             next();
           } else {
-            console.log(privs);
-            console.log(parentRouteName);
             next("/notAuth");
           }
         }
@@ -917,6 +920,10 @@ router.beforeEach((to, from, next) => {
   //   console.log(privs.includes(parentRouteName));
   //   console.log("Parent Route Name:", parentRouteName);
   // }
-
-  name();
+  if (import.meta.env.VITE_PRODUCTION === "false") {
+    console.log("development mode no route guards");
+    next();
+  } else {
+    name();
+  }
 });
