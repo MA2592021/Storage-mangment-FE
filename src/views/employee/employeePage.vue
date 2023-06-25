@@ -87,6 +87,22 @@
               prepend-icon="mdi-note-text-outline"
             ></v-textarea>
           </v-col>
+          <v-col cols="6">
+            <v-text-field
+              :label="$t(`employees.month_salary`)"
+              required
+              readonly
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              :label="$t(`employees.salarystatus`)"
+              required
+              readonly
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
           <v-col cols="12">
             <v-text-field
               :label="$t(`employees.employeedfrom`)"

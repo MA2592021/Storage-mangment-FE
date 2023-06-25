@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import notFound from "../views/notFound.vue";
 import swal from "sweetalert";
 import axios from "axios";
 const router = createRouter({
@@ -404,6 +405,41 @@ const router = createRouter({
           name: "order-page",
 
           component: () => import("../views/orders/orderPage.vue"),
+        },
+      ],
+    },
+    // salary routes
+    {
+      path: "/salary/",
+      name: "salary",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/salaries/landPage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "salary-dash",
+
+          component: () => import("../views/salaries/dashboard.vue"),
+        },
+        {
+          path: "add",
+          name: "salary-add",
+
+          component: () => import("../views/salaries/add.vue"),
+        },
+        {
+          path: "all",
+          name: "salary-all",
+
+          component: () => import("../views/salaries/all.vue"),
+        },
+        {
+          path: ":id",
+          name: "salary-page",
+
+          component: () => import("../views/salaries/salaryPage.vue"),
         },
       ],
     },
@@ -837,6 +873,11 @@ const router = createRouter({
 
       component: () => import("../views/testo.vue"),
     },
+    {
+      path: "/:catchAll(.*)",
+      name: "NotFound",
+      component: notFound,
+    },
   ],
 });
 
@@ -844,7 +885,7 @@ export default router;
 
 router.beforeEach((to, from, next) => {
   async function name() {
-    if (to.name === "danger") {
+    if (to.name === "danger" || to.name === "NotFound") {
       next();
     } else {
       const isLoggedIn = await axios

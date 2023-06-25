@@ -133,7 +133,7 @@ export default {
         { title: "Date in", key: "datein" },
         { title: "Date out", key: "dateout" },
       ],
-      groupBy: [{ key: "id", order: "asc" }],
+      groupBy: [{ key: "number", order: "asc" }],
       headers1: [
         {
           title: "name",
@@ -220,8 +220,9 @@ export default {
     makeerror() {
       let y = [];
       this.card.cardErrors.forEach((element) => {
-        element.forEach((el) => {
+        element.pieceErrors.forEach((el) => {
           let x = {};
+          x.number = element.pieceNo;
           x.id = this.id;
           x.datein = moment(el.dateIn).calendar();
           x.dateout = el.dateOut ? moment(el.dateOut).calendar() : null;

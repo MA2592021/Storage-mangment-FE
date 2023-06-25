@@ -86,19 +86,22 @@ export default {
             localStorage.setItem("id", res.data.user._id);
             if (res.data.userEmployee) {
               console.log("im here");
-              localStorage.setItem(
-                "order",
-                res.data.userEmployee.work[
-                  res.data.userEmployee.work.length - 1
-                ].order
-              );
               localStorage.setItem("employee", res.data.userEmployee.employee);
-              localStorage.setItem(
-                "model",
-                res.data.userEmployee.work[
-                  res.data.userEmployee.work.length - 1
-                ].model
-              );
+              if (res.data.userEmployee.work.length > 0) {
+                localStorage.setItem(
+                  "order",
+                  res.data.userEmployee.work[
+                    res.data.userEmployee.work.length - 1
+                  ].order
+                );
+
+                localStorage.setItem(
+                  "model",
+                  res.data.userEmployee.work[
+                    res.data.userEmployee.work.length - 1
+                  ].model
+                );
+              }
             }
 
             swal("success", "Welcome Back", "success");

@@ -37,6 +37,8 @@ export default {
         return false;
       } else if (this.parentPath === "/track/") {
         return false;
+      } else if (this.parentPath === "/salary/") {
+        return false;
       }
       return true;
     },

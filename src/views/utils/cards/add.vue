@@ -30,7 +30,7 @@
               v-model="card.model"
               :items="selectedOrder.models"
               label="select model"
-              item-title="id.name"
+              item-title="name"
               return-object
             ></v-autocomplete
           ></v-col>
@@ -39,6 +39,22 @@
               required
               v-model="card.qty"
               label="Quantity*"
+              hint="Required"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" md="6">
+            <v-text-field
+              required
+              v-model="card.startRange"
+              label="First Piece Number*"
+              hint="Required"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" md="6">
+            <v-text-field
+              required
+              v-model="card.endRange"
+              label="Last Piece Number*"
               hint="Required"
             ></v-text-field>
           </v-col>
@@ -63,6 +79,8 @@ export default {
       code: "",
       model: "",
       qty: "",
+      endRange: "",
+      startRange: "",
     },
     orders: [],
     selectedOrder: "",
@@ -72,13 +90,17 @@ export default {
     add() {
       // this.url = URL.createObjectURL(this.color.img);
       console.log("im alive");
+      console.log(this.card);
+      console.log(this.selectedOrder._id);
       axios
         .post("/api/card/", {
           code: this.card.code,
-          quantity: this.card.qty,
+          quantity: parseInt(this.card.qty),
           order: this.selectedOrder._id,
-          model: this.card.model.id._id,
+          modelIndex: this.card.model._id,
           details: "test",
+          startRange: parseInt(this.card.startRange),
+          endRange: parseInt(this.card.endRange),
         })
         .then((response) => {
           if (response.data.errors) {
@@ -97,21 +119,15 @@ export default {
       axios.get("/api/order").then((res) => {
         console.log(res.data.data);
         res.data.data.forEach((element) => {
-          let x = {};
-          let uniqueArray = [];
-
-          // Filter out repeated objects from the array
-          element.models.forEach((obj) => {
-            const foundObject = uniqueArray.find(
-              (item) => item.id._id === obj.id._id
-            );
-            if (!foundObject) {
-              uniqueArray.push(obj);
-            }
-          });
+          let x = { models: [] };
           x.name = element.name;
           x._id = element._id;
-          x.models = uniqueArray;
+          element.models.forEach((el) => {
+            let y = {};
+            y.name = el.id.name + ` (${el.code})`;
+            y._id = el._id;
+            x.models.push(y);
+          });
           this.orders.push(x);
         });
         console.log(this.orders);

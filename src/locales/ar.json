@@ -20,6 +20,7 @@
     "requests": "الطلبات",
     "prod": "مدخلات الانتاج",
     "stage": "ادخال المرحلة",
+    "salary": "المرتبات",
     "quality": "اختبار الجودة",
     "storage": "المخزن",
     "track": "متابعة الانتاج",
@@ -76,6 +77,8 @@
     "all": "كل العمال",
     "add": "اضافة عامل",
     "employeedfrom": "تم تعيينه منذ",
+    "month_salary": "مرتب الشهر",
+    "salarystatus": "حالة المرتب",
 
     "p1": "عهد مع",
     "p2": "مستلزمات انتاج مع"
@@ -104,5 +107,23 @@
   "orders": {
     "allOrders": "كل الاوردرات",
     "addOrders": "اضافة اوردر"
-  }
+  },
+  "production": "الانتاج",
+  "errors": "الاخطاء",
+  "verifing": "تحقق من خطا؟",
+  "order": "الاوردر",
+  "employee code": "كود العامل",
+  "card code": "كود الكارتة",
+  "stage code": "كود المرحلة",
+  "submit": "تسجيل",
+  "quality phase code": "كود مرحلة الجودة",
+  "have errors": "يوجد اخطاء؟",
+  "number of pices": "عدد القطع",
+  "piece": "قطعة",
+  "piece number": "رقم القطعة",
+  "number of errors": "عدد الاخطاء  ",
+  "in": "في",
+  "error number": "خطا رقم",
+  "stage error": "مرحلة الخطا",
+  "error desc": "وصف الخطا"
 }

@@ -4,9 +4,9 @@
       <v-checkbox
         v-model="verify"
         @update:modelValue="error = false"
-        label="verifing error?"
+        :label="$t('verifing')"
         color="green"
-        value="green"
+        value="true"
         hide-details
       ></v-checkbox>
     </v-col>
@@ -15,7 +15,7 @@
         v-model="selected_order"
         :items="orders"
         item-title="name"
-        label="order"
+        :label="$t('order')"
         return-object
       ></v-autocomplete>
     </v-col>
@@ -24,7 +24,7 @@
         v-model="selected_model"
         :items="selected_order.models"
         item-title="id.name"
-        label="model"
+        :label="$t('model')"
         return-object
         @update:modelValue="loadmodel()"
       ></v-autocomplete>
@@ -33,12 +33,11 @@
     <v-col cols="12">
       <v-autocomplete
         v-model="selected_card"
-        :items="cards"
+        :items="cardsfilter"
         item-title="code"
         return-object
         inputmode="numeric"
-        label="card code"
-        @update:modelValue="loadstages()"
+        :label="$t('card code')"
       ></v-autocomplete>
     </v-col>
     <v-col cols="12">
@@ -48,35 +47,26 @@
         item-title="id.name"
         return-object
         inputmode="numeric"
-        label="quality phase code"
+        :label="$t('quality phase code')"
       ></v-autocomplete>
     </v-col>
     <v-col cols="12">
       <v-autocomplete
         v-model="selected_stage"
-        :items="unstages"
+        :items="selected_card.currentErrors"
         inputmode="numeric"
         item-title="name"
         return-object
-        label="stage code"
+        :label="$t('stage code')"
         v-if="verify"
-      ></v-autocomplete>
+      >
+      </v-autocomplete>
     </v-col>
-    <v-col cols="12">
-      <v-autocomplete
-        v-model="selected_employee"
-        :items="displayText"
-        item-title="name"
-        inputmode="numeric"
-        return-object
-        v-if="verify"
-        label=" done by employee "
-      ></v-autocomplete>
-    </v-col>
+
     <v-col cols="12">
       <v-checkbox
         v-model="error"
-        label="have errors?"
+        :label="$t('have errors')"
         color="red"
         value="red"
         hide-details
@@ -90,7 +80,8 @@
         >
         <v-col class="mt-2" cols="4" align="center">
           <span
-            >number of pices <strong>{{ errors.length }}</strong></span
+            >{{ $t("number of pices") }}
+            <strong>{{ errors.length }}</strong></span
           >
         </v-col>
         <v-col cols="4"
@@ -100,41 +91,47 @@
       <v-row v-for="(error, index) in errors" :key="error">
         <v-divider :thickness="8"></v-divider>
         <v-col cols="12" align="center"
-          ><span> piece {{ index + 1 }} </span></v-col
+          ><span> {{ $t("piece") }} {{ index + 1 }} </span></v-col
         >
+        <v-col cols="12"
+          ><v-text-field
+            :label="$t('piece number')"
+            v-model="error.number"
+          ></v-text-field
+        ></v-col>
         <v-col cols="4"
           ><v-btn color="pink" @click="decrement1(index)"> - </v-btn></v-col
         >
         <v-col class="mt-2" cols="4" align="center">
           <span>
-            number of errors
-            <strong>{{ error.length }}</strong> in piece
-            <strong>{{ index + 1 }}</strong></span
+            {{ $t("number of errors") }}
+            <strong>{{ error.errors.length }}</strong> {{ $t("in") }}
+            {{ $t("piece number") }} <strong>{{ error.number }}</strong></span
           >
         </v-col>
         <v-col cols="4" align="end"
           ><v-btn color="info" @click="increment1(index)"> + </v-btn></v-col
         >
         <v-col cols="12">
-          <v-row v-for="(er, index) in error" :key="er">
+          <v-row v-for="(er, index) in error.errors" :key="er">
             <v-col cols="12" align="center">
-              <span>error number {{ index + 1 }}</span></v-col
+              <span>{{ $t("error number") }} {{ index + 1 }}</span></v-col
             >
 
             <v-col cols="12" md="6"
               ><v-autocomplete
                 v-model="er.stage"
-                :items="selected_model.id.stages"
+                :items="stageerror"
                 item-title="id.name"
-                label="select stage error"
+                :label="$t('stage error')"
                 return-object
-              ></v-autocomplete
-            ></v-col>
+              ></v-autocomplete>
+            </v-col>
             <v-col cols="12" md="6"
               ><v-autocomplete
                 v-model="er.description"
                 :items="test(er)"
-                label="select error decription"
+                :label="$t('error desc')"
               ></v-autocomplete></v-col
             ><v-divider :thickness="1"></v-divider> </v-row
         ></v-col>
@@ -142,9 +139,9 @@
       </v-row>
     </v-col>
     <v-col cols="12" align="center"
-      ><v-btn outlined color="green" @click="submitquality"
-        >Submit</v-btn
-      ></v-col
+      ><v-btn outlined color="green" @click="submitquality">{{
+        $t("submit")
+      }}</v-btn></v-col
     >
   </v-row>
 </template>
@@ -160,7 +157,6 @@ export default {
     orders: [],
     quality: [],
     cards: [],
-    unstages: [],
     employees: [],
     selected_order: localStorage.getItem("quality_order")
       ? JSON.parse(localStorage.getItem("quality_order"))
@@ -169,7 +165,6 @@ export default {
       ? JSON.parse(localStorage.getItem("quality_model"))
       : "",
     selected_card: "",
-    selected_employee: "",
     selected_stage: "",
 
     selected_quality: null,
@@ -179,13 +174,16 @@ export default {
       if (this.selected_model === "") {
         swal("error", "please select model first", "error");
       } else {
-        this.errors.push([
+        let x = {};
+        x.number = "";
+        x.errors = [
           {
             stage: "",
             enteredBy: localStorage.getItem("id"),
             description: null,
           },
-        ]);
+        ];
+        this.errors.push(x);
       }
     },
     decrement() {
@@ -203,16 +201,19 @@ export default {
       this.errors.pop();
     },
     increment1(index) {
-      this.errors[index].push({
+      this.errors[index].errors.push({
         stage: "",
         enteredBy: localStorage.getItem("id"),
         description: null,
       });
     },
     decrement1(index) {
-      console.log(this.errors[index][this.errors[index].length - 1]);
-      if (this.errors[index][this.errors[index].length - 1].stage === "") {
-        this.errors[index].pop();
+      console.log(this.errors[index].errors);
+      if (
+        this.errors[index].errors[this.errors[index].errors.length - 1]
+          .stage === ""
+      ) {
+        this.errors[index].errors.pop();
       } else {
         swal(
           "danger",
@@ -220,7 +221,7 @@ export default {
           "warning"
         ).then((val) => {
           if (val) {
-            this.errors[index].pop();
+            this.errors[index].errors.pop();
           }
         });
       }
@@ -249,13 +250,7 @@ export default {
         console.log(this.orders);
       });
     },
-    loadstages() {
-      axios
-        .get(`/api/card/${this.selected_card._id}/errors/unconfirmed`)
-        .then((res) => {
-          this.unstages = res.data.data;
-        });
-    },
+
     loadmodel() {
       axios
         .get("/api/model/" + this.selected_model.id._id)
@@ -286,11 +281,41 @@ export default {
             this.selected_model.id._id
         )
         .then((res) => {
-          console.log(res);
+          console.log("card", res);
           this.cards = res.data.data;
         });
     },
-    submitquality() {
+    check(cardErrors) {
+      return new Promise((resolve) => {
+        console.log("yarab er7mna");
+        let x = 0;
+        let y = 0;
+        cardErrors.forEach(async (element) => {
+          await axios
+            .patch(
+              "/api/card/" + this.selected_card._id + "/errors/add/check",
+              {
+                pieceNo: parseInt(element.pieceNo),
+                pieceErrors: element.pieceErrors,
+              }
+            )
+            .then(() => {
+              y += 1;
+            })
+            .catch((err) => {
+              y += 1;
+              x += 1;
+              swal("error", err.response.data.errors[0].msg, "error");
+            })
+            .then(() => {
+              if (cardErrors.length === y) {
+                resolve(x);
+              }
+            });
+        });
+      });
+    },
+    async submitquality() {
       localStorage.setItem(
         "quality_order",
         JSON.stringify(this.selected_order)
@@ -301,20 +326,58 @@ export default {
       );
       let cardErrors = [];
       this.errors.forEach((element) => {
+        let number = element.number;
         let y = [];
-        element.forEach((el) => {
+        element.errors.forEach((el) => {
           let x = {};
           x.enteredBy = el.enteredBy;
           x.stage = el.stage.id._id;
           x.description = el.description;
           y.push(x);
         });
-        cardErrors.push(y);
+        let final = { pieceNo: number, pieceErrors: y };
+        cardErrors.push(final);
       });
+      console.log(cardErrors);
       if (this.error) {
+        console.log("im here in error");
+        const checko = await this.check(cardErrors);
+        console.log(checko);
+        if (checko === 0) {
+          let z = 0;
+          cardErrors.forEach((element) => {
+            console.log("number 1");
+
+            axios
+              .patch("/api/card/" + this.selected_card._id + "/errors/add", {
+                pieceNo: parseInt(element.pieceNo),
+                pieceErrors: element.pieceErrors,
+              })
+              .then((res) => {
+                z += 1;
+                if (cardErrors.length === z) {
+                  axios
+                    .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
+                      stage: this.selected_quality.id._id,
+                      employee: localStorage.getItem("employee"),
+                      enteredBy: localStorage.getItem("id"),
+                    })
+                    .then(() => {
+                      swal("success", "quality check done", "success").then(
+                        () => {
+                          this.$router.go(0);
+                        }
+                      );
+                    });
+                }
+              });
+          });
+        }
+      } else if (this.verify) {
         axios
-          .patch("/api/card/" + this.selected_card._id + "/errors/add", {
-            cardErrors: cardErrors,
+          .patch(`/api/card/${this.selected_card._id}/errors/confirm`, {
+            stage: this.selected_stage._id,
+            verifiedBy: localStorage.getItem("id"),
           })
           .then(() => {
             axios
@@ -325,24 +388,7 @@ export default {
               })
               .then(() => {
                 swal("success", "quality check done", "success");
-              });
-          });
-      } else if (this.verify) {
-        axios
-          .patch(`/api/card/${this.selected_card._id}/errors/confirm`, {
-            stage: this.selected_stage.id._id,
-            verifiedBy: localStorage.getItem("id"),
-            doneBy: this.selected_employee.id,
-          })
-          .then(() => {
-            axios
-              .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
-                stage: this.selected_quality._id,
-                employee: localStorage.getItem("employee"),
-                enteredBy: localStorage.getItem("id"),
-              })
-              .then(() => {
-                swal("success", "quality check done", "success");
+                this.$router.go(0);
               });
           })
           .then(() => {
@@ -384,6 +430,17 @@ export default {
         name: `${employee.name} (${employee.code})`,
         id: employee._id,
       }));
+    },
+    cardsfilter() {
+      return this.cards.filter(
+        (element) =>
+          element.history[element.history.length - 1].state !== "Finished"
+      );
+    },
+    stageerror() {
+      return this.selected_model.id.stages.filter(
+        (element) => element.id.type !== "quality"
+      );
     },
   },
   created() {

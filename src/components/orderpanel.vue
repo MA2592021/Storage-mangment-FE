@@ -48,13 +48,20 @@
               :disabled="dis"
               return-object
             ></v-autocomplete></v-col
-          ><v-col cols="3" xs="6"
+          ><v-col cols="2" xs="6"
+            ><v-text-field
+              label="code"
+              :disabled="dis"
+              v-model="code"
+            ></v-text-field
+          ></v-col>
+          <v-col cols="2" xs="6"
             ><v-text-field
               label="quantity"
               :disabled="dis"
               v-model="qty"
             ></v-text-field></v-col
-          ><v-col cols="3" xs="6" align="center"
+          ><v-col cols="2" xs="6" align="center"
             ><v-btn block color="green" :disabled="dis" @click="appendtable()"
               >Append</v-btn
             ></v-col
@@ -83,6 +90,9 @@
                   </td>
                   <td>
                     {{ item.raw.quantity ? item.raw.quantity : item.raw.qty }}
+                  </td>
+                  <td>
+                    {{ item.raw.code ? item.raw.code : "" }}
                   </td>
                   <td>
                     <v-btn
@@ -265,6 +275,7 @@ export default {
       size: null,
       dis: true,
       dialog: false,
+      code: "",
       link: { get: "/api/material/" },
       headers: [
         {
@@ -276,6 +287,8 @@ export default {
         { title: "size", key: "size" },
         { title: "color", key: "color" },
         { title: "quantity", key: "quantity" },
+        { title: "code", key: "code" },
+        { title: "actions", key: "actions" },
       ],
       headers1: [
         {
@@ -347,6 +360,7 @@ export default {
   methods: {
     appendtable() {
       if (
+        this.code === "" ||
         this.qty === "" ||
         this.qty === "0" ||
         this.color === null ||
@@ -355,6 +369,8 @@ export default {
         this.size === ""
       ) {
         swal("error", "please fill all  information", "error");
+      } else if (this.reqmodel.some((item) => item.code === this.code)) {
+        swal("error", "code cant be repeated in the same order", "error");
       } else {
         const x = {};
 
@@ -363,6 +379,7 @@ export default {
         x._id = this.selected._id;
         x.size = this.size;
         x.color = this.color;
+        x.code = this.code;
         console.log(x);
         this.reqmodel.push(x);
         this.resett();
@@ -400,6 +417,7 @@ export default {
       this.color = null;
       this.size = null;
       this.qty = "";
+      this.code = "";
     },
     deleteitem(id) {
       const index = this.reqmodel.findIndex((element) => element._id === id);
@@ -413,6 +431,7 @@ export default {
         x.quantity = element.quantity ? element.quantity : element.qty;
         x.size = element.size._id;
         x.color = element.color._id;
+        x.code = element.code;
         models.push(x);
       });
       this.$emit("models", models);

@@ -1,63 +1,129 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <v-autocomplete
-        v-model="selected_order"
-        :items="orders"
-        item-title="name"
-        inputmode="numeric"
-        return-object
-        label="order"
-        v-if="!assist"
-      ></v-autocomplete>
-    </v-col>
-    <v-col cols="12">
-      <v-autocomplete
-        v-model="selected_model"
-        :items="selected_order.models"
-        item-title="id.name"
-        inputmode="numeric"
-        return-object
-        label="model"
-        v-if="!assist"
-        @update:modelValue="loadassist()"
-      ></v-autocomplete>
-    </v-col>
-    <v-col cols="12">
-      <v-autocomplete
-        v-model="selected_employee"
-        :items="displayText"
-        item-title="name"
-        inputmode="numeric"
-        return-object
-        label="employee code"
-      ></v-autocomplete>
-    </v-col>
-    <v-col cols="12">
-      <v-autocomplete
-        v-model="selected_card"
-        :items="assist_card"
-        item-title="code"
-        return-object
-        inputmode="numeric"
-        label="card code"
-      ></v-autocomplete>
-    </v-col>
-    <v-col cols="12">
-      <v-autocomplete
-        v-model="selected_stage"
-        :items="assist_stages"
-        return-object
-        item-title="id.name"
-        inputmode="numeric"
-        label="stage code"
-      ></v-autocomplete> </v-col
-    ><v-col cols="12" align="center"
-      ><v-btn outlined color="green" @click="submitproduction"
-        >Submit</v-btn
-      ></v-col
-    ></v-row
-  >
+  <v-card style="width: 100%" class="mt-5">
+    <v-tabs v-model="tabs" grow color="#770f30">
+      <v-tab value="one">{{ $t("production") }}</v-tab>
+      <v-tab value="two">{{ $t("errors") }}</v-tab>
+    </v-tabs>
+
+    <v-card-text>
+      <v-window v-model="tabs">
+        <v-window-item value="one">
+          <v-row>
+            <v-col cols="12">
+              <v-checkbox
+                v-model="verify"
+                @update:modelValue="error = false"
+                :label="$t('verifing')"
+                color="green"
+                value="true"
+                hide-details
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_order"
+                :items="orders"
+                item-title="name"
+                inputmode="numeric"
+                return-object
+                :label="$t('order')"
+                v-if="!assist"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_model"
+                :items="selected_order.models"
+                item-title="name"
+                inputmode="numeric"
+                return-object
+                :label="$t('model')"
+                v-if="!assist"
+                @update:modelValue="loadassist()"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_employee"
+                :items="displayText"
+                item-title="name"
+                inputmode="numeric"
+                return-object
+                :label="$t('employee code')"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_card"
+                :items="assist_card"
+                item-title="code"
+                return-object
+                inputmode="numeric"
+                :label="$t('card code')"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_stage"
+                :items="
+                  verify === false ? stageerror : selected_card.currentErrors
+                "
+                return-object
+                :item-title="verify === false ? `id.name` : `name`"
+                inputmode="numeric"
+                :label="$t('stage code')"
+              ></v-autocomplete> </v-col
+            ><v-col cols="12" align="center"
+              ><v-btn outlined color="green" @click="submitproduction">{{
+                $t("submit")
+              }}</v-btn></v-col
+            ></v-row
+          >
+        </v-window-item>
+
+        <v-window-item value="two">
+          <v-row
+            ><v-col cols="12">
+              <v-autocomplete
+                v-model="selected_card_error"
+                :items="orders"
+                item-title="name"
+                return-object
+                inputmode="numeric"
+                :label="$t('order')"
+                v-if="!assist"
+              ></v-autocomplete> </v-col
+            ><v-col cols="12">
+              <v-autocomplete
+                v-model="selected_model_error"
+                :items="selected_card_error.models"
+                item-title="name"
+                return-object
+                inputmode="numeric"
+                :label="$t('model')"
+                v-if="!assist"
+                @update:modelValue="load_card_error_admin"
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-data-table
+            :headers="headers"
+            :items="card_errors"
+            :group-by="groupBy"
+            :search="search"
+            class="elevation-1"
+          ></v-data-table>
+        </v-window-item>
+      </v-window>
+    </v-card-text>
+  </v-card>
 </template>
 <script>
 import axios from "axios";
@@ -65,6 +131,11 @@ import swal from "sweetalert";
 export default {
   data() {
     return {
+      verify: false,
+      tabs: "one",
+      search: "",
+      selected_card_error: "",
+      selected_model_error: "",
       selected_card: "",
       selected_employee: "",
       selected_stage: "",
@@ -76,6 +147,16 @@ export default {
       assist_stages: [],
       assist: true,
       orders: [],
+      card_errors: [],
+      groupBy: [
+        {
+          title: "card",
+          align: "start",
+          sortable: false,
+          key: "card",
+        },
+      ],
+      headers: [{ title: "stage", key: "stage" }],
     };
   },
   methods: {
@@ -92,7 +173,7 @@ export default {
         model = localStorage.getItem("model");
       } else {
         order = this.selected_order._id;
-        model = this.selected_model.id._id;
+        model = this.selected_model._id;
       }
       axios
         .get(`/api/card/order/${order}/model/${model}`)
@@ -106,14 +187,60 @@ export default {
             .then((res) => (this.assist_stages = res.data.data.stages));
         });
     },
+    load_card_error_assist() {
+      let order = localStorage.getItem("order");
+      let model = localStorage.getItem("model");
+      axios
+        .get(`/api/card/order/${order}/model/${model}/errors`)
+        .then((res) => {
+          res.data.data.forEach((element) => {
+            element.currentErrors.forEach((el) => {
+              let x = {};
+              x.card = element.code;
+              x.stage = el.name;
+              this.card_errors.push(x);
+            });
+          });
+          console.log(this.card_errors);
+        });
+    },
+    load_card_error_admin() {
+      let order = this.selected_card_error._id;
+      let model = this.selected_model_error._id;
+      axios
+        .get(`/api/card/order/${order}/model/${model}/errors`)
+        .then((res) => {
+          res.data.data.forEach((element) => {
+            element.currentErrors.forEach((el) => {
+              let x = {};
+              x.card = element.code;
+              x.stage = el.name;
+              this.card_errors.push(x);
+            });
+          });
+          console.log(this.card_errors);
+        });
+    },
     loadorder() {
       axios.get("/api/order").then((res) => {
-        this.orders = res.data.data;
+        res.data.data.forEach((element) => {
+          let x = { models: [] };
+          x.name = element.name;
+          x._id = element._id;
+          element.models.forEach((el) => {
+            let y = {};
+            y.name = el.id.name + ` (${el.code})`;
+            y._id = el.id._id;
+            x.models.push(y);
+          });
+          this.orders.push(x);
+        });
       });
     },
     start() {
       if (localStorage.getItem("order")) {
         this.loadassist();
+        this.load_card_error_assist();
       } else {
         this.loadorder();
         this.assist = false;
@@ -123,20 +250,36 @@ export default {
       console.log("card", this.selected_card);
       console.log("employee", this.selected_employee);
       console.log("model", this.selected_stage);
-      axios
-        .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
-          stage: this.selected_stage.id._id,
-          employee: this.selected_employee.id,
-          enteredBy: localStorage.getItem("id"),
-        })
-        .then((res) => {
-          console.log(res);
-          swal("success", "stages appended successfully", "success").then(
-            () => {
-              this.$router.go(0);
-            }
-          );
-        });
+      if (this.verify === false) {
+        axios
+          .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
+            stage: this.selected_stage.id._id,
+            employee: this.selected_employee.id,
+            enteredBy: localStorage.getItem("id"),
+          })
+          .then((res) => {
+            console.log(res);
+            swal("success", "stages appended successfully", "success").then(
+              () => {
+                this.$router.go(0);
+              }
+            );
+          });
+      } else {
+        axios
+          .patch(`/api/card/${this.selected_card._id}/errors/repair`, {
+            stage: this.selected_stage._id,
+            doneBy: this.selected_employee.id,
+            enteredBy: localStorage.getItem("id"),
+          })
+          .then((res) => {
+            swal("success", "stages appended successfully", "success").then(
+              () => {
+                this.$router.go(0);
+              }
+            );
+          });
+      }
     },
   },
   computed: {
@@ -145,6 +288,11 @@ export default {
         name: `${employee.name} (${employee.code})`,
         id: employee._id,
       }));
+    },
+    stageerror() {
+      return this.assist_stages.filter(
+        (element) => element.id.type !== "quality"
+      );
     },
   },
   created() {

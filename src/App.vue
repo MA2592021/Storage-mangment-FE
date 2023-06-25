@@ -9,7 +9,10 @@
 
 <script>
 import navbarVue from "./components/layout/navbar.vue";
+import { socket } from "./socket.js";
+import { toast } from "vue3-toastify";
 import axios from "axios";
+
 export default {
   name: "App",
   components: {
@@ -19,6 +22,22 @@ export default {
     console.log("Client request received: Vue app is created");
     // Perform any initial setup or fetch data here
     axios.get("/");
+  },
+  data() {
+    return {
+      fooEvents: [],
+    };
+  },
+  mounted() {
+    socket.on("test", (...args) => {
+      console.log("test");
+    });
+    socket.on("message", (message) => {
+      console.log("Received message:", message);
+      toast.success(message, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    });
   },
   computed: {
     routePath() {

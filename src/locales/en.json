@@ -19,6 +19,7 @@
     "storage": "Storage",
     "prod": "production Entries",
     "stage": "stage Entry",
+    "salary": "salaries",
     "quality": "quality Check",
     "assistants": "assistants",
     "cards": "Cards",
@@ -73,6 +74,8 @@
     "all": "All Employees",
     "add": "Add Employee",
     "employeedfrom": "Employed from",
+    "month_salary": "Month Salary",
+    "salarystatus": "Salary Status",
 
     "p1": "Properties with",
     "p2": "MAterials with"
@@ -101,5 +104,23 @@
   "orders": {
     "allOrders": "All order",
     "addOrders": "Add order"
-  }
+  },
+  "production": "Production",
+  "errors": "Errors",
+  "verifing": "Verifing error ?",
+  "order": "Order",
+  "employee code": "Employee Code",
+  "card code": "Card Code",
+  "stage code": "Stage Code",
+  "submit": "Submit",
+  "quality phase code": "Quality Phase Code",
+  "have errors": "Have Errors ?",
+  "number of pices": "Number of Pices",
+  "piece": "Piece",
+  "piece number": "Piece Number ",
+  "number of errors": "Number of Errors  ",
+  "in": "in",
+  "error number": "Error Number",
+  "stage error": "Stage Error",
+  "error desc": "Error Description"
 }
