@@ -30,7 +30,7 @@
               v-model:items-per-page="itemsPerPage"
               :headers="headers1"
               :search="search"
-              :items="data"
+              :items="salary"
               :group-by="groupBy"
               class="elevation-1"
             >
@@ -41,7 +41,7 @@
               </template>
             </v-data-table>
             <div align="center" class="ma-2">
-              <v-btn class="mx-auto" color="info" @click="printo(1)"
+              <v-btn class="mx-auto" color="info" @click="printo()"
                 >print
               </v-btn>
             </div></v-col
@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import moment from "moment";
 import { usedata } from "../stores/print_data";
 import axios from "axios";
 export default {
@@ -67,7 +66,7 @@ export default {
         {
           title: "stage",
           align: "start",
-          key: "stage",
+          key: "stage[name]",
         },
 
         {
@@ -75,76 +74,9 @@ export default {
           align: "start",
           key: "qty",
         },
-        {
-          title: "salary",
-          align: "start",
-          key: "salary",
-        },
-        {
-          title: "time",
-          align: "start",
-          key: "time",
-        },
       ],
-      data: [
-        {
-          month: 1,
-          order: "dafa",
-          model: "abo el feda",
-          card: "250",
-          qty: 15,
-          salary: 150,
-          time: "test1",
-        },
-        {
-          month: 1,
-          order: "dafa",
-          model: "abo el feda",
-          card: "250",
-          qty: 15,
-          salary: 150,
-          time: "test2",
-        },
-        {
-          month: 1,
-          order: "dafa",
-          model: "abo el feda",
-          card: "250",
-          qty: 15,
-          salary: 150,
-          time: "test6",
-        },
-        {
-          month: 2,
-          order: "dafa",
-          model: "abo el feda",
-          card: "250",
-          qty: 15,
-          salary: 150,
-          time: "test6",
-        },
-        {
-          month: 2,
-          order: "dafa",
-          model: "abo el feda",
-          card: "250",
-          qty: 15,
-          salary: 150,
-          time: "test5",
-        },
-        {
-          month: 2,
-          order: "dafa",
-          model: "abo el feda",
-          card: "250",
-          qty: 15,
-          salary: 150,
-          time: "test6",
-        },
-      ],
-      salary: "",
-      stages: "",
-      id: 1,
+
+      salary: [],
     };
   },
 
@@ -158,42 +90,28 @@ export default {
   methods: {
     loadsalary() {
       axios.get("/api/salary/employee/" + this.$route.params.id).then((res) => {
-        this.salary = res.data.data;
+        res.data.data.forEach((element) => {
+          element.totalWorkPerMonth.forEach((el) => {
+            let x = {};
+            x.month = element.date.month;
+            x.stage = el.stage;
+            x.qty = el.quantity;
+            this.salary.push(x);
+          });
+        });
+        console.log(this.salary);
       });
     },
 
-    printo(x) {
-      if (x === 1) {
-        this.print_data.title = "stages to produce " + this.name;
-        this.print_data.data = this.stages;
-        this.print_data.header = this.headers1;
-        this.$router.push({ path: "/print" });
-      } else if (x === 2) {
-        this.print_data.title = "orders with " + this.name;
-        this.print_data.data = this.orders;
-        this.print_data.header = this.headers2;
-        console.log(this.print_data);
-        this.$router.push({ path: "/orderPrint" });
-      } else if (x === 3) {
-        this.print_data.title = this.name + "  conspumtions";
-        this.print_data.data = this.consumption;
-        this.print_data.header = this.headers;
-        this.$router.push({ path: "/consumptionPrint" });
-      } else {
-        this.print_data.title =
-          this.name +
-          "  conspumtions for " +
-          this.calcQty +
-          " " +
-          this.calcolor.name +
-          " " +
-          this.calcsize.name +
-          " pices";
-        this.print_data.data = this.calcs;
-        this.print_data.header = this.headers4;
-        this.$router.push({ path: "/consumptionPrint" });
-      }
+    printo() {
+      this.print_data.title = this.name + " work salary";
+      this.print_data.data = this.salary;
+      this.print_data.header = this.headers1;
+      this.$router.push({ path: "/print" });
     },
+  },
+  props: {
+    name: String,
   },
 };
 </script>

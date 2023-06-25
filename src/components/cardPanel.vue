@@ -245,36 +245,21 @@ export default {
     },
     printo(x) {
       if (x === 1) {
-        this.print_data.title = "stages to produce " + this.name;
+        this.print_data.title = "stages done in card  " + this.code;
         this.print_data.data = this.stages;
         this.print_data.header = this.headers1;
         this.$router.push({ path: "/print" });
       } else if (x === 2) {
-        this.print_data.title = "orders with " + this.name;
-        this.print_data.data = this.orders;
-        this.print_data.header = this.headers2;
-        console.log(this.print_data);
-        this.$router.push({ path: "/orderPrint" });
-      } else if (x === 3) {
-        this.print_data.title = this.name + "  conspumtions";
-        this.print_data.data = this.consumption;
+        this.print_data.title = "Errors in card " + this.code;
+        this.print_data.data = this.errors;
         this.print_data.header = this.headers;
-        this.$router.push({ path: "/consumptionPrint" });
-      } else {
-        this.print_data.title =
-          this.name +
-          "  conspumtions for " +
-          this.calcQty +
-          " " +
-          this.calcolor.name +
-          " " +
-          this.calcsize.name +
-          " pices";
-        this.print_data.data = this.calcs;
-        this.print_data.header = this.headers4;
-        this.$router.push({ path: "/consumptionPrint" });
+        console.log(this.print_data);
+        this.$router.push({ path: "/print" });
       }
     },
+  },
+  props: {
+    code: String,
   },
 };
 </script>

@@ -67,7 +67,7 @@
       </v-btn>
     </v-card-actions>
   </v-card>
-  <cardPanel />
+  <cardPanel v-bind:code="card.code" />
 </template>
 
 <script>

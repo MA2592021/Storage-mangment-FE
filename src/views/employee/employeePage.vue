@@ -92,6 +92,8 @@
               :label="$t(`employees.month_salary`)"
               required
               readonly
+              v-model="salary.totalCost"
+              prefix="£"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -100,6 +102,8 @@
               :label="$t(`employees.salarystatus`)"
               required
               readonly
+              :class="salary.state === 'Paid' ? 'text-green' : 'text-red'"
+              v-model="salary.state"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -228,10 +232,12 @@ export default {
     historytype: "",
     obj: {},
     historyobject: {},
+    salary: [{ totalCost: "", state: "" }],
   }),
   created() {
     //GEtet route here
     this.employeeload();
+    this.salaryload();
     this.materialsload();
     this.propertiesload();
     axios.get("/api/role/").then((response) => {
@@ -246,6 +252,17 @@ export default {
     };
   },
   methods: {
+    salaryload() {
+      axios.get(`/api/salary/employee/${this.$route.params.id}`).then((res) => {
+        this.salary.totalCost =
+          res.data.data[res.data.data.length - 1].totalCost;
+        this.salary.state =
+          res.data.data[res.data.data.length - 1].state === true
+            ? "Paid"
+            : "Not Paid";
+        console.log(this.salary);
+      });
+    },
     employeeload() {
       axios.get("/api/employee/" + this.$route.params.id).then((response) => {
         // console.log(response);

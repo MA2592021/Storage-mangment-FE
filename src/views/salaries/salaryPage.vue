@@ -23,9 +23,21 @@
           </v-col>
           <v-col cols="12" class="ma-4">
             <v-text-field
-              label="salary state "
+              :label="$t(`employees.month_salary`)"
               required
               readonly
+              v-model="salarymonth.totalCost"
+              prefix="£"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" class="ma-4">
+            <v-text-field
+              :label="$t(`employees.salarystatus`)"
+              required
+              readonly
+              :class="salarymonth.state === 'Paid' ? 'text-green' : 'text-red'"
+              v-model="salarymonth.state"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -41,7 +53,7 @@
       </v-btn>
     </v-card-actions>
   </v-card>
-  <salaryPanel class="mt-3" />
+  <salaryPanel v-bind:name="employee.name" class="mt-3" />
 </template>
 
 <script>
@@ -55,16 +67,30 @@ export default {
   data() {
     return {
       employee: {},
+      salarymonth: { totalCost: "", state: "" },
     };
   },
   created() {
     //Get route
-    axios.get("/api/employee/" + this.$route.params.id).then((response) => {
-      console.log(response);
-      this.employee = response.data.data;
-    });
+    axios
+      .get("/api/salary/employee/" + this.$route.params.id)
+      .then((response) => {
+        this.loademployee();
+        this.salarymonth.totalCost =
+          response.data.data[response.data.data.length - 1].totalCost;
+        this.salarymonth.state =
+          response.data.data[response.data.data.length - 1].state === true
+            ? "Paid"
+            : "Not Paid";
+      });
   },
   methods: {
+    loademployee() {
+      axios.get("/api/employee/" + this.$route.params.id).then((res) => {
+        this.employee = res.data.data;
+        console.log(this.employee);
+      });
+    },
     deletee() {
       swal({
         title: "Are you sure?",

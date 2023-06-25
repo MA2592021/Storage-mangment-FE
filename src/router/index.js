@@ -856,7 +856,7 @@ const router = createRouter({
     //test
     {
       path: "/lazysoftware/credits",
-      name: "test",
+      name: "credits",
 
       component: () => import("../views/test.vue"),
     },
@@ -885,7 +885,15 @@ export default router;
 
 router.beforeEach((to, from, next) => {
   async function name() {
-    if (to.name === "danger" || to.name === "NotFound") {
+    if (
+      to.name === "danger" ||
+      to.name === "NotFound" ||
+      to.name === "print" ||
+      to.name === "consumptionPrint" ||
+      to.name === "orderMPrint" ||
+      to.name === "orderPrint" ||
+      to.name === "credits"
+    ) {
       next();
     } else {
       const isLoggedIn = await axios

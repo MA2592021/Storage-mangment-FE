@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 
-const codeLine1 = "function Arkan(FSMS) { ";
+const codeLine1 = "function Arkan(FSMS , TSMS) { ";
 const codeLine2 = "  console.log('Version 2.0!!!')";
 const codeLine3 = "  Developed by => `LazySoftware`...";
 const codeLine4 = "  const Team = Amir & El Gamal";
