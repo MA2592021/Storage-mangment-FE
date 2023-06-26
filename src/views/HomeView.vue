@@ -1,7 +1,6 @@
 <template>
   <tabs v-if="routePath !== '/'" />
-  <h1 align="center">Dashboard</h1>
-  <v-btn @click="darko()"> dark</v-btn>
+  <!-- <v-btn @click="darko()"> dark</v-btn> -->
   <v-card
     class="mx-auto"
     color="pink-darken-4"
@@ -20,6 +19,7 @@
     <br /><br />
   </v-card>
   <br /><br />
+  <h1 align="center">Dashboard</h1>
   <v-row align="center" justify="space-around" class="ma-4">
     <v-col
       cols="12"

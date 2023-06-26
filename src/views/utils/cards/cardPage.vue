@@ -30,6 +30,33 @@
       </v-col>
       <v-col cols="12" sm="6">
         <v-text-field
+          label="quantity "
+          required
+          readonly
+          v-model="card.quantity"
+          variant="underlined"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-text-field
+          label="start range "
+          required
+          readonly
+          v-model="card.startRange"
+          variant="underlined"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-text-field
+          label="end range "
+          required
+          readonly
+          v-model="card.endRange"
+          variant="underlined"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-text-field
           label="current Stage "
           required
           readonly

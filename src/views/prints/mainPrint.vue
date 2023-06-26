@@ -1,5 +1,13 @@
 <template>
+  <v-img
+    class="bg-white"
+    width="100"
+    :aspect-ratio="1"
+    src="/arkan_logo-withtext.png"
+    cover
+  ></v-img>
   <h1 align="center">{{ print_data.title }}</h1>
+
   <br />
   <v-data-table
     :headers="print_data.header"

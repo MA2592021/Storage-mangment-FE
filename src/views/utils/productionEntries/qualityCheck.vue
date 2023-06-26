@@ -345,10 +345,10 @@ export default {
         console.log(checko);
         if (checko === 0) {
           let z = 0;
-          cardErrors.forEach((element) => {
+          cardErrors.forEach(async (element) => {
             console.log("number 1");
 
-            axios
+            await axios
               .patch("/api/card/" + this.selected_card._id + "/errors/add", {
                 pieceNo: parseInt(element.pieceNo),
                 pieceErrors: element.pieceErrors,

@@ -45,6 +45,15 @@ export default {
         }
       );
     });
+    socket.on("addTracking", (message) => {
+      console.log(message);
+      toast.success(
+        `stage ${message.stage.code} tracked in card ` + message.card.code,
+        {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        }
+      );
+    });
     socket.on("errorConfirm", (message) => {
       console.log(message);
       toast.success(

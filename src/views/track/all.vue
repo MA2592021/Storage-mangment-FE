@@ -87,6 +87,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import { socket } from "../../socket.js";
 export default {
   data: () => ({
     search: "",
@@ -143,36 +144,57 @@ export default {
     stage(id) {
       this.$router.push({ path: "/utils/stage/" + id });
     },
+    loadtrack() {
+      axios.get("/api/card/last/100").then((res) => {
+        this.cards = [];
+        //console.log(res.data.data);
+        res.data.data.forEach((element) => {
+          let x = {};
+          x._id = element._id;
+          x.code = element.code;
+          x.model = element.model;
+          x.order = element.order;
+          x.qty = element.quantity;
+          x.currentstage =
+            element.tracking.length === 0
+              ? ""
+              : element.tracking[element.tracking.length - 1].stage;
+          x.errors = element.cardErrors.length;
+          x.date =
+            element.tracking.length === 0
+              ? "not started yet"
+              : moment(
+                  element.tracking[element.tracking.length - 1].dateOut
+                ).fromNow();
+          x.dato =
+            element.tracking.length === 0
+              ? ""
+              : element.tracking[element.tracking.length - 1].dateOut;
+          this.cards.push(x);
+        });
+        //console.log(this.cards);
+      });
+    },
   },
   created() {
-    axios.get("/api/card/last/100").then((res) => {
-      this.cards = [];
-      //console.log(res.data.data);
-      res.data.data.forEach((element) => {
-        let x = {};
-        x._id = element._id;
-        x.code = element.code;
-        x.model = element.model;
-        x.order = element.order;
-        x.qty = element.quantity;
-        x.currentstage =
-          element.tracking.length === 0
-            ? ""
-            : element.tracking[element.tracking.length - 1].stage;
-        x.errors = element.cardErrors.length;
-        x.date =
-          element.tracking.length === 0
-            ? "not started yet"
-            : moment(
-                element.tracking[element.tracking.length - 1].dateOut
-              ).fromNow();
-        x.dato =
-          element.tracking.length === 0
-            ? ""
-            : element.tracking[element.tracking.length - 1].dateOut;
-        this.cards.push(x);
-      });
-      //console.log(this.cards);
+    this.loadtrack();
+  },
+  mounted() {
+    socket.on("errors", (message) => {
+      console.log(message);
+      this.loadtrack();
+    });
+    socket.on("repairs", (message) => {
+      console.log(message);
+      this.loadtrack();
+    });
+    socket.on("addTracking", (message) => {
+      console.log(message);
+      this.loadtrack();
+    });
+    socket.on("errorConfirm", (message) => {
+      console.log(message);
+      this.loadtrack();
     });
   },
 };

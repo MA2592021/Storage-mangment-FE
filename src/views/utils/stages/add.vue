@@ -165,7 +165,7 @@ export default {
       }
     },
     removeString(index) {
-      this.stringArray.splice(index, 0);
+      this.stringArray.splice(index, 1);
     },
   },
 };

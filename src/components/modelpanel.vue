@@ -333,7 +333,7 @@ export default {
     },
     calc() {
       axios
-        .post("/api/order/consumption", {
+        .post("/api/order/consumption/", {
           models: [
             {
               id: this.id,
