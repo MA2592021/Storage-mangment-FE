@@ -345,33 +345,64 @@ export default {
         console.log(checko);
         if (checko === 0) {
           let z = 0;
-          cardErrors.forEach(async (element) => {
+          // cardErrors.forEach(async (element) => {
+          //   console.log("number 1");
+
+          //   await axios
+          //     .patch("/api/card/" + this.selected_card._id + "/errors/add", {
+          //       pieceNo: parseInt(element.pieceNo),
+          //       pieceErrors: element.pieceErrors,
+          //     })
+          //     .then((res) => {
+          //       z += 1;
+          //       if (cardErrors.length === z) {
+          //         axios
+          //           .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
+          //             stage: this.selected_quality.id._id,
+          //             employee: localStorage.getItem("employee"),
+          //             enteredBy: localStorage.getItem("id"),
+          //           })
+          //           .then(() => {
+          //             swal("success", "quality check done", "success").then(
+          //               () => {
+          //                 this.$router.go(0);
+          //               }
+          //             );
+          //           });
+          //       }
+          //     });
+          // });
+          for (const element of cardErrors) {
             console.log("number 1");
 
-            await axios
-              .patch("/api/card/" + this.selected_card._id + "/errors/add", {
-                pieceNo: parseInt(element.pieceNo),
-                pieceErrors: element.pieceErrors,
-              })
-              .then((res) => {
-                z += 1;
-                if (cardErrors.length === z) {
-                  axios
-                    .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
-                      stage: this.selected_quality.id._id,
-                      employee: localStorage.getItem("employee"),
-                      enteredBy: localStorage.getItem("id"),
-                    })
-                    .then(() => {
-                      swal("success", "quality check done", "success").then(
-                        () => {
-                          this.$router.go(0);
-                        }
-                      );
-                    });
+            try {
+              const res = await axios.patch(
+                "/api/card/" + this.selected_card._id + "/errors/add",
+                {
+                  pieceNo: parseInt(element.pieceNo),
+                  pieceErrors: element.pieceErrors,
                 }
-              });
-          });
+              );
+
+              z += 1;
+              if (cardErrors.length === z) {
+                await axios.patch(
+                  `/api/card/${this.selected_card._id}/tracking/add`,
+                  {
+                    stage: this.selected_quality.id._id,
+                    employee: localStorage.getItem("employee"),
+                    enteredBy: localStorage.getItem("id"),
+                  }
+                );
+
+                swal("success", "quality check done", "success").then(() => {
+                  this.$router.go(0);
+                });
+              }
+            } catch (error) {
+              // Handle error if needed
+            }
+          }
         }
       } else if (this.verify) {
         axios
