@@ -58,13 +58,20 @@
               hint="Required"
             ></v-text-field>
           </v-col>
+          <v-col cols="12" sm="6" md="6">
+            <v-text-field
+              required
+              v-model="card.cutNumber"
+              label="Cut Number*"
+              hint="Required"
+            ></v-text-field>
+          </v-col>
         </v-row>
       </v-container>
       <small>*indicates required field</small>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
       <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
   </v-card>
@@ -81,6 +88,7 @@ export default {
       qty: "",
       endRange: "",
       startRange: "",
+      cutNumber:'',
     },
     orders: [],
     selectedOrder: "",
@@ -101,6 +109,7 @@ export default {
           details: "test",
           startRange: parseInt(this.card.startRange),
           endRange: parseInt(this.card.endRange),
+          cutNumber:parseInt(this.card.cutNumber)
         })
         .then((response) => {
           if (response.data.errors) {

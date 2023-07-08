@@ -59,7 +59,6 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue-darken-1" variant="text"> Close </v-btn>
       <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
     </v-card-actions>
   </v-card>
@@ -68,7 +67,7 @@
 <script>
 import imageuploader from "../../components/imageuploader.vue";
 import axios from "axios";
-import sweetalert from "sweetalert";
+import swal from "sweetalert";
 export default {
   components: { imageuploader },
   data: () => ({

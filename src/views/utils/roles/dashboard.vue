@@ -11,7 +11,9 @@
       >
         {{ datalength }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ datalength }} roles</p>
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ datalength }} {{ $t("roles") }}
+      </p>
     </v-col>
   </v-row>
 </template>

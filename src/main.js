@@ -85,7 +85,9 @@ axios.interceptors.response.use(
   }
 );
 const i18n = createI18n({
-  locale: "en", // Default language
+  locale: localStorage.getItem("locale")
+    ? localStorage.getItem("locale")
+    : "en", // Default language
   messages: {
     en,
     ar,

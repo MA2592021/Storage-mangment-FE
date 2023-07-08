@@ -14,26 +14,55 @@
     >
 
     <v-col cols="12">
-      <tt
-        v-bind:data="materials"
-        v-bind:header="headers.mat_header"
-        v-bind:title="$t('all_mats')"
-        @tableClicked="tableClicked"
-      /> </v-col
+      <v-text-field
+        v-model="search"
+        label="Search"
+        single-line
+        hide-details
+        class="mt-5"
+      ></v-text-field>
+      <v-data-table
+        :headers="header"
+        :items="materials"
+        :search="search"
+        :group-by="groupBy"
+        :items-per-page="itemsPerPage"
+        v-model:sort-by="sortBy"
+        hover
+        hide-default-footer
+        @update:options="options = $event"
+      ></v-data-table> </v-col
   ></v-row>
 </template>
 
 <script>
-import tt from "../../../components/table.vue";
-import { useheaders } from "../../../stores/headers";
 import axios from "axios";
 export default {
-  components: {
-    tt,
-  },
   data() {
     return {
       materials: [],
+      groupBy: [{ key: "type", order: "asc" }],
+
+      sortBy: [{ key: "", order: "asc" }],
+      options: {
+        pageCount: 5,
+      },
+      dialog: false,
+      search: "",
+      page: 1,
+      itemsPerPage: 5,
+      header: [
+        {
+          align: "start",
+          key: "name",
+          sortable: false,
+          title: "name",
+        },
+
+        { title: "quantity", key: "quantity" },
+        { title: "available", key: "available" },
+        { title: "role", key: "role" },
+      ],
     };
   },
   created() {
@@ -54,10 +83,7 @@ export default {
       });
     });
   },
-  setup() {
-    const headers = useheaders();
-    return { headers };
-  },
+
   methods: {
     tableClicked(value) {
       // console.log(value);

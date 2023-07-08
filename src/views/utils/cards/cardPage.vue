@@ -15,7 +15,7 @@
           label="order "
           required
           readonly
-          v-model="card.order.name"
+          v-model="ordername"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -24,7 +24,7 @@
           label="model "
           required
           readonly
-          v-model="card.model.name"
+          v-model="modelname"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -57,10 +57,20 @@
       </v-col>
       <v-col cols="12" sm="6">
         <v-text-field
-          label="current Stage "
+          label="Last Stage "
           required
           readonly
-          v-model="card.tracking[card.tracking.length - 1].stage.name"
+          v-model="lastStage"
+          variant="underlined"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6" md="6">
+        <v-text-field
+          required
+          v-model="card.cutNumber"
+          readonly
+          label="Cut Number*"
+          hint="Required"
           variant="underlined"
         ></v-text-field>
       </v-col>
@@ -106,13 +116,10 @@ export default {
   components: { cardPanel },
   data() {
     return {
-      card: {
-        order: { name: "" },
-        model: { name: "" },
-        tracking: [{ stage: { name: "" } }],
-      },
+      card: {},
     };
   },
+
   created() {
     //Get route
     axios.get("/api/card/" + this.$route.params.id).then((response) => {
@@ -179,6 +186,23 @@ export default {
           });
         }
       });
+    },
+  },
+  computed: {
+    lastStage() {
+      if (this.card.tracking) {
+        if (this.card.tracking.length > 0) {
+          return this.card.tracking[this.card.tracking.length - 1].stage.name;
+        } else {
+          return "not Started yet";
+        }
+      }
+    },
+    ordername() {
+      return this.card.order ? this.card.order.name : null;
+    },
+    modelname() {
+      return this.card.model ? this.card.model.name : null;
     },
   },
 };

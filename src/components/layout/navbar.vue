@@ -127,7 +127,7 @@ export default {
     return {
       username: localStorage.getItem("username"),
       rolename: localStorage.getItem("rolename"),
-      model: "english",
+      model: localStorage.getItem("locale") === "ar" ? "العربية" : "english",
       drawer: false,
       links: [
         {
@@ -320,8 +320,10 @@ export default {
       //console.log("testt");
       if (this.model === "العربية") {
         this.$i18n.locale = "ar";
+        localStorage.setItem("locale", "ar");
       } else {
         this.$i18n.locale = "en";
+        localStorage.setItem("locale", "en");
       }
     },
     look(value) {

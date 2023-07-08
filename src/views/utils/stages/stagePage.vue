@@ -168,7 +168,7 @@ export default {
               rate: this.stage.rate,
               type: this.stage.type,
               note: this.stage.note,
-              machineType: this.stage.machineType,
+              machineType: this.stage.machineType._id,
               stageErrors: this.stage.errors,
             })
             .then((response) => {
@@ -176,6 +176,11 @@ export default {
                 swal("error", response.data.errors[0].msg, "error");
               } else {
                 swal("success", "stage updated successfully", "success");
+                if (this.orgstage.price !== this.stage.price) {
+                  axios.get("/api/salary/recalculate").then((res) => {
+                    console.log(res);
+                  });
+                }
                 this.stageload();
               }
             });

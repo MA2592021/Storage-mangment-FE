@@ -29,7 +29,7 @@
 
 <script>
 import axios from "axios";
-import sweetalert from "sweetalert";
+import swal from "sweetalert";
 export default {
   data: () => ({
     type: {

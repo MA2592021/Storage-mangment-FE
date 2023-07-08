@@ -15,11 +15,13 @@
       ></v-avatar>
     </template>
 
-    <v-card-text class="text-h5 py-2" align="center"> Welcome Back</v-card-text>
+    <v-card-text class="text-h5 py-2" align="center">
+      {{ $t("welcome") }}</v-card-text
+    >
     <br /><br />
   </v-card>
   <br /><br />
-  <h1 align="center">Dashboard</h1>
+  <h1 align="center">{{ $t("dashboard") }}</h1>
   <v-row align="center" justify="space-around" class="ma-4">
     <v-col
       cols="12"
@@ -38,7 +40,9 @@
       >
         {{ user.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ user.length }} Users</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ user.length }} {{ $t("userss") }}
+      </p></v-col
     >
     <v-col
       cols="12"
@@ -58,7 +62,9 @@
       >
         {{ employee.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ employee.length }} Employees</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ employee.length }} {{ $t("employeess") }}
+      </p></v-col
     >
     <v-col
       cols="12"
@@ -78,7 +84,9 @@
       >
         {{ model.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ model.length }} Models</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ model.length }} {{ $t("modelss") }}
+      </p></v-col
     >
     <v-col
       cols="12"
@@ -98,7 +106,9 @@
       >
         {{ property.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ property.length }} Properties</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ property.length }} {{ $t("properties") }}
+      </p></v-col
     >
     <v-col
       cols="12"
@@ -118,7 +128,9 @@
       >
         {{ material.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ material.length }} Materials</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ material.length }} {{ $t("materials") }}
+      </p></v-col
     >
     <v-col
       cols="12"
@@ -138,7 +150,9 @@
       >
         {{ client.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ client.length }} Clients</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ client.length }} {{ $t("clients") }}
+      </p></v-col
     ><v-col
       cols="12"
       align="center"
@@ -157,7 +171,9 @@
       >
         {{ supplier.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ supplier.length }} Suppliers</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ supplier.length }} {{ $t("suppliers") }}
+      </p></v-col
     >
     <v-col
       cols="12"
@@ -177,7 +193,9 @@
       >
         {{ order.length }}
       </v-progress-circular>
-      <p class="text-h5">Arkan have {{ order.length }} Orders</p></v-col
+      <p class="text-h5">
+        {{ $t("arkan have") }} {{ order.length }} {{ $t("orderss") }}
+      </p></v-col
     ></v-row
   >
 </template>

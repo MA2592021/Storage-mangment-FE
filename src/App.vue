@@ -21,8 +21,15 @@ export default {
   created() {
     console.log("Client request received: Vue app is created");
     // Perform any initial setup or fetch data here
-    axios.get("/");
-    console.log(state);
+    axios.get("/").then((res) => {
+      console.log(res.data.msg);
+    });
+    console.log("socket state : ", state);
+    if (localStorage.getItem("locale")) {
+    } else {
+      localStorage.setItem("locale", "en");
+    }
+    console.log(localStorage.getItem("locale"));
   },
   data() {
     return {

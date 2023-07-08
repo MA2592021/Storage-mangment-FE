@@ -1,5 +1,4 @@
 {
-  "welcome": "hello world",
   "tabs": {
     "dashboard": "Dashboard",
     "all": "All",
@@ -31,7 +30,7 @@
     "colors": "Colors",
     "sizes": "Sizes",
     "roles": "Roles",
-    "types": "Types",
+    "types": "Material Types",
     "stages": "Stages",
     "machinetypes": "Machine types"
   },
@@ -122,5 +121,27 @@
   "in": "in",
   "error number": "Error Number",
   "stage error": "Stage Error",
-  "error desc": "Error Description"
+  "error desc": "Error Description",
+  "welcome": "Welcome Back",
+  "dashboard": "Dashboard",
+  "arkan have": "Arkan Have",
+  "userss": "users",
+  "employeess": "Employees",
+  "modelss": "Models",
+  "clients": "Clients",
+  "suppliers": "Suppliers",
+  "orderss": "Orders",
+  "shipments": "Shipments",
+  "requests": "Requests",
+  "in prod order": "in Production Orders",
+  "cartons": "Cartons",
+  "colorss": "Colors",
+  "sizess": "Sizes",
+  "roles": "Roles",
+  "user roles": "User Roles",
+  "stages": "Stages",
+  "material type": "Material Types",
+  "machine type": "Machine Types",
+  "assistants": "Assistants",
+  "cards": "Cards"
 }
