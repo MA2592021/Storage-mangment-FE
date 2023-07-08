@@ -3,11 +3,11 @@
     <v-toolbar theme="dark" app style="background-color: #770f30">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title> Arkan</v-toolbar-title>
+      <v-toolbar-title> {{ $t("arkan") }}</v-toolbar-title>
       <v-spacer></v-spacer>
 
       <v-btn flat color="grey">
-        <span class="mr-2" @click="signout()">sign out</span>
+        <span class="mr-2" @click="signout()"> {{ $t("sign out") }}</span>
         <v-icon right size="large" icon="mdi-logout"></v-icon>
       </v-btn>
     </v-toolbar>

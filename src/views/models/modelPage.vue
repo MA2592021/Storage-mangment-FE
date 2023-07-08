@@ -87,7 +87,6 @@
       >
         {{ $t("save") }}
       </v-btn>
-      <v-btn @click="testoo()">test</v-btn>
     </v-card-actions>
   </v-card>
   <v-card class="mt-3" style="width: 100%">

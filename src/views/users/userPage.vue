@@ -13,7 +13,7 @@
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Name "
+              :label="$t('name')"
               required
               :readonly="dis"
               v-model="user.name"
@@ -22,7 +22,7 @@
           </v-col>
           <v-col cols="12">
             <v-text-field
-              label="code "
+              :label="$t('code')"
               required
               :readonly="dis"
               v-model="user.code"
@@ -31,7 +31,7 @@
           </v-col>
           <v-col cols="12">
             <v-autocomplete
-              label="role"
+              :label="$t('role')"
               v-model="user.role"
               chips
               :disabled="dis"

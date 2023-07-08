@@ -3,7 +3,7 @@
     ><v-row class="ma-2">
       <v-col cols="12" sm="6" md="6">
         <v-text-field
-          label="Name "
+          :label="$t('name')"
           required
           :readonly="dis === true"
           v-model="order.name"
@@ -13,7 +13,7 @@
 
       <v-col cols="12" sm="6">
         <v-autocomplete
-          label="client "
+          :label="$t('client')"
           v-model="order.client"
           variant="underlined"
           :readonly="dis === true"
@@ -24,7 +24,7 @@
       <v-col cols="12" sm="6"
         ><v-textarea
           :clearable="dis === false"
-          label="details"
+          :label="$t('details')"
           v-model="order.details"
           :readonly="dis === true"
           prepend-icon="mdi-note-text-outline"
@@ -33,7 +33,7 @@
       <v-col cols="12" sm="6"
         ><v-textarea
           :clearable="dis === false"
-          label="Note"
+          :label="$t('note')"
           v-model="order.note"
           :readonly="dis === true"
           prepend-icon="mdi-note-text-outline"
@@ -41,7 +41,11 @@
       </v-col>
       <v-col cols="12" align="center"
         ><v-chip :color="order.status === true ? 'green' : 'red'">
-          {{ order.status === true ? "order Finished" : "order in production" }}
+          {{
+            order.status === true
+              ? $t("order finished")
+              : $t("order in production")
+          }}
         </v-chip>
       </v-col>
     </v-row>
@@ -50,7 +54,7 @@
         @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t("edit") : $t("cancel") }}
       </v-btn>
       <v-btn
         @click="deletee()"
@@ -59,7 +63,7 @@
         prepend-icon=" mdi-delete-forever"
         color="red"
       >
-        Delete
+        {{ $t("delete") }}
       </v-btn>
       <v-btn
         @click="done()"
@@ -68,7 +72,7 @@
         prepend-icon="mdi-check-all"
         color="cyan"
       >
-        complete
+        {{ $t("complete") }}
       </v-btn>
       <v-btn
         :disabled="dis === true"
@@ -76,7 +80,7 @@
         color="green"
         @click="save()"
       >
-        Save
+        {{ $t("save") }}
       </v-btn>
     </v-card-actions>
   </v-card>

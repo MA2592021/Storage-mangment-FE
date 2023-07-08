@@ -9,7 +9,7 @@
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Name*"
+              :label="$t('name') + `*`"
               v-model="supplier.name"
               required
               hint="Required"
@@ -19,13 +19,13 @@
             <v-text-field
               required
               v-model="supplier.phoneNo"
-              label="phoneNo*"
+              :label="$t('phone') + `*`"
               hint="Required"
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="3" md="3">
             <v-text-field
-              label="state*"
+              :label="$t('state') + `*`"
               v-model="supplier.state"
               hint="Required"
               required
@@ -35,7 +35,7 @@
           <v-col cols="12" sm="6">
             <v-textarea
               clearable
-              label="address"
+              :label="$t('address') + `*`"
               v-model="supplier.address"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -44,7 +44,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               clearable
-              label="Note"
+              :label="$t('note')"
               v-model="supplier.note"
               prepend-inner-icon="mdi-note-text-outline"
             ></v-textarea>
@@ -59,7 +59,9 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="green-darken-1" variant="text" @click="add"> Save </v-btn>
+      <v-btn color="green-darken-1" variant="text" @click="add">
+        {{ $t("save") }}
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -115,8 +117,8 @@ export default {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
           } else {
-            swal("success", "yay", "success").then(() =>
-              this.$router.push({ path: "/supplier/all" })
+            swal("success", "supplier created successfully", "success").then(
+              () => this.$router.push({ path: "/supplier/all" })
             );
           }
         })

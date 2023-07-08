@@ -1,7 +1,8 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row>
-      <v-col cols="12" align="center" class="text-h4"> clients </v-col
+      <v-col cols="12" align="center" class="text-h4">
+        {{ $t("navbar.clients") }} </v-col
       ><v-col cols="3" sm="2"
         ><v-img
           class="bg-white"
@@ -14,7 +15,7 @@
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Name "
+              :label="$t('name')"
               required
               :readonly="dis === true"
               v-model="client.name"
@@ -24,7 +25,7 @@
           <v-col cols="12" md="6" lg="3">
             <v-text-field
               required
-              label="state "
+              :label="$t('state')"
               :readonly="dis === true"
               v-model="client.state"
               variant="underlined"
@@ -35,7 +36,7 @@
             <v-text-field
               required
               v-model="client.phoneNo"
-              label="phoneNo "
+              :label="$t('phone')"
               :readonly="!isEditing"
               variant="underlined"
               ><template v-slot:append>
@@ -59,7 +60,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="Note"
+              :label="$t('note')"
               v-model="client.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -68,7 +69,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="address"
+              :label="$t('address')"
               v-model="client.address"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -80,7 +81,7 @@
         @click="cancel()"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t("edit") : $t("cancel") }}
       </v-btn>
       <v-btn
         class="ml-auto text-red"
@@ -88,7 +89,7 @@
         :disabled="dis === true"
         prepend-icon="mdi-delete-forever"
       >
-        Delete
+        {{ $t("delete") }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -97,7 +98,7 @@
         color="green"
         @click="dialog = !dialog"
       >
-        Save
+        {{ $t("save") }}
       </v-btn>
     </v-card-actions>
   </v-card>

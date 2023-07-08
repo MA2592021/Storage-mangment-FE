@@ -5,7 +5,7 @@
         <v-row>
           <v-col cols="12" class="ma-4">
             <v-text-field
-              label="Name "
+              :label="$t('name')"
               required
               readonly
               v-model="employee.name"
@@ -14,7 +14,7 @@
           </v-col>
           <v-col cols="12" class="ma-4">
             <v-text-field
-              label="code "
+              :label="$t('code')"
               required
               readonly
               v-model="employee.code"
@@ -49,7 +49,7 @@
         prepend-icon=" mdi-cash-multiple"
         color="green"
       >
-        Salary Paid
+        {{ $t("pay salary") }}
       </v-btn>
     </v-card-actions>
   </v-card>

@@ -1,7 +1,9 @@
 <template>
   <v-card class="mx-auto" elevation="2" style="width: 100%"
     ><v-row class="ma-3"
-      ><v-col cols="12" align="center" class="text-h4"> shipments </v-col>
+      ><v-col cols="12" align="center" class="text-h4">
+        {{ $t("navbar.shipments") }}
+      </v-col>
       <v-col cols="3" sm="2"
         ><v-img
           class="bg-white"
@@ -16,7 +18,7 @@
         <v-row>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              label="Name "
+              :label="$t('name')"
               required
               :readonly="dis === true"
               v-model="shipment.name"
@@ -25,7 +27,7 @@
           </v-col>
           <v-col cols="12" sm="3" md="3">
             <v-text-field
-              label="status "
+              :label="$t('status')"
               required
               readonly
               v-model="shipment.status"
@@ -34,7 +36,7 @@
           </v-col>
           <v-col cols="12" sm="3" md="3">
             <v-text-field
-              label="created at "
+              :label="$t('created at')"
               required
               readonly
               v-model="shipment.time"
@@ -44,7 +46,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="details"
+              :label="$t('details')"
               v-model="shipment.details"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -53,7 +55,7 @@
           <v-col cols="12" sm="6"
             ><v-textarea
               :clearable="dis === false"
-              label="Note"
+              :label="$t('note')"
               v-model="shipment.note"
               :readonly="dis === true"
               prepend-icon="mdi-note-text-outline"
@@ -91,7 +93,7 @@
         :disabled="shipment.status === 'Shipped'"
         :prepend-icon="dis ? 'mdi-circle-edit-outline' : 'mdi-cancel'"
       >
-        {{ dis ? "edit" : "cancel" }}
+        {{ dis ? $t("edit") : $t("cancel") }}
       </v-btn>
       <v-btn
         class="ml-auto text-red"
@@ -99,7 +101,7 @@
         :disabled="dis === true"
         prepend-icon="mdi-delete-forever"
       >
-        Delete
+        {{ $t("delete") }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -108,7 +110,7 @@
         color="teal-lighten-3"
         @click="approve()"
       >
-        Approve
+        {{ $t("approve") }}
       </v-btn>
       <v-btn
         class="ml-auto"
@@ -116,7 +118,7 @@
         prepend-icon="mdi-truck"
         color="green"
       >
-        Ship
+        {{ $t("ship") }}
         <v-dialog v-model="dialog5" activator="parent">
           <v-card>
             <v-card-title>
@@ -138,7 +140,7 @@
         color="green"
         @click="dialog = !dialog"
       >
-        Save
+        {{ $t("save") }}
       </v-btn>
     </v-card-actions>
   </v-card>
