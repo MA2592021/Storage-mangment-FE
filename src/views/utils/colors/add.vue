@@ -24,6 +24,9 @@
               hint="Required"
             ></v-text-field>
           </v-col>
+          <v-col cols="12" sm="12">
+            <imageuploader @image="imageup" />
+          </v-col>
         </v-row>
       </v-container>
       <small>*indicates required field</small>
@@ -36,24 +39,32 @@
 </template>
 
 <script>
+import imageuploader from "../../../components/imageuploader.vue";
 import axios from "axios";
 import sweetalert from "sweetalert";
 export default {
+  components: { imageuploader },
   data: () => ({
     color: {
       name: "",
       code: "",
+      image: "",
     },
   }),
 
   methods: {
+    imageup(image) {
+      this.color.image = image;
+    },
     add() {
       // this.url = URL.createObjectURL(this.color.img);
       console.log("im alive");
+      console.log(this.color);
       axios
         .post("/api/color", {
           name: this.color.name,
           code: this.color.code,
+          image: this.color.image,
         })
         .then((response) => {
           if (response.data.errors) {
