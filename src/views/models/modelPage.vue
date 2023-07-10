@@ -11,12 +11,21 @@
         ></v-img></v-col
       ><v-col cols="9" sm="10">
         <v-row>
-          <v-col cols="12">
+          <v-col cols="8">
             <v-text-field
               :label="$t(`name`) + '*'"
               required
               :readonly="dis === true"
               v-model="model.name"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              :label="$t(`code`) + '*'"
+              required
+              :readonly="dis === true"
+              v-model="model.code"
               variant="underlined"
             ></v-text-field>
           </v-col>
@@ -28,7 +37,8 @@
               multiple
               :label="$t(`sizes`) + '*'"
               item-title="name"
-              readonly
+              :readonly="dis === true"
+              return-object
             ></v-autocomplete>
           </v-col>
           <v-col cols="12" sm="6" md="6">
@@ -37,9 +47,10 @@
               :items="colors"
               chips
               multiple
+              return-object
               :label="$t(`colors`) + '*'"
               item-title="name"
-              readonly
+              :readonly="dis === true"
             ></v-autocomplete>
           </v-col>
 
@@ -165,7 +176,7 @@ export default {
       this.model.stages = this.orgmodel.stages;
       this.model.orders = this.orgmodel.orders;
       this.model.consumption = this.orgmodel.consumptions;
-
+      this.model.code = this.orgmodel.code;
       this.model.note = this.orgmodel.note;
       this.model.details = this.orgmodel.details;
     },
@@ -178,11 +189,24 @@ export default {
       this.clone();
     },
     save() {
+      let colors = [];
+      this.model.colors.forEach((el) => {
+        colors.push(el._id);
+      });
+      let sizes = [];
+      this.model.sizes.forEach((el) => {
+        console.log(el);
+        sizes.push(el._id);
+      });
+      console.log(sizes);
       axios
         .patch("/api/model/" + this.$route.params.id, {
           note: this.model.note,
           details: this.model.details,
           name: this.model.name,
+          code: this.model.code,
+          sizes: sizes,
+          colors: colors,
         })
         .then((response) => {
           if (response.data.errors) {

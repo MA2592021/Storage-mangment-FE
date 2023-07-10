@@ -356,11 +356,12 @@ export default {
         this.load_card_error_assist();
       }
     });
-    socket.on("assistantupdated", () => {
+    socket.on("assistantUpdated", () => {
+      console.log("im in assistant updated");
       if (!this.assist) {
       } else {
         axios
-          .get("/api/userEmployee/" + localStorage.getItem("id"))
+          .get("/api/userEmployee/" + localStorage.getItem("useremployee"))
           .then((res) => {
             localStorage.setItem(
               "order",
