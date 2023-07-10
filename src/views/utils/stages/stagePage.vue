@@ -77,10 +77,12 @@
             class="ma-1"
             variant="outlined"
             label
+            :closable="dis === false"
+            @click:close="removeString(index)"
           >
             {{ item }}
-          </v-chip></v-row
-        >
+          </v-chip>
+        </v-row>
       </v-col>
       <v-col cols="12" sm="6"
         ><v-textarea
@@ -196,12 +198,14 @@ export default {
       this.stage.type = this.orgstage.type;
       this.stage.note = this.orgstage.note;
       this.stage.machineType = this.orgstage.machineType.name;
-      this.stage.errors = this.orgstage.stageErrors;
+      this.stage.errors = [...this.orgstage.stageErrors];
     },
     cancel() {
       this.dis = !this.dis;
-
       this.clone();
+    },
+    removeString(index) {
+      this.stage.errors.splice(index, 1);
     },
     deletee() {
       swal({

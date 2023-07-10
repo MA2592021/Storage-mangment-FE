@@ -69,14 +69,18 @@
                   verify === false ? stageerror : selected_card.currentErrors
                 "
                 return-object
-                :item-title="verify === false ? `id.name` : `name`"
+                :item-title="verify === false ? `name` : `name`"
                 inputmode="numeric"
                 :label="$t('stage code')"
-              ></v-autocomplete> </v-col
+              ></v-autocomplete></v-col
             ><v-col cols="12" align="center"
-              ><v-btn outlined color="green" @click="submitproduction">{{
-                $t("submit")
-              }}</v-btn></v-col
+              ><v-btn
+                outlined
+                color="green"
+                @click="submitproduction"
+                :loading="loading"
+                >{{ $t("submit") }}</v-btn
+              ></v-col
             ></v-row
           >
         </v-window-item>
@@ -96,7 +100,9 @@
             ><v-col cols="12">
               <v-autocomplete
                 v-model="selected_model_error"
-                :items="selected_card_error.models"
+                :items="
+                  selected_card_error === null ? '' : selected_card_error.models
+                "
                 item-title="name"
                 return-object
                 inputmode="numeric"
@@ -128,10 +134,12 @@
 <script>
 import axios from "axios";
 import swal from "sweetalert";
+import { socket } from "../../../socket.js";
 export default {
   data() {
     return {
       verify: false,
+      loading: false,
       tabs: "one",
       search: "",
       selected_card_error: "",
@@ -238,6 +246,12 @@ export default {
       });
     },
     start() {
+      this.selected_card = null;
+      this.selected_card_error = null;
+      this.selected_employee = null;
+      this.selected_model_error = null;
+      this.selected_stage = null;
+      this.verify = false;
       if (localStorage.getItem("order")) {
         this.loadassist();
         this.load_card_error_assist();
@@ -247,23 +261,23 @@ export default {
       }
     },
     submitproduction() {
-      console.log("card", this.selected_card);
-      console.log("employee", this.selected_employee);
-      console.log("model", this.selected_stage);
+      //console.log("card", this.selected_card);
+      //console.log("employee", this.selected_employee);
+      //console.log("model", this.selected_stage);
+      this.loading = true;
       if (this.verify === false) {
         axios
           .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
-            stage: this.selected_stage.id._id,
+            stage: this.selected_stage.id,
             employee: this.selected_employee.id,
             enteredBy: localStorage.getItem("id"),
           })
           .then((res) => {
-            console.log(res);
-            swal("success", "stages appended successfully", "success").then(
-              () => {
-                this.$router.go(0);
-              }
-            );
+            //console.log(res);
+            swal("success", "تم رصد المرحلة بنجاح", "success").then(() => {
+              this.start();
+              this.loading = false;
+            });
           });
       } else {
         axios
@@ -273,31 +287,75 @@ export default {
             enteredBy: localStorage.getItem("id"),
           })
           .then((res) => {
-            swal("success", "stages appended successfully", "success").then(
-              () => {
-                this.$router.go(0);
-              }
-            );
+            swal("success", "تم رصد الاصلاحات بنجاح", "success").then(() => {
+              this.start();
+              this.loading = false;
+            });
           });
       }
+      this.loading = false;
     },
   },
   computed: {
     displayText() {
-      return this.employees.map((employee) => ({
-        name: `${employee.name} (${employee.code})`,
-        id: employee._id,
-      }));
+      return this.employees
+        .filter((employee) => employee.role.number > 3)
+        .map((employee) => ({
+          name: `${employee.name} (${employee.code})`,
+          id: employee._id,
+        }));
+    },
+    stageview() {
+      if (verify === false) {
+      } else {
+      }
     },
     stageerror() {
-      return this.assist_stages.filter(
-        (element) => element.id.type !== "quality"
-      );
+      return this.assist_stages
+        .filter((element) => element.id.type !== "quality")
+        .map((el) => ({
+          name: `${el.id.name} (${el.id.code})`,
+          id: el.id._id,
+        }));
     },
   },
   created() {
     this.start();
     this.loademployee();
+  },
+  mounted() {
+    socket.on("errors", (message) => {
+      console.log(message);
+      if (!this.assist) {
+        this.load_card_error_admin();
+      } else {
+        this.load_card_error_assist();
+      }
+    });
+    socket.on("repairs", (message) => {
+      console.log(message);
+      if (!this.assist) {
+        this.load_card_error_admin();
+      } else {
+        this.load_card_error_assist();
+      }
+    });
+    socket.on("addTracking", (message) => {
+      console.log(message);
+      if (!this.assist) {
+        this.load_card_error_admin();
+      } else {
+        this.load_card_error_assist();
+      }
+    });
+    socket.on("errorConfirm", (message) => {
+      console.log(message);
+      if (!this.assist) {
+        this.load_card_error_admin();
+      } else {
+        this.load_card_error_assist();
+      }
+    });
   },
 };
 </script>

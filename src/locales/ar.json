@@ -109,7 +109,7 @@
     "addMaterial": "اضافة خامة انتاج"
   },
   "orders": {
-    "allOrders": "كل الاوردرات",
+    "allOrders": "كل الطلبيات",
     "addOrders": "اضافة اوردر"
   },
   "sign out": "تسجيل خروج ",
@@ -120,8 +120,8 @@
   "order in production": "  الطلبية قيد الانتاج",
   "complete": "انهاء",
   "errors": "الاخطاء",
-  "verifing": "تحقق من خطا؟",
-  "order": "الاوردر",
+  "verifing": "اصلاحات؟",
+  "order": "الطلبية",
   "employee code": "كود العامل",
   "card code": "كود الكارتة",
   "stage code": "كود المرحلة",

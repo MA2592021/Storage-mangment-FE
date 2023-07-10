@@ -21,6 +21,7 @@
         single-line
         hide-details
       ></v-text-field>
+
       <v-data-table
         :group-by="groupBy"
         :headers="headers"
@@ -33,14 +34,20 @@
         item-value="name"
       >
         <template v-slot:item.errors="{ item }">
-          <v-chip
-            @click="test(item)"
-            class="ma-2"
-            :color="item.columns.errors === 0 ? `green` : `red`"
-            text-color="white"
+          <v-badge
+            dot
+            inline
+            :color="item.raw.currentErrors.length > 0 ? 'red' : 'green'"
           >
-            {{ item.columns.errors }}
-          </v-chip>
+            <v-chip
+              @click="test(item)"
+              class="ma-2"
+              :color="item.columns.errors === 0 ? `green` : `red`"
+              text-color="white"
+            >
+              {{ item.columns.errors }}
+            </v-chip></v-badge
+          >
         </template>
         <template v-slot:item.model="{ item }">
           <v-chip @click="model(item.raw.model._id)" class="ma-2">
@@ -112,7 +119,7 @@ export default {
       console.log(item);
     },
     getChipColor(type) {
-      if (type === "preperation") {
+      if (type === "preparations") {
         return "orange";
       } else if (type === "production") {
         return "info";
@@ -147,7 +154,7 @@ export default {
     loadtrack() {
       axios.get("/api/card/last/100").then((res) => {
         this.cards = [];
-        //console.log(res.data.data);
+        console.log(res.data.data);
         res.data.data.forEach((element) => {
           let x = {};
           x._id = element._id;
@@ -155,6 +162,7 @@ export default {
           x.model = element.model;
           x.order = element.order;
           x.qty = element.quantity;
+          x.currentErrors = element.currentErrors;
           x.currentstage =
             element.tracking.length === 0
               ? ""
@@ -163,9 +171,9 @@ export default {
           x.date =
             element.tracking.length === 0
               ? "not started yet"
-              : moment(
-                  element.tracking[element.tracking.length - 1].dateOut
-                ).fromNow();
+              : moment(element.tracking[element.tracking.length - 1].dateOut)
+                  .subtract(3, "hours")
+                  .fromNow();
           x.dato =
             element.tracking.length === 0
               ? ""

@@ -3,7 +3,7 @@
     <v-col cols="12">
       <v-checkbox
         v-model="verify"
-        @update:modelValue="error = false"
+        @update:modelValue="errorclear()"
         :label="$t('verifing')"
         color="green"
         value="true"
@@ -22,7 +22,7 @@
     <v-col cols="12">
       <v-autocomplete
         v-model="selected_model"
-        :items="selected_order.models"
+        :items="selected_order === null ? '' : selected_order.models"
         item-title="id.name"
         :label="$t('model')"
         return-object
@@ -53,7 +53,7 @@
     <v-col cols="12">
       <v-autocomplete
         v-model="selected_stage"
-        :items="selected_card.currentErrors"
+        :items="selected_card === null ? '' : selected_card.currentErrors"
         inputmode="numeric"
         item-title="name"
         return-object
@@ -160,12 +160,12 @@ export default {
     employees: [],
     selected_order: localStorage.getItem("quality_order")
       ? JSON.parse(localStorage.getItem("quality_order"))
-      : "",
+      : null,
     selected_model: localStorage.getItem("quality_model")
       ? JSON.parse(localStorage.getItem("quality_model"))
-      : "",
-    selected_card: "",
-    selected_stage: "",
+      : null,
+    selected_card: null,
+    selected_stage: null,
 
     selected_quality: null,
   }),
@@ -396,7 +396,7 @@ export default {
                 );
 
                 swal("success", "quality check done", "success").then(() => {
-                  this.$router.go(0);
+                  this.start();
                 });
               }
             } catch (error) {
@@ -419,7 +419,7 @@ export default {
               })
               .then(() => {
                 swal("success", "quality check done", "success");
-                this.$router.go(0);
+                this.start();
               });
           })
           .then(() => {
@@ -454,6 +454,23 @@ export default {
         return [];
       }
     },
+    start() {
+      this.selected_card = null;
+      this.selected_stage = null;
+      this.error = false;
+      this.verify = false;
+      this.errors = [];
+      if (localStorage.getItem("quality_model")) {
+        this.loadcards();
+        this.loadquality();
+      }
+    },
+    errorclear() {
+      if (this.verify === true) {
+        this.error = false;
+        this.errors = [];
+      }
+    },
   },
   computed: {
     displayText() {
@@ -477,10 +494,7 @@ export default {
   created() {
     this.loadorders();
     this.loademployee();
-    if (localStorage.getItem("quality_model")) {
-      this.loadcards();
-      this.loadquality();
-    }
+    this.start();
   },
 };
 </script>

@@ -118,13 +118,16 @@ export default {
     loadassist() {
       this.assists = [];
       axios.get("/api/userEmployee/").then((res) => {
+        console.log(res);
         res.data.data.forEach((element) => {
           let x = {};
-          x._id = element._id;
-          x.name = element.employee.name;
-          x.code = element.employee.code;
-          x.work = element.work[element.work.length - 1];
-          this.assists.push(x);
+          if (element.user.role.number === 3) {
+            x._id = element._id;
+            x.name = element.employee.name;
+            x.code = element.employee.code;
+            x.work = element.work[element.work.length - 1];
+            this.assists.push(x);
+          }
         });
       });
     },

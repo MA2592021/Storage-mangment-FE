@@ -70,7 +70,7 @@ export default {
     order: {
       name: "",
       client: null,
-      details: "",
+      details: "   ",
       note: "    ",
     },
     clients: [],

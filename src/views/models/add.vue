@@ -117,6 +117,7 @@
         variant="text"
         @click="add"
         v-if="step === 4"
+        :loading="loading"
       >
         {{ $t("tabs.add") }}
       </v-btn>
@@ -143,6 +144,7 @@ export default {
         );
       },
     ],
+    loading: false,
     step: 1,
     url: null,
     image: null,
@@ -170,6 +172,7 @@ export default {
   },
   methods: {
     add() {
+      this.loading = true;
       // this.url = URL.createObjectURL(this.employee.img);
       const temp_colors = [];
       const temp_sizes = [];
