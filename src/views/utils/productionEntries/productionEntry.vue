@@ -356,6 +356,24 @@ export default {
         this.load_card_error_assist();
       }
     });
+    socket.on("assistantupdated", () => {
+      if (!this.assist) {
+      } else {
+        axios
+          .get("/api/userEmployee/" + localStorage.getItem("id"))
+          .then((res) => {
+            localStorage.setItem(
+              "order",
+              res.data.data.work[res.data.data.work.length - 1].order._id
+            );
+            localStorage.setItem(
+              "model",
+              res.data.data.work[res.data.data.work.length - 1].model._id
+            );
+            this.start();
+          });
+      }
+    });
   },
 };
 </script>

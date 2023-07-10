@@ -27,18 +27,14 @@
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              :label="$t(`phone`) + '*'"
+              :label="$t(`phone`)"
               v-model="employee.phone"
-              hint="Required"
-              required
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field
-              required
               v-model="employee.nid"
-              :label="$t(`nid`) + '*'"
-              hint="Required"
+              :label="$t(`nid`)"
             ></v-text-field>
           </v-col>
 
@@ -102,8 +98,8 @@ export default {
     employee: {
       name: "",
       code: "",
-      phone: "",
-      nid: "",
+      phone: null,
+      nid: null,
       img: "",
       role: null,
       note: "    ",
