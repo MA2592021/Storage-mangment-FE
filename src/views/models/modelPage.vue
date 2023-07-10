@@ -35,6 +35,7 @@
               :items="sizes"
               chips
               multiple
+              :clearable="dis === false"
               :label="$t(`sizes`) + '*'"
               item-title="name"
               :readonly="dis === true"
@@ -46,6 +47,7 @@
               v-model="model.colors"
               :items="colors"
               chips
+              :clearable="dis === false"
               multiple
               return-object
               :label="$t(`colors`) + '*'"
