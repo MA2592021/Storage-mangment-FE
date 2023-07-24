@@ -853,7 +853,7 @@ const router = createRouter({
         import("../views/utils/productionEntries/qualityCheck.vue"),
     },
 
-    //test
+    //credits
     {
       path: "/lazysoftware/credits",
       name: "credits",

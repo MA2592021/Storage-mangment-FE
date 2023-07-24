@@ -59,7 +59,7 @@
             {{ item.columns.code }}
           </v-chip>
         </template>
-        <template v-slot:item.stage="{ item }">
+        <template v-slot:item.currentstage[name]="{ item }">
           <v-chip
             class="ma-2"
             :color="getChipColor(item.raw.currentstage.type)"
@@ -76,10 +76,18 @@
         </template>
         <template v-slot:item.date="{ item }">
           <v-chip class="ma-2" :color="timeago(item.raw.dato)">
-            {{ item.raw.date }}
+            {{ momentdate(item.raw.date) }}
           </v-chip>
         </template>
       </v-data-table>
+    </v-col>
+    <v-col>
+      <!-- <v-checkbox
+        v-model="groupBy"
+        label="group by Stage"
+        value="{ key: `currentstage[name]`, order: `asc` }"
+      ></v-checkbox>
+      {{ groupBy }} -->
     </v-col>
     <v-col cols="12"
       ><p style="color: red">* red is for not started yet</p>
@@ -102,13 +110,17 @@ export default {
       { key: "date", order: "dsc" },
       { order: "asc", key: "model" },
     ],
-    groupBy: [{ key: "order[name]", order: "asc" }],
+    groupBy: [
+      { key: `order[name]`, order: `asc` },
+      // { key: "currentstage[name]", order: "asc" },
+    ],
     headers: [
+      // { key: "order[name]", title: "order" },
       { title: "model", key: "model" },
       { title: "card", align: "start", key: "code" },
       { title: "quantity", align: "center", key: "qty" },
       { title: "errors", key: "errors" },
-      { title: "last stage", key: "stage" },
+      { title: "last stage", key: "currentstage[name]", groupable: true },
       { title: "time finished", key: "date" },
     ],
 
@@ -151,6 +163,14 @@ export default {
     stage(id) {
       this.$router.push({ path: "/utils/stage/" + id });
     },
+    momentdate(value) {
+      if (value === "not started yet") {
+        return "not started yet";
+      } else {
+        return moment(value).subtract(3, "hours").fromNow();
+      }
+    },
+
     loadtrack() {
       axios.get("/api/card/last/100").then((res) => {
         this.cards = [];
@@ -171,9 +191,8 @@ export default {
           x.date =
             element.tracking.length === 0
               ? "not started yet"
-              : moment(element.tracking[element.tracking.length - 1].dateOut)
-                  .subtract(3, "hours")
-                  .fromNow();
+              : element.tracking[element.tracking.length - 1].dateOut;
+
           x.dato =
             element.tracking.length === 0
               ? ""

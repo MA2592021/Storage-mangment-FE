@@ -266,7 +266,7 @@ export default {
     updatemodels(value) {
       console.log(value);
       axios
-        .patch("/api/order/models/" + this.$route.params.id, {
+        .patch(`/api/order/${this.$route.params.id}/models/add` , {
           models: value,
         })
         .then((response) => {

@@ -95,6 +95,9 @@
                     {{ item.raw.code ? item.raw.code : "" }}
                   </td>
                   <td>
+                    {{ item.raw.produced }}
+                  </td>
+                  <td>
                     <v-btn
                       color="red"
                       :disabled="dis"
@@ -288,6 +291,7 @@ export default {
         { title: "color", key: "color" },
         { title: "quantity", key: "quantity" },
         { title: "code", key: "code" },
+        { title: "produced", key: "produced" },
         { title: "actions", key: "actions" },
       ],
       headers1: [
@@ -355,6 +359,7 @@ export default {
       ship1: [],
       clientmat1: [],
       total1: [],
+      orgmodel: [],
     };
   },
   methods: {
@@ -380,6 +385,7 @@ export default {
         x.size = this.size;
         x.color = this.color;
         x.code = this.code;
+        x.produced = 0;
         console.log(x);
         this.reqmodel.push(x);
         this.resett();
@@ -420,12 +426,37 @@ export default {
       this.code = "";
     },
     deleteitem(id) {
+      let diff = this.getArrayDifference(this.reqmodel, this.orgmodel);
+
       const index = this.reqmodel.findIndex((element) => element._id === id);
-      this.reqmodel.splice(index, 1);
+      const found = diff.findIndex((element) => element._id === id);
+      console.log(index);
+      swal("are you sure want to delete this item?").then((val) => {
+        if (val) {
+          if (found === -1) {
+            console.log(index);
+            axios
+              .patch(`/api/order/${this.order}/models/remove`, {
+                index: id,
+              })
+              .then(() => {
+                swal("success", "item deleted successfully", "success");
+                this.orgmodel.splice(index, 1);
+                this.reqmodel.splice(index, 1);
+              });
+          } else {
+            this.reqmodel.splice(index, 1);
+            this.orgmodel.splice(index, 1);
+            swal("success", "item deleted successfully", "success");
+          }
+        }
+      });
     },
     appendreq() {
       const models = [];
-      this.reqmodel.forEach((element) => {
+      let diff = this.getArrayDifference(this.reqmodel, this.orgmodel);
+      console.log("diff", diff);
+      diff.forEach((element) => {
         const x = {};
         x.id = element.id ? element.id._id : element._id;
         x.quantity = element.quantity ? element.quantity : element.qty;
@@ -441,6 +472,11 @@ export default {
         this.model = response.data.data;
         //console.log(this.model);
       });
+    },
+    getArrayDifference(arr1, arr2) {
+      return arr1.filter(
+        (item1) => !arr2.some((item2) => item1["code"] === item2["code"])
+      );
     },
     submit(value) {
       console.log(value);
@@ -461,6 +497,7 @@ export default {
   created() {
     this.loadmodel();
     console.log(this.reqmodel);
+    this.orgmodel = this.reqmodel.slice();
     this.ship.forEach((element) => {
       const x = {};
       x.name = element.name;

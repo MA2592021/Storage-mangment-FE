@@ -63,12 +63,14 @@ export default {
   }),
   methods: {
     login: function () {
+      console.log("logging in");
       axios
         .post("/api/auth/login", {
           code: this.code,
           password: this.password,
         })
         .then((res) => {
+          console.log(res.data);
           if (res.data.errors) {
             swal("error", res.data.errors[0].msg, "error");
           } else {

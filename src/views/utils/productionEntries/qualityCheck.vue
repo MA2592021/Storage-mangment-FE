@@ -38,6 +38,7 @@
         return-object
         inputmode="numeric"
         :label="$t('card code')"
+        @update:modelValue="loadcard()"
       ></v-autocomplete>
     </v-col>
     <v-col cols="12">
@@ -80,7 +81,7 @@
         >
         <v-col class="mt-2" cols="4" align="center">
           <span
-            >{{ $t("number of pices") }}
+            >{{ $t("number of stages") }}
             <strong>{{ errors.length }}</strong></span
           >
         </v-col>
@@ -91,14 +92,17 @@
       <v-row v-for="(error, index) in errors" :key="error">
         <v-divider :thickness="8"></v-divider>
         <v-col cols="12" align="center"
-          ><span> {{ $t("piece") }} {{ index + 1 }} </span></v-col
+          ><span> {{ $t("stage") }} {{ index + 1 }} </span></v-col
         >
         <v-col cols="12"
-          ><v-text-field
-            :label="$t('piece number')"
-            v-model="error.number"
-          ></v-text-field
-        ></v-col>
+          ><v-autocomplete
+            v-model="error.stage"
+            :items="stageerror"
+            item-title="id.name"
+            :label="$t('stage error')"
+            return-object
+          ></v-autocomplete>
+        </v-col>
         <v-col cols="4"
           ><v-btn color="pink" @click="decrement1(index)"> - </v-btn></v-col
         >
@@ -106,7 +110,7 @@
           <span>
             {{ $t("number of errors") }}
             <strong>{{ error.errors.length }}</strong> {{ $t("in") }}
-            {{ $t("piece number") }} <strong>{{ error.number }}</strong></span
+            {{ $t("stage") }} <strong>{{ error.number }}</strong></span
           >
         </v-col>
         <v-col cols="4" align="end"
@@ -121,8 +125,8 @@
             <v-col cols="12" md="6"
               ><v-autocomplete
                 v-model="er.stage"
-                :items="stageerror"
-                item-title="id.name"
+                :items="card.tracking"
+                item-title="stage.name"
                 :label="$t('stage error')"
                 return-object
               ></v-autocomplete>
@@ -153,6 +157,7 @@ export default {
   data: () => ({
     error: false,
     verify: false,
+    card: "",
     errors: [],
     orders: [],
     quality: [],
@@ -171,15 +176,15 @@ export default {
   }),
   methods: {
     increment() {
-      if (this.selected_model === "") {
-        swal("error", "please select model first", "error");
+      if (this.selected_card === null) {
+        swal("error", "please select card first", "error");
       } else {
         let x = {};
-        x.number = "";
+        x.stage = "";
+        x.enteredBy = localStorage.getItem("id");
         x.errors = [
           {
-            stage: "",
-            enteredBy: localStorage.getItem("id"),
+            pices: [],
             description: null,
           },
         ];
@@ -187,7 +192,7 @@ export default {
       }
     },
     decrement() {
-      if (this.errors.length < 2) {
+      if (this.errors.length >= 1) {
         swal(
           "danger",
           "are you sure you want to delete last element",
@@ -197,21 +202,21 @@ export default {
             this.errors.pop();
           }
         });
+      } else {
+        this.errors.pop();
       }
-      this.errors.pop();
     },
     increment1(index) {
       this.errors[index].errors.push({
-        stage: "",
-        enteredBy: localStorage.getItem("id"),
+        pices: [],
         description: null,
       });
     },
     decrement1(index) {
-      console.log(this.errors[index].errors);
+      //console.log(this.errors[index].errors);
       if (
         this.errors[index].errors[this.errors[index].errors.length - 1]
-          .stage === ""
+          .description === null
       ) {
         this.errors[index].errors.pop();
       } else {
@@ -228,7 +233,7 @@ export default {
     },
     loadorders() {
       axios.get("/api/order").then((res) => {
-        console.log(res.data.data);
+        //console.log(res.data.data);
         res.data.data.forEach((element) => {
           let x = {};
           let uniqueArray = [];
@@ -247,7 +252,7 @@ export default {
           x.models = uniqueArray;
           this.orders.push(x);
         });
-        console.log(this.orders);
+        //console.log(this.orders);
       });
     },
 
@@ -256,6 +261,7 @@ export default {
         .get("/api/model/" + this.selected_model.id._id)
         .then((res) => {
           this.selected_model.id = res.data.data;
+          console.log("model", res.data.data);
         })
         .then(() => {
           this.loadcards();
@@ -268,9 +274,9 @@ export default {
           this.quality.push(element);
         }
 
-        console.log(element.id.type);
+        //console.log(element.id.type);
       });
-      console.log(this.quality);
+      //console.log(this.quality);
     },
     loadcards() {
       axios
@@ -284,6 +290,13 @@ export default {
           console.log("card", res);
           this.cards = res.data.data;
         });
+    },
+    loadcard() {
+      axios.get("/api/card/" + this.selected_card._id).then((res) => {
+        console.log(res.data);
+        this.card = res.data.data;
+        console.log("selected", this.selected_card);
+      });
     },
     check(cardErrors) {
       return new Promise((resolve) => {
@@ -454,6 +467,7 @@ export default {
         return [];
       }
     },
+
     start() {
       this.selected_card = null;
       this.selected_stage = null;
@@ -486,6 +500,12 @@ export default {
       );
     },
     stageerror() {
+      let common = this.selected_model.id.stages.filter((element) =>
+        this.card.tracking.includes((el) => {
+          element.id._id = el._id;
+        })
+      );
+      console.log(common);
       return this.selected_model.id.stages.filter(
         (element) => element.id.type !== "quality"
       );

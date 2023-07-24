@@ -13,11 +13,7 @@
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item v-for="n in 3" :key="n" :value="n" disabled>
-        <v-container fluid>
-          <v-row>
-            <router-view />
-          </v-row>
-        </v-container>
+        <router-view />
       </v-window-item>
     </v-window>
   </v-card>

@@ -17,19 +17,29 @@
             item-title="name"
             label="select stage"
             return-object
-            @update:modelValue="dosomthing(selected, stage.id)"
-          ></v-autocomplete></v-col
-      ></v-row>
+            @update:modelValue="dosomthing(selected, stage.id)" /></v-col
+        ><v-col
+          ><v-checkbox
+            label="parallel with previous stage ?"
+            v-model="stage.parallel"
+            :disabled="index === 0"
+            @update:modelValue="parallelize(index)"
+          ></v-checkbox
+        ></v-col>
+        <v-col>{{ stage }}</v-col>
+      </v-row>
 
       <h2 class="text-h5 mb-6">{{ stage.name }}</h2>
 
       <p class="mb-4 text-medium-emphasis text-body-2">
-        stage machien type :
+        stage machine type :
         {{ stage.machineType ? stage.machineType.name : "" }}
       </p>
       <p class="mb-4 text-medium-emphasis text-body-2">
-        stage note : {{ stage.note }}
-        {{ stage.machineType ? stage.machineType.name : "" }}
+        stage type : {{ stage.type }}
+      </p>
+      <p class="mb-4 text-medium-emphasis text-body-2">
+        stage priority : {{ stage.priority }}
       </p>
 
       <v-divider class="mb-4"></v-divider>
@@ -89,10 +99,13 @@ export default {
 
   data() {
     return {
-      stages: [{ id: "0", name: "stage name", desc: "stage discribtion" }],
+      stages: [
+        { id: 0, name: "stage name", priority: 1, parallel: false, type: "" },
+      ],
       realstages: [],
       id: 0,
       selected: null,
+      priority: 1,
       selectedmt: { name: "" },
       data: [],
       machinetypes: [],
@@ -102,15 +115,19 @@ export default {
   created() {
     axios.get("/api/stage/").then((response) => {
       this.data = response.data.data;
+      console.log(this.data);
     });
   },
   methods: {
     addstage() {
       this.id += 1;
+      this.priority += 1;
       this.stages.push({
         id: this.id,
         name: "stage name",
-        desc: "stage describtion",
+        priority: this.priority,
+        type: "",
+        parallel: false,
       });
     },
     deletee(id) {
@@ -132,6 +149,7 @@ export default {
         console.log(element, index);
       }
     },
+
     down(id) {
       console.log("im alive");
 
@@ -153,19 +171,42 @@ export default {
       this.stages.find((m) => m.id === index).machineType =
         selected.machineType;
       this.stages.find((m) => m.id === index)._id = selected._id;
-      this.stages.find((m) => m.id === index).note = selected.note;
+      this.stages.find((m) => m.id === index).type = selected.type;
       this.selected = null;
-      console.log(this.stages.find((m) => m.id === index));
+      //console.log(this.stages.find((m) => m.id === index));
     },
+    parallelize(index) {
+      //console.log("im here", this.stages[index].priority);
+      if (this.stages[index].parallel === true) {
+        console.log("parallelize");
+        this.stages[index].priority = this.stages[index - 1].priority;
 
+        let pir = this.stages[index].priority;
+        for (let x = index + 1; x < this.stages.length; x++) {
+          this.stages[x].priority = pir + 1;
+          pir++;
+        }
+        console.log(this.stages[index + 1].priority);
+        this.priority = pir;
+      } else {
+        console.log("unparallelize");
+        this.stages[index].priority = this.stages[index - 1].priority + 1;
+
+        let pir = this.stages[index].priority;
+        for (let x = index + 1; x < this.stages.length; x++) {
+          this.stages[x].priority = pir + 1;
+          pir++;
+        }
+        console.log(this.stages[index + 1].priority);
+        this.priority = pir;
+      }
+    },
     save() {
-      let counter = 1;
-
       this.realstages = [];
       this.stages.forEach((element) => {
         const x = {};
         x.id = element._id;
-        x.priority = counter;
+        x.priority = element.priority;
         this.realstages.push(x);
         counter += 1;
       });
