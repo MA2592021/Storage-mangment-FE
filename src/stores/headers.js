@@ -93,7 +93,7 @@ export const useheaders = defineStore("headers", {
         sortable: false,
         title: "name",
       },
-
+      { title: "code", key: "code" },
       { title: "details", key: "details" },
     ],
     request_header: [

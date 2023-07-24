@@ -19,7 +19,14 @@
                   hint="Required"
                 ></v-text-field>
               </v-col>
-
+              <v-col cols="12">
+                <v-text-field
+                  :label="$t(`code`) + '*'"
+                  v-model="model.code"
+                  required
+                  hint="Required"
+                ></v-text-field>
+              </v-col>
               <v-col cols="12" sm="6">
                 <v-autocomplete
                   :label="$t(`colors`) + '*'"
@@ -150,6 +157,7 @@ export default {
     image: null,
     model: {
       name: "",
+      code: "",
       details: "    ",
       colors: null,
       sizes: null,
@@ -185,6 +193,7 @@ export default {
       axios
         .post("/api/model", {
           name: this.model.name,
+          code: this.model.code,
           details: this.model.details,
           note: this.model.note,
           colors: temp_colors,

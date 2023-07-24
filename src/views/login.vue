@@ -75,6 +75,7 @@ export default {
             swal("error", res.data.errors[0].msg, "error");
           } else {
             console.log(res);
+
             localStorage.setItem("accessToken", res.data.accessToken);
             localStorage.setItem("refreshToken", res.data.refreshToken);
             localStorage.setItem("username", res.data.user.name);
@@ -89,6 +90,7 @@ export default {
             if (res.data.userEmployee) {
               console.log("im here");
               localStorage.setItem("employee", res.data.userEmployee.employee);
+              localStorage.setItem("useremployee", res.data.userEmployee._id);
               if (res.data.userEmployee.work.length > 0) {
                 localStorage.setItem(
                   "order",

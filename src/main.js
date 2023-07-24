@@ -98,7 +98,7 @@ const i18n = createI18n({
 createApp(App)
   .use(router, axios)
   .use(Vue3Toasity, {
-    autoClose: 3000,
+    autoClose: 10000,
     limit: 3,
     // ...
   })
