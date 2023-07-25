@@ -66,6 +66,14 @@
               hint="Required"
             ></v-text-field>
           </v-col>
+          <v-col cols="12" sm="6" md="6">
+            <v-text-field
+              required
+              v-model="card.boxNumber"
+              label="Box number*"
+              hint="Required"
+            ></v-text-field>
+          </v-col>
         </v-row>
       </v-container>
       <small>*indicates required field</small>
@@ -88,7 +96,8 @@ export default {
       qty: "",
       endRange: "",
       startRange: "",
-      cutNumber:'',
+      cutNumber: "",
+      boxNumber: "",
     },
     orders: [],
     selectedOrder: "",
@@ -109,7 +118,8 @@ export default {
           details: "test",
           startRange: parseInt(this.card.startRange),
           endRange: parseInt(this.card.endRange),
-          cutNumber:parseInt(this.card.cutNumber)
+          cutNumber: parseInt(this.card.cutNumber),
+          boxNumber: parseInt(this.card.boxNumber),
         })
         .then((response) => {
           if (response.data.errors) {

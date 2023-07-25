@@ -119,9 +119,16 @@
 
 <script>
 import axios from "axios";
+import { usedata } from "../../stores/mainStore";
+
 export default {
   setup() {
-    return {};
+    const maindata = usedata();
+    const updaterole = (value) => {
+      // Call the 'setPiniaAttribute' action to update the state
+      maindata.setrole(value);
+    };
+    return { updaterole };
   },
   data() {
     return {
@@ -310,6 +317,7 @@ export default {
     signout: function () {
       axios.get("/api/auth/logout").then(() => {
         localStorage.clear();
+        this.updaterole("");
         this.$router.push({
           path: "/login",
         });

@@ -42,6 +42,7 @@
 <script>
 import axios from "axios";
 import swal from "sweetalert";
+import { usedata } from "../stores/mainStore";
 export default {
   data: () => ({
     code: "",
@@ -61,6 +62,14 @@ export default {
       },
     ],
   }),
+  setup() {
+    const maindata = usedata();
+    const updaterole = (value) => {
+      // Call the 'setPiniaAttribute' action to update the state
+      maindata.setrole(value);
+    };
+    return { updaterole };
+  },
   methods: {
     login: function () {
       console.log("logging in");
@@ -70,11 +79,12 @@ export default {
           password: this.password,
         })
         .then((res) => {
-          console.log(res.data);
+          this.updaterole(res.data.user.role.number);
+          //console.log(res.data);
           if (res.data.errors) {
             swal("error", res.data.errors[0].msg, "error");
           } else {
-            console.log(res);
+            //console.log(res);
 
             localStorage.setItem("accessToken", res.data.accessToken);
             localStorage.setItem("refreshToken", res.data.refreshToken);
@@ -85,6 +95,7 @@ export default {
             );
             localStorage.setItem("rolename", res.data.user.role.title);
             localStorage.setItem("rolenum", res.data.user.role.number);
+
             localStorage.setItem("code", res.data.user.code);
             localStorage.setItem("id", res.data.user._id);
             if (res.data.userEmployee) {
@@ -111,12 +122,12 @@ export default {
             swal("success", "Welcome Back", "success");
             console.log("rolenumber", localStorage.getItem("rolenum"));
             if (localStorage.getItem("rolenum") === "3") {
-              console.log("test");
+              //console.log("test");
               this.$router.push({ path: "/utils/prodEntry/" });
             } else if (localStorage.getItem("rolenum") === "2") {
               this.$router.push({ path: "/utils/quality/" });
             } else {
-              console.log("testss");
+              //console.log("testss");
               this.$router.push({ path: "/" });
             }
           }

@@ -6,7 +6,7 @@
         $t("models.addModel")
       }}</span>
     </v-card-title>
-    <v-window v-model="step">
+    <v-window v-model="step" disabled>
       <v-window-item :value="1">
         <v-card-text>
           <v-container>

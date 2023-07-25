@@ -134,7 +134,7 @@
 <script>
 import axios from "axios";
 import swal from "sweetalert";
-import { socket } from "../../../socket.js";
+import { connectSocket } from "../../../socket.js";
 export default {
   data() {
     return {
@@ -270,7 +270,7 @@ export default {
           .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
             stage: this.selected_stage.id,
             employee: this.selected_employee.id,
-            enteredBy: localStorage.getItem("id"),
+            enteredBy: localStorage.getItem("employee"),
           })
           .then((res) => {
             //console.log(res);
@@ -324,6 +324,7 @@ export default {
     this.loademployee();
   },
   mounted() {
+    const socket = connectSocket();
     socket.on("errors", (message) => {
       console.log(message);
       if (!this.assist) {

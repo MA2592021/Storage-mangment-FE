@@ -1,11 +1,18 @@
 <template>
-  <v-img
-    class="bg-white"
-    width="100"
-    :aspect-ratio="1"
-    src="/arkan_logo-withtext.png"
-    cover
-  ></v-img>
+  <v-row>
+    <v-col cols="9">
+      <v-img
+        class="bg-white"
+        width="100"
+        :aspect-ratio="1"
+        src="/arkan_logo-withtext.png"
+        cover
+      ></v-img
+    ></v-col>
+    <v-col cols="3"
+      ><p align="end">Date : {{ currentDate }}</p>
+    </v-col>
+  </v-row>
   <h1 align="center">{{ print_data.title }}</h1>
   <br />
   <v-data-table
@@ -44,12 +51,17 @@ export default {
   mounted() {
     setTimeout(() => {
       window.print();
-    }, 2000);
+    }, 1000);
   },
 
   created() {
     console.log(this.data);
     console.log(this.print_data);
+  },
+  data() {
+    return {
+      currentDate: moment().format("YYYY-MM-DD HH:mm"),
+    };
   },
   setup() {
     const print_data = usedata();
@@ -59,7 +71,11 @@ export default {
 </script>
 
 <style>
-tbody tr:nth-of-type(odd) {
-  background-color: rgba(248, 0, 0, 0.06) !important;
+@media print {
+  /* Hide headers and footers when printing */
+  @page {
+    size: auto;
+    margin: 0;
+  }
 }
 </style>

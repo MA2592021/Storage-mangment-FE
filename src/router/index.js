@@ -120,6 +120,12 @@ const router = createRouter({
           component: () => import("../views/models/all.vue"),
         },
         {
+          path: "stageUpdate/:id",
+          name: "model-update",
+
+          component: () => import("../views/models/stageupdate.vue"),
+        },
+        {
           path: ":id",
           name: "model-page",
 
@@ -896,20 +902,26 @@ router.beforeEach((to, from, next) => {
     ) {
       next();
     } else {
-      const isLoggedIn = await axios
-        .post("/api/auth/test", {
-          refreshToken: localStorage.getItem("refreshToken"),
-        })
-        .then((response) => {
-          return true;
-        })
-        .catch((err) => {
-          if (err.message === "Network Error") {
-            swal("Network Problem", " please check your Connection", "error");
-            console.log(err);
-          }
-          return false;
-        });
+      const isLoggedIn = localStorage.getItem("refreshToken")
+        ? await axios
+            .post("/api/auth/test", {
+              refreshToken: localStorage.getItem("refreshToken"),
+            })
+            .then((response) => {
+              return true;
+            })
+            .catch((err) => {
+              if (err.message === "Network Error") {
+                swal(
+                  "Network Problem",
+                  " please check your Connection",
+                  "error"
+                );
+                console.log(err);
+              }
+              return false;
+            })
+        : false;
       if (to.meta.requiresAuth && !isLoggedIn) {
         // User is not logged in and the route requires authentication
 

@@ -10,25 +10,28 @@ export const state = reactive({
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = import.meta.env.VITE_SOCKET_URL;
 
-export const socket = io(URL);
+export function connectSocket() {
+  const socket = io(URL);
 
-// socket.on("message", (message) => {
-//   console.log("Received message:", message);
-// });
+  // socket.on("message", (message) => {
+  //   console.log("Received message:", message);
+  // });
 
-socket.on("connect", () => {
-  state.connected = true;
-});
+  socket.on("connect", () => {
+    state.connected = true;
+  });
 
-socket.on("disconnect", () => {
-  state.connected = false;
-});
+  socket.on("disconnect", () => {
+    state.connected = false;
+  });
 
-// socket.on("test", (...args) => {
-//   state.fooEvents.push(args);
-//   console.log(args);
-// });
+  // socket.on("test", (...args) => {
+  //   state.fooEvents.push(args);
+  //   console.log(args);
+  // });
 
-socket.on("bar", (...args) => {
-  state.barEvents.push(args);
-});
+  // socket.on("bar", (...args) => {
+  //   state.barEvents.push(args);
+  // });
+  return socket;
+}

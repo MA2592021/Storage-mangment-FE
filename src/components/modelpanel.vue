@@ -30,6 +30,7 @@
               <v-btn class="mx-auto" color="info" @click="printo(1)"
                 >print
               </v-btn>
+              <v-btn class="ml-2" color="red" @click="update()">Edit </v-btn>
             </div></v-col
           >
         </v-row>
@@ -200,6 +201,7 @@
 <script>
 import axios from "axios";
 import { usedata } from "../stores/print_data";
+import Stageupdate from "../views/models/stageupdate.vue";
 export default {
   data() {
     return {
@@ -237,10 +239,10 @@ export default {
           key: "id.name",
         },
         {
-          title: "machine type",
+          title: "Type",
           align: "start",
           sortable: false,
-          key: "machineType.name",
+          key: "id.type",
         },
         {
           title: "priority",
@@ -283,9 +285,10 @@ export default {
   created() {
     axios.get("/api/order/model/" + this.$route.params.id).then((response) => {
       this.orders = response.data.data;
-      console.log(this.orders);
     });
+    //console.log(this.stages);
   },
+
   props: {
     stages: Array,
     consumption: Array,
@@ -299,6 +302,11 @@ export default {
     return { print_data };
   },
   methods: {
+    update() {
+      this.$router.push({
+        path: "/model/stageUpdate/" + this.$route.params.id,
+      });
+    },
     printo(x) {
       if (x === 1) {
         this.print_data.title = "stages to produce " + this.name;
