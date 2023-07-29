@@ -121,9 +121,15 @@ const router = createRouter({
         },
         {
           path: "stageUpdate/:id",
-          name: "model-update",
+          name: "model-stage-update",
 
           component: () => import("../views/models/stageupdate.vue"),
+        },
+        {
+          path: "consumptionupdate/:id",
+          name: "model-consumption-update",
+
+          component: () => import("../views/models/consumptionupdate.vue"),
         },
         {
           path: ":id",

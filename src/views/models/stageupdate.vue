@@ -23,7 +23,7 @@
         v-model="item.raw.parallel"
       ></v-checkbox>
     </template>
-    <template v-slot:item.name[name]="props">
+    <template v-slot:item.name="props">
       <v-autocomplete
         :error="props.item.raw.error"
         :error-messages="
@@ -32,8 +32,9 @@
         label="stages"
         :items="data"
         item-title="name"
-        return-object
-        v-model="props.item.raw.name"
+        item-value="_id"
+        v-model="props.item.raw._id"
+        @update:modelValue="dothings(props.item.raw.id)"
       ></v-autocomplete>
     </template>
     <template v-slot:item.actions="{ item, index }">
@@ -41,7 +42,11 @@
         <v-col
           ><v-btn
             color="warning"
-            :disabled="index === 0 || item.raw.parallel === true"
+            :disabled="
+              index === 0 ||
+              item.raw.parallel === true ||
+              stages[index - 1].parallel === true
+            "
             @click="up(index)"
             class="mr-2"
             >&#8593;</v-btn
@@ -51,7 +56,9 @@
           <v-btn
             color="info"
             :disabled="
-              index === stages.length - 1 || item.raw.parallel === true
+              index === stages.length - 1 ||
+              item.raw.parallel === true ||
+              stages[index + 1].parallel === true
             "
             @click="down(index)"
             >&#8595;</v-btn
@@ -61,7 +68,7 @@
           <v-btn
             color="red"
             :disabled="item.raw.parallel === true"
-            @click="deletee(index)"
+            @click="deletee(item.raw.id)"
             icon="mdi-delete-circle"
             class="ml-2"
           ></v-btn
@@ -69,8 +76,15 @@
       </v-row>
     </template>
   </v-data-table>
-  <v-btn variant="tonal" color="success" @click="save" class="mt-2">Save</v-btn>
-  {{ stages }}
+  <v-row>
+    <v-col align="center" class="ma-4"
+      ><v-btn variant="tonal" color="red" @click="cancel" class="mr-4"
+        >Cancel</v-btn
+      >
+
+      <v-btn variant="tonal" color="success" @click="save">Update</v-btn></v-col
+    >
+  </v-row>
 </template>
 
 <script>
@@ -83,14 +97,14 @@ export default {
       .then((res) => {
         this.model = res.data.data;
         res.data.data.stages.forEach((element, index) => {
-          const x = { name: { name: "", type: "", rate: "" } };
+          const x = {};
           x.id = this.id();
-          x.name._id = element.id._id;
+          x._id = element.id._id;
           x.priority = +element.priority;
-          x.name.name = element.id.name;
-          x.name.type = element.id.type;
-          x.name.rate = element.id.rate;
-          x.name.machinetype = element.id.machineType.name;
+          //x.name = element.id.name;
+          x.type = element.id.type;
+          x.rate = element.id.rate;
+          x.machinetype = element.id.machineType.name;
           x.error = false;
           if (index === 0) {
             x.parallel = false;
@@ -116,7 +130,7 @@ export default {
     add() {
       this.stages.push({
         id: this.id(),
-        name: "",
+        //name: "",
         priority: this.counter,
         error: false,
         parallel: false,
@@ -146,19 +160,21 @@ export default {
         }
       }
     },
+    cancel() {
+      swal("", "are you sure you want to Cancel?", "info").then((val) => {
+        if (val) {
+          this.$router.go(-1);
+        }
+      });
+    },
     async save() {
       let er = 0;
       this.stages.forEach((element) => {
-        if (element.name) {
-          if (element.name.name) {
-            element.error = false;
-          } else {
-            element.error = true;
-            er++;
-          }
-        } else {
+        if (!element._id) {
           element.error = true;
           er++;
+        } else {
+          element.error = false;
         }
       });
       if (er === 0) {
@@ -172,11 +188,25 @@ export default {
           const stages = [];
           this.stages.forEach((element) => {
             const x = {};
-            x._id = element.name._id;
+            x.id = element._id;
             x.priority = element.priority;
             stages.push(x);
           });
-          this.$emit("stages_done", stages);
+          axios
+            .patch(`/api/model/stages/update/${this.$route.params.id}`, {
+              stages: stages,
+            })
+            .then(() => {
+              swal("success", "stages updated successfully", "success").then(
+                (val) => {
+                  if (val) {
+                    this.$router.push({
+                      path: `/model/${this.$route.params.id}`,
+                    });
+                  }
+                }
+              );
+            });
         } else {
           dublicate.forEach((element) => {
             const index = this.stages.findIndex(
@@ -213,14 +243,19 @@ export default {
       this.stages[index + 1].priority = temp;
       this.sortByAttribute("priority");
     },
-    deletee(index) {
-      const pir = this.stages[index].priority;
+    deletee(id) {
       swal("Are you sure want to delete this stage").then((val) => {
         if (val) {
+          const index = this.stages.findIndex((el) => el.id === id);
+          if (index === 0) {
+            if (this.stages[index + 1].parallel === true) {
+              this.parallelize(index + 1);
+            }
+            this.stages[index + 1].parallel = false;
+          }
           for (let i = index + 1; i < this.stages.length; i++) {
             this.stages[i].priority = this.stages[i].priority - 1;
           }
-
           this.stages.splice(index, 1);
           swal("success", "stage deleted successfully", "success");
         }
@@ -228,21 +263,33 @@ export default {
     },
     async getDuplicateIndices() {
       const lookup = await this.stages.reduce((a, e) => {
-        a[e.name._id] = ++a[e.name._id] || 0;
+        a[e._id] = ++a[e._id] || 0;
         return a;
       }, {});
 
-      return this.stages.filter((e) => lookup[e.name._id]);
+      return this.stages.filter((e) => lookup[e._id]);
     },
     id() {
       // Create a random ID using Math.random() and Date.now()
       const id = Math.random().toString(36).substr(2) + Date.now().toString(36);
       return id;
     },
+    dothings(id) {
+      //console.log(id);
+      const index = this.stages.findIndex((el) => el.id === id);
+      const index2 = this.data.findIndex(
+        (el) => el._id === this.stages[index]._id
+      );
+      //console.log(index, index2);
+      this.stages[index].type = this.data[index2].type;
+      this.stages[index].rate = this.data[index2].rate;
+    },
   },
   computed: {
     counter() {
-      return this.stages[this.stages.length - 1].priority + 1;
+      return this.stages.length === 0
+        ? 1
+        : this.stages[this.stages.length - 1].priority + 1;
     },
   },
   data() {
@@ -258,22 +305,24 @@ export default {
           width: "10%",
           sortable: false,
         },
-        { title: "priority", align: "center", key: "priority", width: "10%" },
+        {
+          title: "priority",
+          align: "center",
+          key: "priority",
+          width: "10%",
+          sortable: false,
+        },
         {
           title: "Choose stage",
           align: "center",
           sortable: false,
-          key: "name[name]",
+          key: "name",
           width: "30%",
         },
 
-        { title: "type", align: "end", key: "name[type]" },
-        {
-          title: "machine type",
-          align: "center",
-          key: "name[machineType]",
-        },
-        { title: "rate", align: "end", key: "name[rate]" },
+        { title: "type", align: "end", key: "type" },
+
+        { title: "rate", align: "end", key: "rate" },
         { title: "Actions", align: "center", key: "actions" },
       ],
       sortBy: [{ key: "priority", order: "asc" }],
@@ -282,8 +331,3 @@ export default {
   },
 };
 </script>
-
-// save() { // this.realstages = []; // this.stages.forEach((element) => { //
-const x = {}; // x.id = element._id; // x.priority = element.priority; //
-this.realstages.push(x); // counter += 1; // }); // this.$emit("stages_done",
-this.realstages); // },

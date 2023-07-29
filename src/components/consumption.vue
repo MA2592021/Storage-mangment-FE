@@ -1,7 +1,7 @@
 <template>
   <transition-group name="list" tag="ul">
     <v-row class="border" v-for="(c, index) in counter" :key="c"
-      ><v-col cols="12" align="center"
+      ><v-col cols="12" align="center" class="mt-4"
         ><h3>material {{ index + 1 }}</h3></v-col
       >
       <v-col cols="12" sm="4"
@@ -54,6 +54,7 @@
     }}</v-btn>
     <v-btn class="mt-2" color="success" @click="save()">{{ $t("save") }}</v-btn>
   </v-col>
+  {{ consumptions }}
 </template>
 
 <script>
@@ -62,21 +63,27 @@ export default {
   data() {
     return {
       counter: [null],
+      model: [],
       materialselect: [],
       qty: [],
       colorselect: [],
       sizeselect: [],
       materials: [],
       consumption: [],
+      colors: [],
+      sizes: [],
     };
   },
-  props: {
-    colors: Array,
-    sizes: Array,
-  },
+
   created() {
-    axios.get("/api/material/").then((response) => {
-      this.materials = response.data.data;
+    axios.get("api/model/" + this.$route.params.id).then((res) => {
+      this.model = res.data.data;
+      //console.log(this.model);
+      this.colors = res.data.data.colors;
+      this.sizes = res.data.data.sizes;
+      axios.get("/api/material/").then((response) => {
+        this.materials = response.data.data;
+      });
     });
   },
   methods: {
@@ -118,7 +125,10 @@ export default {
         this.consumption.push(x);
         counter += 1;
       });
-      this.$emit("material_done", this.consumption);
+      axios.patch(`/api/model/consumptions/add/${this.$route.params.id}`, {
+        consumptions: this.consumption,
+      });
+      //this.$emit("material_done", this.consumption);
     },
   },
 };

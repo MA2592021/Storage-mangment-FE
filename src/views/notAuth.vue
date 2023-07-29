@@ -12,12 +12,26 @@
       ></v-col>
       <v-col cols="6"
         ><h1>Sorry you are not authenticated to view this page ...</h1>
-        <p>if you face any problems please contact System Adminstration</p>
+        <p>
+          if you face any problems please contact
+          <strong>System Adminstration</strong>
+        </p>
       </v-col>
+      <v-col align="center"
+        ><v-btn @click="goback" color="red">Go Back</v-btn></v-col
+      >
     </v-row>
   </div>
 </template>
-
+<script>
+export default {
+  methods: {
+    goback() {
+      this.$router.go(-1);
+    },
+  },
+};
+</script>
 <style>
 .container {
   display: flex;

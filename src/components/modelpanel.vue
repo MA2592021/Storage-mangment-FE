@@ -128,6 +128,7 @@
               <v-btn class="mx-auto" color="info" @click="printo(3)"
                 >print
               </v-btn>
+              <v-btn class="ml-2" color="red" @click="update2()">Edit </v-btn>
             </div></v-col
           >
         </v-row>
@@ -201,7 +202,6 @@
 <script>
 import axios from "axios";
 import { usedata } from "../stores/print_data";
-import Stageupdate from "../views/models/stageupdate.vue";
 export default {
   data() {
     return {
@@ -296,6 +296,7 @@ export default {
     id: String,
     colors: Array,
     sizes: Array,
+    code: String,
   },
   setup() {
     const print_data = usedata();
@@ -305,6 +306,11 @@ export default {
     update() {
       this.$router.push({
         path: "/model/stageUpdate/" + this.$route.params.id,
+      });
+    },
+    update2() {
+      this.$router.push({
+        path: "/model/consumptionupdate/" + this.$route.params.id,
       });
     },
     printo(x) {
@@ -348,10 +354,12 @@ export default {
               color: this.calcolor._id,
               size: this.calcsize._id,
               quantity: this.calcQty,
+              code: this.code,
             },
           ],
         })
         .then((res) => {
+          this.calcs = [];
           console.log("here", res);
           res.data.data.forEach((element) => {
             const x = {};

@@ -110,6 +110,7 @@
       v-bind:colors="model.colors"
       v-bind:sizes="model.sizes"
       v-bind:id="this.$route.params.id"
+      v-bind:code="this.model.code"
     />
   </v-card>
 </template>

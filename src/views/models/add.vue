@@ -6,140 +6,100 @@
         $t("models.addModel")
       }}</span>
     </v-card-title>
-    <v-window v-model="step" disabled>
-      <v-window-item :value="1">
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  :label="$t(`name`) + '*'"
-                  v-model="model.name"
-                  required
-                  hint="Required"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  :label="$t(`code`) + '*'"
-                  v-model="model.code"
-                  required
-                  hint="Required"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-autocomplete
-                  :label="$t(`colors`) + '*'"
-                  chips
-                  v-model="model.colors"
-                  persistent-hint
-                  multiple
-                  hint="Required"
-                  :items="colors"
-                  item-title="name"
-                  return-object
-                ></v-autocomplete>
-              </v-col>
 
-              <v-col cols="12" sm="6">
-                <v-autocomplete
-                  :label="$t(`sizes`) + '*'"
-                  chips
-                  v-model="model.sizes"
-                  persistent-hint
-                  multiple
-                  hint="Required"
-                  :items="sizes"
-                  item-title="name"
-                  return-object
-                ></v-autocomplete>
-              </v-col>
+    <v-card-text>
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field
+              :label="$t(`name`) + '*'"
+              v-model="model.name"
+              required
+              hint="Required"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12">
+            <v-text-field
+              :label="$t(`code`) + '*'"
+              v-model="model.code"
+              required
+              hint="Required"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-autocomplete
+              :label="$t(`colors`) + '*'"
+              chips
+              v-model="model.colors"
+              persistent-hint
+              multiple
+              hint="Required"
+              :items="colors"
+              item-title="name"
+              item-value="_id"
+            ></v-autocomplete>
+          </v-col>
 
-              <v-col cols="12" sm="6"
-                ><v-textarea
-                  clearable
-                  :label="$t(`note`) + '*'"
-                  v-model="model.note"
-                  prepend-inner-icon="mdi-note-text-outline"
-                ></v-textarea>
-              </v-col>
-              <v-col cols="12" sm="6"
-                ><v-textarea
-                  clearable
-                  :label="$t(`details`) + '*'"
-                  v-model="model.details"
-                  prepend-inner-icon="mdi-note-text-outline"
-                ></v-textarea>
-              </v-col>
+          <v-col cols="12" sm="6">
+            <v-autocomplete
+              :label="$t(`sizes`) + '*'"
+              chips
+              v-model="model.sizes"
+              persistent-hint
+              multiple
+              hint="Required"
+              :items="sizes"
+              item-title="name"
+              item-value="_id"
+            ></v-autocomplete>
+          </v-col>
 
-              <v-col cols="12" sm="12">
-                <imageuploader @image="imageup" />
-              </v-col>
-            </v-row>
-          </v-container>
-          <small>*indicates required field</small>
-        </v-card-text>
-      </v-window-item>
-      <v-window-item :value="2">
-        <v-card-text>
-          <stageinput @stages_done="stagethings" />
-        </v-card-text>
-      </v-window-item>
-      <v-window-item :value="3">
-        <consumption
-          v-bind:colors="model.colors"
-          v-bind:sizes="model.sizes"
-          @material_done="materialthings"
-          v-if="step === 3"
-        />
-      </v-window-item>
-      <v-window-item :value="4">
-        <div class="pa-4 text-center">
-          <v-img
-            class="mb-4"
-            contain
-            height="128"
-            src="/arkan_logo-no-text.png"
-          ></v-img>
-          <h3 class="text-h6 font-weight-light mb-2">
-            are you sure want to add this model?
-          </h3>
-          <span class="text-caption text-grey"
-            >please be sure of data entered you can go back
-          </span>
-        </div>
-      </v-window-item>
-    </v-window>
+          <v-col cols="12" sm="6"
+            ><v-textarea
+              clearable
+              :label="$t(`note`) + '*'"
+              v-model="model.note"
+              prepend-inner-icon="mdi-note-text-outline"
+            ></v-textarea>
+          </v-col>
+          <v-col cols="12" sm="6"
+            ><v-textarea
+              clearable
+              :label="$t(`details`) + '*'"
+              v-model="model.details"
+              prepend-inner-icon="mdi-note-text-outline"
+            ></v-textarea>
+          </v-col>
+
+          <v-col cols="12" sm="12">
+            <imageuploader @image="imageup" />
+          </v-col>
+        </v-row>
+      </v-container>
+      <small>*indicates required field</small>
+    </v-card-text>
 
     <v-card-actions>
-      <v-btn v-if="step > 1" variant="text" @click="step--" class="border">
-        {{ $t("back") }}
-      </v-btn>
       <v-spacer></v-spacer>
-      <v-btn v-if="step < 4" color="primary" variant="flat" @click="steps">
-        {{ $t("next") }}
-      </v-btn>
       <v-btn
         color="green-darken-1"
         variant="text"
         @click="add"
-        v-if="step === 4"
         :loading="loading"
       >
         {{ $t("tabs.add") }}
       </v-btn>
     </v-card-actions>
   </v-card>
+  {{ model }}
 </template>
 
 <script>
 import imageuploader from "../../components/imageuploader.vue";
-import stageinput from "../../components/stageinput.vue";
-import consumption from "../../components/consumption.vue";
 import axios from "axios";
 import swal from "sweetalert";
 export default {
-  components: { imageuploader, stageinput, consumption },
+  components: { imageuploader },
   data: () => ({
     rules: [
       (value) => {
@@ -152,9 +112,6 @@ export default {
       },
     ],
     loading: false,
-    step: 1,
-    url: null,
-    image: null,
     model: {
       name: "",
       code: "",
@@ -166,11 +123,7 @@ export default {
       consumption: null,
       note: "    ",
     },
-    temp_id: "",
-    materials: [
-      { name: "zorar", id: "232" },
-      { name: "white 2omash ", id: "231" },
-    ],
+
     colors: [],
     sizes: [],
   }),
@@ -182,57 +135,24 @@ export default {
     add() {
       this.loading = true;
       // this.url = URL.createObjectURL(this.employee.img);
-      const temp_colors = [];
-      const temp_sizes = [];
-      this.model.colors.forEach((element) => {
-        temp_colors.push(element._id);
-      });
-      this.model.sizes.forEach((element) => {
-        temp_sizes.push(element._id);
-      });
       axios
         .post("/api/model", {
           name: this.model.name,
           code: this.model.code,
           details: this.model.details,
           note: this.model.note,
-          colors: temp_colors,
-          sizes: temp_sizes,
+          colors: this.model.colors,
+          sizes: this.model.sizes,
           image: this.model.img,
         })
         .then((response) => {
-          if (response.data.errors) {
-            swal("error", response.data.errors[0].msg, "error");
-          } else {
-            console.log("im adding stages");
-            console.log(response.data);
-            this.temp_id = response.data.data._id;
-            axios
-              .patch("/api/model/stages/add/" + this.temp_id, {
-                stages: this.model.stages,
-              })
-              .then((response) => {
-                if (response.data.errors) {
-                  swal("error", response.data.errors[0].msg, "error");
-                } else {
-                  console.log(response);
-                  console.log("im adding consumptions");
-                  axios
-                    .patch("/api/model/consumptions/add/" + this.temp_id, {
-                      consumptions: this.model.consumption,
-                    })
-                    .then((r) => {
-                      if (r.data.errors) {
-                        swal("error", r.data.errors[0].msg, "error");
-                      } else {
-                        swal("success", "model added successfully", "success");
-                        this.$router.push({ path: "/model/all" });
-                      }
-                    });
-                }
-              });
-          }
+          swal("success", "model added successfully", "success").then((val) => {
+            if (val) {
+              this.$router.push({ path: "/model/all" });
+            }
+          });
         });
+      this.loading = false;
     },
     sizeload() {
       axios.get("/api/size/").then((response) => {
@@ -244,37 +164,9 @@ export default {
         this.colors = response.data.data;
       });
     },
-    steps() {
-      if (
-        this.model.colors === null ||
-        this.model.colors.length === 0 ||
-        this.model.sizes === null ||
-        this.model.sizes.length === 0 ||
-        this.model.name === ""
-      ) {
-        swal("error", "please fill all information", "error");
-      } else if (this.step === 2 && this.model.stages === null) {
-        swal("error", "please save stages before go to next step", "error");
-      } else if (this.step === 3 && this.model.consumption === null) {
-        swal(
-          "error",
-          "please save consumptions before go to next step",
-          "error"
-        );
-      } else {
-        this.step += 1;
-      }
-    },
+
     imageup(image) {
       this.model.img = image;
-    },
-    stagethings(value) {
-      this.model.stages = value;
-      console.log("model stages", this.model.stages);
-    },
-    materialthings(value) {
-      this.model.consumption = value;
-      console.log(this.model.consumption);
     },
   },
 };

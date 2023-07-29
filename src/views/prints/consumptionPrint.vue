@@ -40,7 +40,7 @@
 
 <script>
 import { usedata } from "../../stores/print_data";
-
+import moment from "moment";
 export default {
   mounted() {
     setTimeout(() => {
