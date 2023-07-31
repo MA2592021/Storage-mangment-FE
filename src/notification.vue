@@ -2,8 +2,10 @@
 import { usedata } from "./stores/mainStore";
 import { state, connectSocket } from "./socket.js";
 import { toast } from "vue3-toastify";
-import { watch } from "vue";
-
+import notifySound from "./assets/notify.mp3";
+import warningSound from "./assets/simplewarning.mp3";
+import repairSound from "./assets/repair.mp3";
+import successSound from "./assets/success.mp3";
 export default {
   data() {
     return {
@@ -18,24 +20,40 @@ export default {
       this.startlisten();
     }
   },
+
   methods: {
+    success_sound() {
+      const audio = new Audio(notifySound);
+      audio.play();
+    },
+    error_sound() {
+      const audio = new Audio(warningSound);
+      audio.play();
+    },
+    confirm_sound() {
+      const audio = new Audio(repairSound);
+      audio.play();
+    },
+    repair_sound() {
+      const audio = new Audio(successSound);
+      audio.play();
+    },
     startlisten() {
       console.log("socket now is listening");
-
+      this.socket = connectSocket();
       this.socket.on("errors", (message) => {
         console.log(message);
         toast.error("error in card " + message.card.code, {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
+        this.error_sound();
       });
       this.socket.on("repairs", (message) => {
         console.log(message);
-        toast.info(
-          `stage ${message.stage.code} repaired in card ` + message.card.code,
-          {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          }
-        );
+        toast.info(` ${message.card.code} card errors has been repaired `, {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
+        this.repair_sound();
       });
       this.socket.on("addTracking", (message) => {
         console.log(message);
@@ -45,16 +63,14 @@ export default {
             position: toast.POSITION.BOTTOM_RIGHT,
           }
         );
+        this.success_sound();
       });
       this.socket.on("errorConfirm", (message) => {
         console.log(message);
-        toast.success(
-          `stage ${message.stage.code} repaired & confirmed in card ` +
-            message.card.code,
-          {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          }
-        );
+        toast.success(` ${message.card.code} card errors has been Fixed   `, {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
+        this.success_sound();
       });
       this.socket.on("message", (message) => {
         console.log("Received message:", message);
@@ -66,7 +82,6 @@ export default {
   },
   setup() {
     const maindata = usedata();
-
     return { maindata };
   },
   watch: {

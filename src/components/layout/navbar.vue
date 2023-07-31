@@ -15,6 +15,7 @@
       theme="dark"
       v-model="drawer"
       app
+      width="295"
       style="background-color: #770f30"
     >
       <v-row class="hidden-sm-and-down"
@@ -35,9 +36,10 @@
           <p class="text-subtitle-1">{{ username }}</p>
           <p class="text-subtitle-1">{{ rolename }}</p>
         </v-col>
-
+      </v-row>
+      <v-row>
         <v-switch
-          class="ml-8"
+          class="ml-10"
           v-model="model"
           hide-details
           true-value="العربية"

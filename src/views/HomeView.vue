@@ -198,11 +198,16 @@
       </p></v-col
     ></v-row
   >
+  <!-- <v-btn @click="test">play</v-btn>
+  <v-btn @click="test1">play</v-btn> -->
 </template>
 
 <script>
 import tabs from "../components/layout/tabs.vue";
 import axios from "axios";
+// import notifySound from "../assets/notify.mp3";
+// import warningSound from "../assets/simplewarning.mp3";
+
 export default {
   components: { tabs },
 
@@ -222,7 +227,6 @@ export default {
       order: "",
       supplier: "",
       client: "",
-
       image: null,
       priv: JSON.parse(localStorage.getItem("privileges")),
     };
@@ -247,6 +251,14 @@ export default {
   },
 
   methods: {
+    // test() {
+    //   const audio = new Audio(notifySound);
+    //   audio.play();
+    // },
+    // test1() {
+    //   const audio = new Audio(warningSound);
+    //   audio.play();
+    // },
     darko() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       console.log(this.$vuetify.theme.dark);

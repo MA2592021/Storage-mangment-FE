@@ -1,15 +1,37 @@
 <template>
-  <v-card style="width: 100%" class="mt-5">
-    <v-tabs v-model="tabs" grow color="#770f30">
-      <v-tab value="one">{{ $t("production") }}</v-tab>
-      <v-tab value="two">{{ $t("errors") }}</v-tab>
-    </v-tabs>
+  <v-bottom-navigation
+    grow
+    v-model="nav"
+    mode="shift"
+    absolute
+    :bg-color="bar_color()"
+  >
+    <v-btn value="track">
+      <v-icon>mdi-flag-plus</v-icon>
 
+      Track
+    </v-btn>
+
+    <v-btn value="repair">
+      <v-icon>mdi-hammer-screwdriver</v-icon>
+
+      Repair
+    </v-btn>
+
+    <v-btn value="errors" @click="errorbadge = 0">
+      <v-badge color="error" v-if="errorbadge !== 0" :content="errorbadge">
+        <v-icon>mdi-alert-circle-outline</v-icon></v-badge
+      >
+      <v-icon v-if="errorbadge === 0">mdi-alert-circle-outline</v-icon>
+      Errors
+    </v-btn>
+  </v-bottom-navigation>
+  <v-card style="width: 100%" class="mt-5">
     <v-card-text>
-      <v-window v-model="tabs">
-        <v-window-item value="one">
+      <v-window v-model="nav">
+        <v-window-item value="track">
           <v-row>
-            <v-col cols="12">
+            <!-- <v-col cols="12">
               <v-checkbox
                 v-model="verify"
                 @update:modelValue="error = false"
@@ -18,13 +40,12 @@
                 value="true"
                 hide-details
               ></v-checkbox>
-            </v-col>
+            </v-col> -->
             <v-col cols="12">
               <v-autocomplete
                 v-model="selected_order"
                 :items="orders"
                 item-title="name"
-                inputmode="numeric"
                 return-object
                 :label="$t('order')"
                 v-if="!assist"
@@ -35,7 +56,6 @@
                 v-model="selected_model"
                 :items="selected_order.models"
                 item-title="name"
-                inputmode="numeric"
                 return-object
                 :label="$t('model')"
                 v-if="!assist"
@@ -80,12 +100,94 @@
                 @click="submitproduction"
                 :loading="loading"
                 >{{ $t("submit") }}</v-btn
-              ></v-col
+              ><v-btn
+                outlined
+                color="red"
+                class="ml-4"
+                v-if="!assist"
+                @click="replacetrack"
+                :loading="loading"
+                >{{ $t("replace") }}</v-btn
+              >
+            </v-col></v-row
+          >
+        </v-window-item>
+        <v-window-item value="repair">
+          <v-row>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_order"
+                :items="orders"
+                item-title="name"
+                return-object
+                :label="$t('order')"
+                v-if="!assist"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_model"
+                :items="selected_order.models"
+                item-title="name"
+                return-object
+                :label="$t('model')"
+                v-if="!assist"
+                @update:modelValue="loadassist()"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="selected_repair_card"
+                :items="assist_card"
+                item-title="code"
+                item-value="_id"
+                inputmode="numeric"
+                :label="$t('card code')"
+                :disabled="selected_repairs.length !== 0"
+                @update:modelValue="load_repairs"
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-data-table
+            :headers="headers1"
+            :items="repiarstages"
+            :search="search"
+            show-select
+            class="elevation-1"
+            v-model="selected_repairs"
+            return-object
+          >
+            <template v-slot:item.check="{ item, index }">
+              <v-checkbox class="ml-4" v-model="item.raw.check"></v-checkbox>
+            </template>
+            <template v-slot:item.employee[name]="props">
+              <v-autocomplete
+                label="employee"
+                :items="displayText"
+                item-title="name"
+                item-value="_id"
+                v-model="props.item.raw.employee"
+                :readonly="props.item.raw.check === false"
+                @update:modelValue="dothings(props.item.raw.id)"
+              ></v-autocomplete>
+            </template>
+          </v-data-table>
+          <v-row
+            ><v-col align="center" class="mt-4"
+              ><v-btn color="success" :loading="loading" @click="repiar()">{{
+                $t("submit")
+              }}</v-btn></v-col
             ></v-row
           >
         </v-window-item>
-
-        <v-window-item value="two">
+        <v-window-item value="errors">
           <v-row
             ><v-col cols="12">
               <v-autocomplete
@@ -140,11 +242,13 @@ export default {
     return {
       verify: false,
       loading: false,
-      tabs: "one",
+      errorbadge: 0,
+      nav: "track",
       search: "",
       selected_card_error: "",
       selected_model_error: "",
       selected_card: "",
+      selected_repair_card: "",
       selected_employee: "",
       selected_stage: "",
       selected_order: "",
@@ -165,6 +269,16 @@ export default {
         },
       ],
       headers: [{ title: "stage", key: "stage" }],
+      headers1: [
+        { title: "stage", key: "stage[name]" },
+        {
+          title: "employee",
+          key: "employee[name]",
+        },
+        { title: "other", key: "check" },
+      ],
+      repiarstages: [],
+      selected_repairs: [],
     };
   },
   methods: {
@@ -196,38 +310,50 @@ export default {
         });
     },
     load_card_error_assist() {
-      let order = localStorage.getItem("order");
-      let model = localStorage.getItem("model");
-      axios
-        .get(`/api/card/order/${order}/model/${model}/errors`)
-        .then((res) => {
-          res.data.data.forEach((element) => {
-            element.currentErrors.forEach((el) => {
-              let x = {};
-              x.card = element.code;
-              x.stage = el.name;
-              this.card_errors.push(x);
+      const order = localStorage.getItem("order")
+        ? localStorage.getItem("order")
+        : "";
+      const model = localStorage.getItem("model")
+        ? localStorage.getItem("model")
+        : "";
+      if (order !== "") {
+        axios
+          .get(`/api/card/order/${order}/model/${model}/errors`)
+          .then((res) => {
+            res.data.data.forEach((element) => {
+              element.currentErrors.forEach((el) => {
+                let x = {};
+                x.card = element.code;
+                x.stage = el.name;
+                this.card_errors.push(x);
+              });
             });
+            console.log(this.card_errors);
           });
-          console.log(this.card_errors);
-        });
+      }
     },
     load_card_error_admin() {
-      let order = this.selected_card_error._id;
-      let model = this.selected_model_error._id;
-      axios
-        .get(`/api/card/order/${order}/model/${model}/errors`)
-        .then((res) => {
-          res.data.data.forEach((element) => {
-            element.currentErrors.forEach((el) => {
-              let x = {};
-              x.card = element.code;
-              x.stage = el.name;
-              this.card_errors.push(x);
+      const order = this.selected_card_error._id
+        ? this.selected_card_error._id
+        : "";
+      const model = this.selected_model_error._id
+        ? this.selected_model_error._id
+        : "";
+      if (order !== "") {
+        axios
+          .get(`/api/card/order/${order}/model/${model}/errors`)
+          .then((res) => {
+            res.data.data.forEach((element) => {
+              element.currentErrors.forEach((el) => {
+                let x = {};
+                x.card = element.code;
+                x.stage = el.name;
+                this.card_errors.push(x);
+              });
             });
+            console.log(this.card_errors);
           });
-          console.log(this.card_errors);
-        });
+      }
     },
     loadorder() {
       axios.get("/api/order").then((res) => {
@@ -261,11 +387,11 @@ export default {
       }
     },
     submitproduction() {
-      //console.log("card", this.selected_card);
-      //console.log("employee", this.selected_employee);
-      //console.log("model", this.selected_stage);
-      this.loading = true;
-      if (this.verify === false) {
+      if (this.selected_card === null) {
+        swal("error", "please select card", "error");
+      } else {
+        this.loading = true;
+
         axios
           .patch(`/api/card/${this.selected_card._id}/tracking/add`, {
             stage: this.selected_stage.id,
@@ -275,25 +401,102 @@ export default {
           .then((res) => {
             //console.log(res);
             swal("success", "تم رصد المرحلة بنجاح", "success").then(() => {
+              console.log("add track", res);
               this.start();
               this.loading = false;
             });
-          });
-      } else {
+          })
+          .catch(() => (this.loading = false));
+      }
+    },
+    load_repairs() {
+      if (this.selected_repair_card !== null) {
+        console.log(this.selected_repair_card);
+        this.repiarstages = [];
         axios
-          .patch(`/api/card/${this.selected_card._id}/errors/repair`, {
+          .get(`/api/card/${this.selected_repair_card}/errors/repair`)
+          .then((res) => {
+            console.log(res.data.data);
+
+            res.data.data.forEach((element) => {
+              const x = {};
+              x.employee = {
+                name:
+                  `${element.employee.name} ` + ` ( ${element.employee.code} )`,
+                _id: element.employee._id,
+              };
+              x.stage = {
+                name: `${element.stage.name} ` + ` ( ${element.stage.code} )`,
+                _id: element.stage._id,
+              };
+              x.check = false;
+              this.repiarstages.push(x);
+            });
+          });
+        console.log(this.repiarstages);
+      }
+    },
+    replacetrack() {
+      if (this.selected_card === null) {
+        swal("error", "please select card", "error");
+      } else {
+        this.loading = true;
+        axios
+          .patch(`/api/card/${this.selected_card._id}/tracking/replace`, {
             stage: this.selected_stage._id,
             doneBy: this.selected_employee.id,
             enteredBy: localStorage.getItem("id"),
           })
           .then((res) => {
-            swal("success", "تم رصد الاصلاحات بنجاح", "success").then(() => {
+            swal(
+              "success",
+              "replace employee done successfully",
+              "success"
+            ).then(() => {
               this.start();
               this.loading = false;
+              this.$router.go(0);
             });
           });
       }
-      this.loading = false;
+    },
+    repiar() {
+      if (this.selected_repairs.length === 0) {
+        swal("error", "please select stages to repair", "error");
+      } else {
+        this.loading = true;
+        const data = [];
+        this.selected_repairs.forEach((element) => {
+          const x = {};
+          x.stage = element.stage._id;
+          x.employee = element.employee._id;
+          data.push(x);
+        });
+        console.log(data);
+        axios
+          .patch(`/api/card/${this.selected_repair_card}/errors/repair/all`, {
+            enteredBy: localStorage.getItem("employee"),
+            repairs: data,
+          })
+          .then((res) => {
+            console.log(res);
+            swal("success", "selected stages repaired successfully", "success");
+            this.loading = false;
+            this.$router.go(0);
+          })
+          .catch((err) => {
+            this.loading = false;
+          });
+      }
+    },
+    bar_color() {
+      if (this.nav === "track") {
+        return "success";
+      } else if (this.nav === "repair") {
+        return "info";
+      } else {
+        return "red";
+      }
     },
   },
   computed: {
@@ -304,11 +507,6 @@ export default {
           name: `${employee.name} (${employee.code})`,
           id: employee._id,
         }));
-    },
-    stageview() {
-      if (verify === false) {
-      } else {
-      }
     },
     stageerror() {
       return this.assist_stages
@@ -326,31 +524,8 @@ export default {
   mounted() {
     const socket = connectSocket();
     socket.on("errors", (message) => {
-      console.log(message);
-      if (!this.assist) {
-        this.load_card_error_admin();
-      } else {
-        this.load_card_error_assist();
-      }
-    });
-    socket.on("repairs", (message) => {
-      console.log(message);
-      if (!this.assist) {
-        this.load_card_error_admin();
-      } else {
-        this.load_card_error_assist();
-      }
-    });
-    socket.on("addTracking", (message) => {
-      console.log(message);
-      if (!this.assist) {
-        this.load_card_error_admin();
-      } else {
-        this.load_card_error_assist();
-      }
-    });
-    socket.on("errorConfirm", (message) => {
-      console.log(message);
+      //console.log(message);
+      this.errorbadge++;
       if (!this.assist) {
         this.load_card_error_admin();
       } else {

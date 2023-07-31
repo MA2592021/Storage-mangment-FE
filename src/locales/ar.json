@@ -35,6 +35,7 @@
     "machinetypes": "أنواع الماكينات"
   },
   "password": "الرقم السري",
+  "replace": "تبديل",
   "print": "طباعة",
   "unit": "الوحدة",
   "type": "النوع",
@@ -130,6 +131,7 @@
   "have errors": "يوجد اخطاء؟",
   "number of stages": "عدد المراحل",
   "piece": "قطعة",
+  "pieces": "قطع",
   "stage number": "رقم المرحلة",
   "stage": "مرحلة",
   "number of errors": "عدد الاخطاء  ",
