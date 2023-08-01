@@ -8,13 +8,11 @@ import swal from "sweetalert";
 import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
-import { loadFonts } from "./plugins/webfontloader";
 import vue3Highlightjs from "vue3-highlightjs";
 import "highlight.js/styles/dracula.css";
 import Vue3Toasity from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 const pinia = createPinia();
-loadFonts();
 axios.defaults.baseURL = import.meta.env.VITE_BASEURL;
 axios.interceptors.request.use(
   (config) => {

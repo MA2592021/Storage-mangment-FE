@@ -205,8 +205,6 @@
 <script>
 import tabs from "../components/layout/tabs.vue";
 import axios from "axios";
-// import notifySound from "../assets/notify.mp3";
-// import warningSound from "../assets/simplewarning.mp3";
 
 export default {
   components: { tabs },

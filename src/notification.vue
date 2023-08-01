@@ -1,3 +1,6 @@
+<template>
+  <v-btn @click="emit_test">test emit</v-btn>
+</template>
 <script>
 import { usedata } from "./stores/mainStore";
 import { state, connectSocket } from "./socket.js";
@@ -37,6 +40,10 @@ export default {
     repair_sound() {
       const audio = new Audio(successSound);
       audio.play();
+    },
+    emit_test() {
+      console.log("im in test");
+      this.socket.emit("message", 55555, () => {});
     },
     startlisten() {
       console.log("socket now is listening");
