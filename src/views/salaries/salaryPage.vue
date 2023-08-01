@@ -48,6 +48,7 @@
         @click="deletee()"
         prepend-icon=" mdi-cash-multiple"
         color="green"
+        disabled
       >
         {{ $t("pay salary") }}
       </v-btn>

@@ -50,24 +50,7 @@
     </v-col>
   </v-row>
   <!-- error section -->
-  <v-row v-if="haveError"
-    ><v-col cols="4">
-      <v-btn
-        color="red"
-        :disabled="errors.length === 0"
-        @click="sub_error"
-        block
-      >
-        -
-      </v-btn></v-col
-    >
-    <v-col cols="4" align="center">
-      <h3>{{ errors.length }} stages have error</h3></v-col
-    >
-    <v-col cols="4">
-      <v-btn color="success" @click="add_error" block> + </v-btn></v-col
-    ></v-row
-  >
+
   <v-row class="mt-3">
     <v-col cols="12">
       <v-data-table
@@ -78,9 +61,11 @@
       >
         <template v-slot:top>
           <v-toolbar flat>
-            <v-toolbar-title align="center">{{
-              $t(`errors`)
-            }}</v-toolbar-title></v-toolbar
+            <v-toolbar-title align="center"
+              >{{ errors.length }} {{ $t(`errors`) }}</v-toolbar-title
+            ><v-btn color="info" variant="tonal" @click="add_error">
+              + {{ $t(`add stage`) }}
+            </v-btn></v-toolbar
           ></template
         >
         <template v-slot:item.description="props">

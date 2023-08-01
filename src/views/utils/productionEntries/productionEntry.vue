@@ -361,13 +361,22 @@ export default {
           let x = { models: [] };
           x.name = element.name;
           x._id = element._id;
-          element.models.forEach((el) => {
-            let y = {};
-            y.name = el.id.name + ` (${el.code})`;
-            y._id = el.id._id;
-            x.models.push(y);
-          });
-          this.orders.push(x);
+          (x.models = element.models
+            .filter(
+              (person, index, self) =>
+                index === self.findIndex((p) => p.name === person.name)
+            )
+            .map((model) => ({
+              name: model.id.name,
+              _id: model.id._id,
+            }))),
+            // element.models.forEach((el) => {
+            //   let y = {};
+            //   y.name = el.id.name + ` (${el.code})`;
+            //   y._id = el.id._id;
+            //   x.models.push(y);
+            // });
+            this.orders.push(x);
         });
       });
     },
@@ -462,7 +471,7 @@ export default {
     },
     repiar() {
       if (this.selected_repairs.length === 0) {
-        swal("error", "please select stages to repair", "error");
+        swal("error", "برجاء اختيار مراحل للاصلاح", "error");
       } else {
         this.loading = true;
         const data = [];
@@ -480,7 +489,7 @@ export default {
           })
           .then((res) => {
             console.log(res);
-            swal("success", "selected stages repaired successfully", "success");
+            swal("success", "تم رصد الاصلاحات بنجاح", "success");
             this.loading = false;
             this.$router.go(0);
           })

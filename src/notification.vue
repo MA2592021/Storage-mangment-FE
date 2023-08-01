@@ -42,23 +42,26 @@ export default {
       console.log("socket now is listening");
       this.socket = connectSocket();
       this.socket.on("errors", (message) => {
-        console.log(message);
-        toast.error("error in card " + message.card.code, {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
+        console.log("errors", message);
+        toast.error(
+          ` ${message.currentErrorsLength} errors in card ` + message.cardCode,
+          {
+            position: toast.POSITION.BOTTOM_RIGHT,
+          }
+        );
         this.error_sound();
       });
       this.socket.on("repairs", (message) => {
-        console.log(message);
+        console.log("repair", message);
         toast.info(` ${message.card.code} card errors has been repaired `, {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
         this.repair_sound();
       });
       this.socket.on("addTracking", (message) => {
-        console.log(message);
+        console.log("add tracking", message);
         toast.success(
-          `stage ${message.stage.code} tracked in card ` + message.card.code,
+          `stage ${message.lastStageName} tracked in card ` + message.cardCode,
           {
             position: toast.POSITION.BOTTOM_RIGHT,
           }
@@ -66,8 +69,8 @@ export default {
         this.success_sound();
       });
       this.socket.on("errorConfirm", (message) => {
-        console.log(message);
-        toast.success(` ${message.card.code} card errors has been Fixed   `, {
+        console.log("error confirm", message);
+        toast.success(` ${message.cardCode} card errors has been Fixed   `, {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
         this.success_sound();

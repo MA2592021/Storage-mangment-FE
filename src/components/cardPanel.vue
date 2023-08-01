@@ -63,6 +63,7 @@
               v-model:items-per-page="itemsPerPage"
               :headers="headers"
               :items="errors"
+              hover
               item-value="name"
               class="elevation-1"
             >

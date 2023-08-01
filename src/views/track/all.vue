@@ -12,7 +12,26 @@
         }}</span></span
       ></v-col
     >
-
+    <v-row>
+      <v-col cols="6" class="ml-4">
+        <v-autocomplete
+          v-model="selectedOrder"
+          :items="orders"
+          item-title="name"
+          return-object
+          :label="$t('order')"
+        ></v-autocomplete>
+      </v-col>
+      <v-col cols="5" class="ml-4">
+        <v-autocomplete
+          v-model="selectedModel"
+          :items="selectedOrder.models"
+          item-title="name"
+          item-value="id"
+          :label="$t('model')"
+          @update:modelValue="loadtrack()"
+        ></v-autocomplete> </v-col
+    ></v-row>
     <v-col cols="12">
       <v-text-field
         v-model="search"
@@ -32,51 +51,39 @@
         items-per-page="50"
         class="elevation-1"
         item-value="name"
+        hover
       >
-        <template v-slot:item.errors="{ item }">
+        <template v-slot:item.piecesGotErrors="{ item }">
           <v-badge
             dot
             inline
-            :color="item.raw.currentErrors.length > 0 ? 'red' : 'green'"
+            :color="item.raw.currentErrorsLength > 0 ? 'red' : 'green'"
           >
             <v-chip
-              @click="test(item)"
               class="ma-2"
-              :color="item.columns.errors === 0 ? `green` : `red`"
+              :color="item.columns.piecesGotErrors === 0 ? `green` : `red`"
               text-color="white"
             >
-              {{ item.columns.errors }}
+              {{ item.columns.piecesGotErrors }}
             </v-chip></v-badge
           >
         </template>
-        <template v-slot:item.model="{ item }">
-          <v-chip @click="model(item.raw.model._id)" class="ma-2">
-            {{ item.columns.model.name }}
-          </v-chip>
+        <template v-slot:item.color="{ item }">
+          {{ item.raw.colorName }} ({{ item.raw.colorCode }})
         </template>
         <template v-slot:item.code="{ item }">
-          <v-chip @click="card(item.raw._id)" class="ma-2">
+          <v-chip @click="card(item.raw.cardID)" class="ma-2">
             {{ item.columns.code }}
           </v-chip>
         </template>
-        <template v-slot:item.currentstage[name]="{ item }">
-          <v-chip
-            class="ma-2"
-            :color="getChipColor(item.raw.currentstage.type)"
-            @click="
-              item.raw.currentstage.name ? stage(item.raw.currentstage._id) : ''
-            "
-          >
-            {{
-              item.raw.currentstage.name
-                ? item.raw.currentstage.name
-                : "not started yet"
-            }}
+        <template v-slot:item.lastStage="{ item }">
+          <v-chip class="ma-2" :color="getChipColor(item.raw.lastStageType)">
+            {{ item.raw.lastStage }}
           </v-chip>
         </template>
-        <template v-slot:item.date="{ item }">
-          <v-chip class="ma-2" :color="timeago(item.raw.dato)">
-            {{ momentdate(item.raw.date) }}
+        <template v-slot:item.lastStageDate="{ item }">
+          <v-chip class="ma-2" :color="timeago(item.raw.lastStageDate)">
+            {{ momentdate(item.raw.lastStageDate) }}
           </v-chip>
         </template>
       </v-data-table>
@@ -102,34 +109,31 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import { socket } from "../../socket.js";
+import { connectSocket } from "../../socket.js";
 export default {
   data: () => ({
     search: "",
-    sortBy: [
-      { key: "date", order: "dsc" },
-      { order: "asc", key: "model" },
-    ],
+    sortBy: [],
     groupBy: [
-      { key: `order[name]`, order: `asc` },
-      // { key: "currentstage[name]", order: "asc" },
+      //{ key: `order[name]`, order: `asc` },
     ],
     headers: [
       // { key: "order[name]", title: "order" },
-      { title: "model", key: "model" },
-      { title: "card", align: "start", key: "code" },
-      { title: "quantity", align: "center", key: "qty" },
-      { title: "errors", key: "errors" },
-      { title: "last stage", key: "currentstage[name]", groupable: true },
-      { title: "time finished", key: "date" },
-    ],
 
+      { title: "card", align: "start", key: "code" },
+      { title: "quantity", align: "center", key: "quantity" },
+      { title: "size", key: "size" },
+      { title: "color", key: "color" },
+      { title: "errors", key: "piecesGotErrors" },
+      { title: "last stage", key: "lastStage" },
+      { title: "time finished", key: "lastStageDate" },
+    ],
+    orders: "",
+    selectedOrder: "",
+    selectedModel: "",
     cards: [],
   }),
   methods: {
-    test(item) {
-      console.log(item);
-    },
     getChipColor(type) {
       if (type === "preparations") {
         return "orange";
@@ -154,9 +158,7 @@ export default {
       }
       return "red";
     },
-    model(id) {
-      this.$router.push({ path: "/model/" + id });
-    },
+
     card(id) {
       this.$router.push({ path: "/utils/cards/" + id });
     },
@@ -167,46 +169,46 @@ export default {
       if (value === "not started yet") {
         return "not started yet";
       } else {
-        return moment(value).subtract(3, "hours").fromNow();
+        return moment(value).calendar();
       }
     },
-
-    loadtrack() {
-      axios.get("/api/card/last/100").then((res) => {
-        this.cards = [];
-        console.log(res.data.data);
-        res.data.data.forEach((element) => {
-          let x = {};
-          x._id = element._id;
-          x.code = element.code;
-          x.model = element.model;
-          x.order = element.order;
-          x.qty = element.quantity;
-          x.currentErrors = element.currentErrors;
-          x.currentstage =
-            element.tracking.length === 0
-              ? ""
-              : element.tracking[element.tracking.length - 1].stage;
-          x.errors = element.cardErrors.length;
-          x.date =
-            element.tracking.length === 0
-              ? "not started yet"
-              : element.tracking[element.tracking.length - 1].dateOut;
-
-          x.dato =
-            element.tracking.length === 0
-              ? ""
-              : element.tracking[element.tracking.length - 1].dateOut;
-          this.cards.push(x);
-        });
-        //console.log(this.cards);
+    load_order() {
+      axios.get("/api/order").then((res) => {
+        this.orders = res.data.data.map((order) => ({
+          name: order.name,
+          id: order._id,
+          models: order.models
+            .filter(
+              (person, index, self) =>
+                index === self.findIndex((p) => p.name === person.name)
+            )
+            .map((model) => ({
+              name: model.id.name,
+              id: model.id._id,
+            })),
+        }));
+        //console.log(res.data.data);
       });
+    },
+    loadtrack() {
+      console.log(this.selectedOrder.id, this.selectedModel);
+      axios
+        .get(
+          `/api/card/order/${this.selectedOrder.id}/model/${this.selectedModel}/production`
+        )
+        .then((res) => {
+          this.cards = res.data.data;
+          console.log(res);
+        });
     },
   },
   created() {
-    this.loadtrack();
+    //this.loadtrack();
+    this.load_order();
   },
   mounted() {
+    const socket = connectSocket();
+
     socket.on("errors", (message) => {
       console.log(message);
       this.loadtrack();
@@ -216,12 +218,19 @@ export default {
       this.loadtrack();
     });
     socket.on("addTracking", (message) => {
-      console.log(message);
-      this.loadtrack();
+      const index = this.cards.findIndex(
+        (card) => card.cardID === message.cardID
+      );
+      this.cards[index].lastStage = message.lastStageName;
+      this.cards[index].lastStageType = message.lastStageType;
+      this.cards[index].lastStageDate = message.lastStageDate;
+      this.cards[index].done = message.cardDone;
     });
     socket.on("errorConfirm", (message) => {
-      console.log(message);
-      this.loadtrack();
+      const index = this.cards.findIndex(
+        (card) => card.cardID === message.cardID
+      );
+      this.cards[index].currentErrorsLength = message.currentErrorsLength;
     });
   },
 };
