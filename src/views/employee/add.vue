@@ -115,8 +115,35 @@ export default {
     add() {
       // this.url = URL.createObjectURL(this.employee.img);
       console.log("im alive");
-      axios
-        .post("/api/employee", {
+      let data = {};
+      if (this.employee.phone === null && this.employee.nid === null) {
+        data = {
+          name: this.employee.name,
+          code: this.employee.code,
+          role: this.employee.role._id,
+          note: this.employee.note,
+          image: this.employee.img,
+        };
+      } else if (this.employee.phone === null) {
+        data = {
+          name: this.employee.name,
+          code: this.employee.code,
+          role: this.employee.role._id,
+          note: this.employee.note,
+          image: this.employee.img,
+          phoneNo: this.employee.phone,
+        };
+      } else if (this.employee.nid === null) {
+        data = {
+          name: this.employee.name,
+          code: this.employee.code,
+          role: this.employee.role._id,
+          NID: this.employee.nid,
+          note: this.employee.note,
+          image: this.employee.img,
+        };
+      } else {
+        data = {
           name: this.employee.name,
           code: this.employee.code,
           role: this.employee.role._id,
@@ -124,7 +151,10 @@ export default {
           NID: this.employee.nid,
           note: this.employee.note,
           image: this.employee.img,
-        })
+        };
+      }
+      axios
+        .post("/api/employee", data)
         .then((response) => {
           if (response.data.errors) {
             console.log(response);

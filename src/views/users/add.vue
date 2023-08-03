@@ -42,7 +42,6 @@
               item-title="name"
               return-object
             ></v-autocomplete>
-            {{ selectedEmployee }}
           </v-col>
           <v-col cols="12" sm="6" md="6">
             <v-text-field

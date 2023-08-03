@@ -122,7 +122,10 @@ export default {
         res.data.data.forEach((element) => {
           let x = {};
           if (element.user) {
-            if (element.user.role.number === 3) {
+            if (
+              element.user.role.number === 3 ||
+              element.user.role.number === 2
+            ) {
               x._id = element._id;
               x.name = element.employee.name;
               x.code = element.employee.code;

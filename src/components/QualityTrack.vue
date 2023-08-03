@@ -320,6 +320,7 @@ export default {
     },
     ////// submits
     async submit() {
+      this.loading = true;
       const check = await this.check();
       console.log("check result", check ? "success" : "failed");
       if (check === true) {
@@ -330,41 +331,60 @@ export default {
         );
         localStorage.setItem("quality_stage", this.selectQuality);
         axios
-          .patch(`/api/card/${this.selectedCard.id}/tracking/add`, {
-            stage: this.selectQuality,
-            employee: localStorage.getItem("employee"),
-            enteredBy: localStorage.getItem("employee"),
-          })
-          .then(() => {
-            if (this.haveError) {
-              this.submit_errors();
-            }
-          })
-          .catch(() => {
-            if (this.haveError) {
+          .get(
+            `/api/card/${this.selectedCard.id}/stage/${this.selectQuality}/isTracked`
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.data.tracked !== true) {
+              axios
+                .patch(`/api/card/${this.selectedCard.id}/tracking/add`, {
+                  stage: this.selectQuality,
+                  employee: localStorage.getItem("employee"),
+                  enteredBy: localStorage.getItem("employee"),
+                })
+                .then(() => {
+                  if (this.haveError) {
+                    this.submit_errors();
+                  }
+                })
+                .catch(() => {
+                  if (this.haveError) {
+                    this.submit_errors();
+                  }
+                });
+            } else {
               this.submit_errors();
             }
           });
+      } else {
+        this.loading = false;
       }
     },
     submit_errors() {
-      const errors = this.errors.map((error) => ({
-        stage: error.stage.id,
-        description: error.description,
-        pieces: error.pieces,
-      }));
-      //console.log("errors", errors);
-      axios
-        .patch(`/api/card/${this.selectedCard.id}/errors/add`, {
-          employee: localStorage.getItem("employee"),
-          cardErrors: errors,
-        })
-        .then((res) => {
-          //console.log("add error", res);
-          swal("success", "errors added successfully", "success").then(() => {
-            this.restart();
+      if (this.haveError === true) {
+        const errors = this.errors.map((error) => ({
+          stage: error.stage.id,
+          description: error.description,
+          pieces: error.pieces,
+        }));
+        //console.log("errors", errors);
+        axios
+          .patch(`/api/card/${this.selectedCard.id}/errors/add`, {
+            employee: localStorage.getItem("employee"),
+            cardErrors: errors,
+          })
+          .then((res) => {
+            //console.log("add error", res);
+            swal("success", "errors added successfully", "success").then(() => {
+              this.restart();
+              this.loading = false;
+            });
+          })
+          .catch(() => {
+            this.loading = false;
           });
-        });
+      }
     },
   },
   props: {

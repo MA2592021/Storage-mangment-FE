@@ -208,29 +208,33 @@ export default {
   },
   mounted() {
     const socket = connectSocket();
-
+    let index = 0;
     socket.on("errors", (message) => {
       console.log(message);
-      this.loadtrack();
+      index = this.cards.findIndex((card) => card.cardID === message.cardID);
+      this.cards[index].currentErrorsLength = message.currentErrorsLength;
+      this.cards[index].piecesGotErrors = message.pieceErrors;
+      this.cards[index].lastStageDate = moment(message.date).calendar();
+
+      //this.loadtrack();
     });
     socket.on("repairs", (message) => {
       console.log(message);
+      // index = this.cards.findIndex((card) => card.cardID === message.cardID);
+      // this.cards[index].lastStageDate = moment(message.date).calendar();
       this.loadtrack();
     });
     socket.on("addTracking", (message) => {
-      const index = this.cards.findIndex(
-        (card) => card.cardID === message.cardID
-      );
+      index = this.cards.findIndex((card) => card.cardID === message.cardID);
       this.cards[index].lastStage = message.lastStageName;
       this.cards[index].lastStageType = message.lastStageType;
       this.cards[index].lastStageDate = message.lastStageDate;
       this.cards[index].done = message.cardDone;
     });
     socket.on("errorConfirm", (message) => {
-      const index = this.cards.findIndex(
-        (card) => card.cardID === message.cardID
-      );
+      index = this.cards.findIndex((card) => card.cardID === message.cardID);
       this.cards[index].currentErrorsLength = message.currentErrorsLength;
+      this.cards[index].lastStageDate = moment(message.date).calendar();
     });
   },
 };

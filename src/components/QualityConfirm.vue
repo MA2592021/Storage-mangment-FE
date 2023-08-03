@@ -120,6 +120,11 @@ export default {
             swal("success", "Errors Confirmed successfully", "success");
             this.loading = false;
           })
+          .then((val) => {
+            if (val) {
+              this.restart();
+            }
+          })
           .catch(() => (this.loading = false));
       }
     },

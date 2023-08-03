@@ -112,6 +112,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import { usedata } from "../stores/print_data";
 import axios from "axios";
 export default {
@@ -155,23 +156,32 @@ export default {
           key: "workEff",
         },
       ],
-      groupBy1: [{ key: "day", order: "asc" }],
+      groupBy1: [
+        { key: "month", order: "asc" },
+        { key: "day", order: "asc" },
+      ],
       headers2: [
         {
-          title: "stage",
+          title: "card",
           align: "start",
-          key: "stage[name]",
+          key: "card",
         },
 
         {
-          title: "work quantity",
+          title: "stage",
           align: "start",
-          key: "quantity",
+          key: "stage",
+        },
+
+        {
+          title: "type",
+          align: "start",
+          key: "type",
         },
         {
-          title: "error quantity",
+          title: "date",
           align: "start",
-          key: "noOfErrors",
+          key: "date",
         },
       ],
       salary: [],
@@ -189,7 +199,7 @@ export default {
   methods: {
     loadsalary() {
       axios.get("/api/salary/employee/" + this.$route.params.id).then((res) => {
-        console.log(res.data.data);
+        console.log("here", res.data.data);
         res.data.data.forEach((element) => {
           element.totalWorkPerMonth.forEach((el) => {
             let x = {};
@@ -205,17 +215,45 @@ export default {
             x.workEff = (+x.workRate - +x.errorRate).toFixed(2);
             this.salary.push(x);
           });
-          element.workDetails.forEach((el) => {
-            el.work.forEach((e) => {
-              const x = {};
-              x.day = "day " + el.day;
-              x.stage = e.stage;
-              x.quantity = e.quantity;
-              x.noOfErrors = e.noOfErrors;
-              console.log(x);
-              this.work.push(x);
+          // element.workDetails.forEach((el) => {
+          //   el.work.forEach((e) => {
+          //     const x = {};
+          //     x.day = "day " + el.day;
+          //     x.month = "month " + element.date.month;
+          //     x.stage = e.stage;
+          //     x.quantity = e.quantity;
+          //     x.noOfErrors = e.noOfErrors;
+          //     console.log(x);
+          //     this.work.push(x);
+          //   });
+          // });
+        });
+        axios.get(`/api/work/employee/${this.$route.params.id}`).then((res) => {
+          console.log(res);
+          res.data.data.forEach((element) => {
+            element.workHistory.forEach((ele) => {
+              ele.cards.forEach((el) => {
+                const x = {};
+                x.month = `month (${element.date.month})`;
+                x.day = `day (${ele.day}) `;
+                x.card = el.card.code;
+                x.stage = el.stage.name + ` (${el.stage.code})`;
+                if (el.type === 1) {
+                  x.type = "add tracking";
+                } else if (el.type === 2) {
+                  x.type = "add error";
+                } else if (el.type === 3) {
+                  x.type = "repair";
+                } else {
+                  x.type = "confirm error";
+                }
+
+                x.date = moment(el.date).calendar();
+                this.work.push(x);
+              });
             });
           });
+          console.log("work", this.work);
         });
         console.log("work", this.work);
         console.log(this.salary);

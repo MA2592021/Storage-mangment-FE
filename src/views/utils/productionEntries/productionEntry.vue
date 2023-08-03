@@ -9,13 +9,13 @@
     <v-btn value="track">
       <v-icon>mdi-flag-plus</v-icon>
 
-      Track
+      {{ $t("track") }}
     </v-btn>
 
     <v-btn value="repair">
       <v-icon>mdi-hammer-screwdriver</v-icon>
 
-      Repair
+      {{ $t("repair") }}
     </v-btn>
 
     <v-btn value="errors" @click="errorbadge = 0">
@@ -23,12 +23,12 @@
         <v-icon>mdi-alert-circle-outline</v-icon></v-badge
       >
       <v-icon v-if="errorbadge === 0">mdi-alert-circle-outline</v-icon>
-      Errors
+      {{ $t("errors") }}
     </v-btn>
   </v-bottom-navigation>
   <v-card style="width: 100%" class="mt-5">
     <v-card-text>
-      <v-window v-model="nav">
+      <v-window v-model="nav" disabled>
         <v-window-item value="track">
           <v-row>
             <!-- <v-col cols="12">
@@ -333,12 +333,10 @@ export default {
       }
     },
     load_card_error_admin() {
-      const order = this.selected_card_error._id
-        ? this.selected_card_error._id
-        : "";
-      const model = this.selected_model_error._id
-        ? this.selected_model_error._id
-        : "";
+      const order =
+        this.selected_card_error !== null ? this.selected_card_error._id : "";
+      const model =
+        this.selected_model_error !== null ? this.selected_model_error._id : "";
       if (order !== "") {
         axios
           .get(`/api/card/order/${order}/model/${model}/errors`)

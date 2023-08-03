@@ -9,13 +9,18 @@
     <v-btn value="track">
       <v-icon>mdi-flag-plus</v-icon>
 
-      Track
+      {{ $t("track") }}
     </v-btn>
 
     <v-btn value="confirm">
       <v-icon>mdi-check-decagram</v-icon>
 
-      Confirm
+      {{ $t("confirm") }}
+    </v-btn>
+    <v-btn value="global">
+      <v-icon>mdi-alert-outline</v-icon>
+
+      {{ $t("add global error") }}
     </v-btn>
 
     <v-btn value="errors" @click="errorBadge = 0">
@@ -23,12 +28,12 @@
         <v-icon>mdi-alert-circle-outline</v-icon></v-badge
       >
       <v-icon v-if="errorBadge === 0">mdi-alert-circle-outline</v-icon>
-      Errors
+      {{ $t("errors") }}
     </v-btn>
   </v-bottom-navigation>
   <v-card style="width: 100%" class="mt-5">
     <v-card-text>
-      <v-window v-model="nav">
+      <v-window v-model="nav" disabled>
         <v-window-item value="track">
           <QualityTrack v-bind:orders="orders" />
         </v-window-item>
@@ -38,6 +43,7 @@
         <v-window-item value="errors">
           <QualityErrorPage v-bind:orders="orders" />
         </v-window-item>
+        <v-window-item value="global"> hello </v-window-item>
       </v-window>
     </v-card-text>
   </v-card>

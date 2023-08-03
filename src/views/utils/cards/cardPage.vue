@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     moment(date) {
-      return moment(date).subtract(3, "hours").calendar();
+      return moment(date).calendar();
     },
 
     timeago(index) {

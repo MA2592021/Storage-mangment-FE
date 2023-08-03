@@ -45,10 +45,9 @@
     ><v-card-actions>
       <v-btn
         class="ml-auto"
-        @click="deletee()"
+        @click="pay()"
         prepend-icon=" mdi-cash-multiple"
         color="green"
-        disabled
       >
         {{ $t("pay salary") }}
       </v-btn>
@@ -69,13 +68,17 @@ export default {
     return {
       employee: {},
       salarymonth: { totalCost: "", state: "" },
+      id: "",
     };
   },
   created() {
     //Get route
+    console.log("test");
     axios
       .get("/api/salary/employee/" + this.$route.params.id)
       .then((response) => {
+        console.log(this.id);
+        console.log(response);
         this.loademployee();
         this.salarymonth.totalCost =
           response.data.data[response.data.data.length - 1].totalCost;
@@ -83,6 +86,7 @@ export default {
           response.data.data[response.data.data.length - 1].state === true
             ? "Paid"
             : "Not Paid";
+        this.id = response.data.data[response.data.data.length - 1]._id;
       });
   },
   methods: {
@@ -92,10 +96,10 @@ export default {
         console.log(this.employee);
       });
     },
-    deletee() {
+    pay() {
       swal({
         title: "Are you sure?",
-        text: "Are you sure that you want to delete this type?",
+        text: "Are you sure that you want to pay this salary?",
         icon: "warning",
         dangerMode: true,
       }).then((willDelete) => {
@@ -113,17 +117,58 @@ export default {
                   swal("error", response.data.errors[0].msg, "error");
                 } else {
                   axios
-                    .delete("/api/machineType/" + this.$route.params.id)
+                    .delete(`/api/salary/${this.id}/done`)
                     .then((response) => {
                       if (response.data.errors) {
                         swal("error", response.data.errors[0].msg, "error");
                       } else {
                         swal(
                           "success",
-                          "machine Type deleted suuccessfully",
+                          "salary paid suuccessfully",
                           "success"
                         ).then(() => {
-                          this.$router.push({ path: "/utils/type/all" });
+                          this.$router.push({ path: "/salary/all" });
+                        });
+                      }
+                    });
+                }
+              });
+          });
+        }
+      });
+    },
+    deletee() {
+      swal({
+        title: "Are you sure?",
+        text: "Are you sure that you want to delete this salary?",
+        icon: "warning",
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          swal("enter your password", {
+            content: "input",
+          }).then((value) => {
+            axios
+              .post("/api/auth/testCredentials", {
+                code: localStorage.getItem("code"),
+                password: value,
+              })
+              .then((response) => {
+                if (response.data.errors) {
+                  swal("error", response.data.errors[0].msg, "error");
+                } else {
+                  axios
+                    .delete("/api/salary/employee/" + this.$route.params.id)
+                    .then((response) => {
+                      if (response.data.errors) {
+                        swal("error", response.data.errors[0].msg, "error");
+                      } else {
+                        swal(
+                          "success",
+                          "salary deleted suuccessfully",
+                          "success"
+                        ).then(() => {
+                          this.$router.push({ path: "/salary/all" });
                         });
                       }
                     });

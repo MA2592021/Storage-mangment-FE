@@ -1,5 +1,5 @@
 <template>
-  <v-btn @click="emit_test">test emit</v-btn>
+  <!-- <v-btn @click="emit_test">test emit</v-btn> -->
 </template>
 <script>
 import { usedata } from "./stores/mainStore";
