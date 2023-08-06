@@ -33,7 +33,15 @@ export default {
   },
   computed: {
     datalength() {
-      return this.data.length;
+      let counter = 0;
+      this.data.forEach((element) => {
+        if (element.user !== null) {
+          if (element.user.role.number >= 3) {
+            counte++;
+          }
+        }
+      });
+      return counter;
     },
   },
 };

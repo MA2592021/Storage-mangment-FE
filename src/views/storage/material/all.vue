@@ -31,6 +31,7 @@
         hover
         hide-default-footer
         @update:options="options = $event"
+        @click:row="tableClicked"
       ></v-data-table> </v-col
   ></v-row>
 </template>
@@ -85,11 +86,11 @@ export default {
   },
 
   methods: {
-    tableClicked(value) {
-      // console.log(value);
+    tableClicked(e, value) {
+      console.log(value);
       // console.log(this.materials.employee);
       this.$router.push({
-        path: `/storage/material/${value._id}`,
+        path: `/storage/material/${value.item.raw._id}`,
       });
     },
   },

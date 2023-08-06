@@ -49,6 +49,7 @@
                 return-object
                 :label="$t('order')"
                 v-if="!assist"
+                @update:modelValue="blurs"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
@@ -70,6 +71,7 @@
                 inputmode="numeric"
                 return-object
                 :label="$t('employee code')"
+                @update:modelValue="blurs"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
@@ -80,6 +82,7 @@
                 return-object
                 inputmode="numeric"
                 :label="$t('card code')"
+                @update:modelValue="blurs"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
@@ -92,6 +95,7 @@
                 :item-title="verify === false ? `name` : `name`"
                 inputmode="numeric"
                 :label="$t('stage code')"
+                @update:modelValue="blurs"
               ></v-autocomplete></v-col
             ><v-col cols="12" align="center"
               ><v-btn
@@ -122,6 +126,7 @@
                 return-object
                 :label="$t('order')"
                 v-if="!assist"
+                @update:modelValue="blurs"
               ></v-autocomplete>
             </v-col>
             <v-col cols="12">
@@ -175,7 +180,7 @@
                 item-value="_id"
                 v-model="props.item.raw.employee"
                 :readonly="props.item.raw.check === false"
-                @update:modelValue="dothings(props.item.raw.id)"
+                @update:modelValue="blurs"
               ></v-autocomplete>
             </template>
           </v-data-table>
@@ -198,6 +203,7 @@
                 inputmode="numeric"
                 :label="$t('order')"
                 v-if="!assist"
+                @update:modelValue="blurs"
               ></v-autocomplete> </v-col
             ><v-col cols="12">
               <v-autocomplete
@@ -227,6 +233,14 @@
             :group-by="groupBy"
             :search="search"
             class="elevation-1"
+          >
+            <template v-slot:item.global="{ item }">
+              <v-checkbox
+                readonly
+                color="red"
+                class="ml-4"
+                v-model="item.raw.global"
+              ></v-checkbox> </template
           ></v-data-table>
         </v-window-item>
       </v-window>
@@ -268,20 +282,27 @@ export default {
           key: "card",
         },
       ],
-      headers: [{ title: "stage", key: "stage" }],
+      headers: [
+        { title: "المرحلة", key: "stage" },
+        { title: "رقم القطعة", key: "piece" },
+        { title: "مشكلة عامة", key: "global" },
+      ],
       headers1: [
-        { title: "stage", key: "stage[name]" },
+        { title: "المرحلة", key: "stage[name]" },
         {
-          title: "employee",
+          title: "العامل",
           key: "employee[name]",
         },
-        { title: "other", key: "check" },
+        { title: "عامل اخر", key: "check" },
       ],
       repiarstages: [],
       selected_repairs: [],
     };
   },
   methods: {
+    blurs() {
+      document.activeElement.blur();
+    },
     loademployee() {
       axios.get("/api/employee").then((res) => {
         this.employees = res.data.data;
@@ -308,6 +329,7 @@ export default {
             .get("/api/model/" + model)
             .then((res) => (this.assist_stages = res.data.data.stages));
         });
+      this.blurs();
     },
     load_card_error_assist() {
       const order = localStorage.getItem("order")
@@ -316,7 +338,7 @@ export default {
       const model = localStorage.getItem("model")
         ? localStorage.getItem("model")
         : "";
-      if (order !== "") {
+      if (model !== "") {
         axios
           .get(`/api/card/order/${order}/model/${model}/errors`)
           .then((res) => {
@@ -337,10 +359,11 @@ export default {
         this.selected_card_error !== null ? this.selected_card_error._id : "";
       const model =
         this.selected_model_error !== null ? this.selected_model_error._id : "";
-      if (order !== "") {
+      if (model !== "") {
         axios
           .get(`/api/card/order/${order}/model/${model}/errors`)
           .then((res) => {
+            console.log("res", res);
             res.data.data.forEach((element) => {
               element.currentErrors.forEach((el) => {
                 let x = {};
@@ -348,8 +371,19 @@ export default {
                 x.stage = el.name;
                 this.card_errors.push(x);
               });
+              element.globalErrors.forEach((el) => {
+                if (!el.verifiedBy) {
+                  const x = {};
+                  x.stage = el.description;
+                  x.card = element.code;
+                  x.piece = el.pieceNo;
+                  x.global = true;
+                  this.card_errors.push(x);
+                }
+              });
             });
             console.log(this.card_errors);
+            this.blurs();
           });
       }
     },
@@ -427,11 +461,14 @@ export default {
 
             res.data.data.forEach((element) => {
               const x = {};
-              x.employee = {
-                name:
-                  `${element.employee.name} ` + ` ( ${element.employee.code} )`,
-                _id: element.employee._id,
-              };
+              element.employee
+                ? (x.employee = {
+                    name:
+                      `${element.employee.name} ` +
+                      ` ( ${element.employee.code} )`,
+                    _id: element.employee._id,
+                  })
+                : "";
               x.stage = {
                 name: `${element.stage.name} ` + ` ( ${element.stage.code} )`,
                 _id: element.stage._id,
@@ -441,18 +478,20 @@ export default {
             });
           });
         console.log(this.repiarstages);
+        this.blurs();
       }
     },
     replacetrack() {
+      console.log(this.selected_employee.id);
       if (this.selected_card === null) {
         swal("error", "please select card", "error");
       } else {
         this.loading = true;
         axios
           .patch(`/api/card/${this.selected_card._id}/tracking/replace`, {
-            stage: this.selected_stage._id,
-            doneBy: this.selected_employee.id,
-            enteredBy: localStorage.getItem("id"),
+            stage: this.selected_stage.id,
+            employee: this.selected_employee.id,
+            enteredBy: localStorage.getItem("employee"),
           })
           .then((res) => {
             swal(
@@ -464,6 +503,9 @@ export default {
               this.loading = false;
               this.$router.go(0);
             });
+          })
+          .catch(() => {
+            this.loading = false;
           });
       }
     },
@@ -476,7 +518,11 @@ export default {
         this.selected_repairs.forEach((element) => {
           const x = {};
           x.stage = element.stage._id;
-          x.employee = element.employee._id;
+          if (element.employee) {
+            x.employee = element.employee._id;
+          } else {
+            return;
+          }
           data.push(x);
         });
         console.log(data);
@@ -487,9 +533,10 @@ export default {
           })
           .then((res) => {
             console.log(res);
-            swal("success", "تم رصد الاصلاحات بنجاح", "success");
             this.loading = false;
-            this.$router.go(0);
+            swal("success", "تم رصد الاصلاحات بنجاح", "success").then(() => {
+              this.$router.go(0);
+            });
           })
           .catch((err) => {
             this.loading = false;
@@ -509,7 +556,7 @@ export default {
   computed: {
     displayText() {
       return this.employees
-        .filter((employee) => employee.role.number > 3)
+        .filter((employee) => employee.role.number > 4)
         .map((employee) => ({
           name: `${employee.name} (${employee.code})`,
           id: employee._id,

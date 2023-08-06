@@ -33,7 +33,16 @@
     :group-by="groupBy"
     :search="search"
     class="elevation-1"
-  ></v-data-table>
+  >
+    <template v-slot:item.global="{ item }">
+      <v-checkbox
+        readonly
+        color="red"
+        class="ml-4"
+        v-model="item.raw.global"
+      ></v-checkbox>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -50,16 +59,18 @@ export default {
       card_errors: [],
       headers: [
         {
-          title: "card",
+          title: "الكارتة",
           align: "start",
 
           key: "card",
         },
-        { sortable: false, title: "stage", key: "stage" },
+        { sortable: false, title: "مرحلة", key: "stage" },
+        { sortable: false, title: "رقم القطعة", key: "piece" },
+        { sortable: false, title: " مشكلة كارتة", key: "global" },
       ],
       groupBy: [
         {
-          title: "card",
+          title: "الكارتة",
           align: "start",
           sortable: false,
           key: "card",
@@ -84,12 +95,23 @@ export default {
             `/api/card/order/${this.selectedOrder.id}/model/${this.selectedModel}/errors`
           )
           .then((res) => {
+            console.log(res);
             res.data.data.forEach((element) => {
               element.currentErrors.forEach((el) => {
                 let x = {};
                 x.card = element.code;
                 x.stage = el.name;
                 this.card_errors.push(x);
+              });
+              element.globalErrors.forEach((el) => {
+                if (!el.verifiedBy) {
+                  const x = {};
+                  x.stage = el.description;
+                  x.piece = el.pieceNo;
+                  x.global = true;
+                  x.card = element.code;
+                  this.card_errors.push(x);
+                }
               });
             });
             console.log(this.card_errors);

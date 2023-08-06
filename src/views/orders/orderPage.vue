@@ -39,6 +39,17 @@
           prepend-icon="mdi-note-text-outline"
         ></v-textarea>
       </v-col>
+      <v-col cols="12"
+        ><v-autocomplete
+          label="production sequence"
+          item-title="name"
+          item-value="key"
+          :items="items"
+          :readonly="dis === true"
+          v-model="selectedSeq"
+          @update:modelValue="updatesequence"
+        ></v-autocomplete>
+      </v-col>
       <v-col cols="12" align="center"
         ><v-chip :color="order.status === true ? 'green' : 'red'">
           {{
@@ -109,6 +120,11 @@ export default {
     return {
       order: {},
       clients: [],
+      items: [
+        { name: "By sequence", key: true },
+        { name: "Parallel", key: false },
+      ],
+      selectedSeq: {},
       orgorder: {},
       dis: true,
       x: 0,
@@ -173,6 +189,7 @@ export default {
       this.order.client = this.orgorder.client;
       this.order.note = this.orgorder.note;
       this.order.status = this.orgorder.status;
+      this.selectedSeq.key = this.orgorder.sequence;
     },
     cancel() {
       this.dis = !this.dis;
@@ -266,7 +283,7 @@ export default {
     updatemodels(value) {
       console.log(value);
       axios
-        .patch(`/api/order/${this.$route.params.id}/models/add` , {
+        .patch(`/api/order/${this.$route.params.id}/models/add`, {
           models: value,
         })
         .then((response) => {
@@ -275,6 +292,15 @@ export default {
           } else {
             swal("success", "models updated successfully", "success");
           }
+        });
+    },
+    updatesequence() {
+      axios
+        .patch(`/api/order/${this.$route.params.id}/sequence`, {
+          sequence: this.selectedSeq,
+        })
+        .then((response) => {
+          swal("success", "order sequence updated successfully", "success");
         });
     },
   },

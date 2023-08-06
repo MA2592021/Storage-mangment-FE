@@ -91,7 +91,6 @@
       </v-btn>
     </v-card-actions>
   </v-card>
-  {{ model }}
 </template>
 
 <script>

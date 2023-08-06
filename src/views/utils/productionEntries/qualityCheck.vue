@@ -43,7 +43,9 @@
         <v-window-item value="errors">
           <QualityErrorPage v-bind:orders="orders" />
         </v-window-item>
-        <v-window-item value="global"> hello </v-window-item>
+        <v-window-item value="global">
+          <QualityGlobalAdd v-bind:orders="orders" />
+        </v-window-item>
       </v-window>
     </v-card-text>
   </v-card>
@@ -53,6 +55,7 @@
 import QualityTrack from "../../../components/QualityTrack.vue";
 import QualityErrorPage from "../../../components/QualityErrorPage.vue";
 import QualityConfirm from "../../../components/QualityConfirm.vue";
+import QualityGlobalAdd from "../../../components/QualityGlobalAdd.vue";
 import { connectSocket } from "../../../socket.js";
 import axios from "axios";
 export default {
@@ -60,11 +63,13 @@ export default {
     QualityTrack,
     QualityErrorPage,
     QualityConfirm,
+    QualityGlobalAdd,
   },
   data() {
     return {
       nav: "track",
       errorBadge: 0,
+
       orders: [],
     };
   },
@@ -85,6 +90,7 @@ export default {
               id: model.id._id,
             })),
         }));
+
         //console.log(res.data.data);
       });
     },

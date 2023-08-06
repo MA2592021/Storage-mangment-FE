@@ -77,13 +77,7 @@
       <v-col cols="12"
         ><v-timeline side="start" align="start">
           <v-timeline-item
-            :dot-color="
-              h.state === 'Approved'
-                ? 'teal-lighten-3'
-                : h.state === 'Shipped'
-                ? 'green'
-                : 'pink'
-            "
+            :dot-color="getdotcolor(h)"
             size="small"
             v-for="h in card.history"
             :key="h"
@@ -186,6 +180,25 @@ export default {
           });
         }
       });
+    },
+    getdotcolor(item) {
+      if (item.type === "create") {
+        return "blue";
+      } else if (item.type === "track") {
+        return "yellow";
+      } else if (item.type === "addGlobalError" || item.type === "addError") {
+        return "red";
+      } else if (
+        item.type === "update" ||
+        item.type === "verify" ||
+        item.type === "confirmGlobalError"
+      ) {
+        return "green";
+      } else if (item.type === "replace") {
+        return "purple";
+      } else if (item.type === "repair") {
+        return "cyan";
+      }
     },
   },
   computed: {

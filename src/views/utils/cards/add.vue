@@ -143,7 +143,9 @@ export default {
           x._id = element._id;
           element.models.forEach((el) => {
             let y = {};
-            y.name = el.id.name + ` (${el.code})`;
+            y.name =
+              el.id.name +
+              ` (${el.code}) (${el.color.name}-${el.color.code}) (${el.size.name})`;
             y._id = el._id;
             x.models.push(y);
           });

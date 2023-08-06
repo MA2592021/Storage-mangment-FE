@@ -32,6 +32,23 @@
         chips
         multiple
         v-model="props.item.raw.colors"
+      >
+        <template v-slot:prepend-item>
+          <v-list-item
+            ripple
+            @click="
+              props.item.raw.colors = toggle(props.item.raw.colors, colors)
+            "
+          >
+            <v-list-item-content>
+              <v-list-item-title
+                v-if="props.item.raw.colors.length !== colors.length"
+                >Select All</v-list-item-title
+              >
+              <v-list-item-title v-else>UnSelect All</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider class="mt-2"></v-divider> </template
       ></v-autocomplete>
     </template>
     <template v-slot:item.sizes="props">
@@ -43,6 +60,21 @@
         chips
         multiple
         v-model="props.item.raw.sizes"
+      >
+        <template v-slot:prepend-item>
+          <v-list-item
+            ripple
+            @click="props.item.raw.sizes = toggle(props.item.raw.sizes, sizes)"
+          >
+            <v-list-item-content>
+              <v-list-item-title
+                v-if="props.item.raw.sizes.length !== sizes.length"
+                >Select All</v-list-item-title
+              >
+              <v-list-item-title v-else>UnSelect All</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider class="mt-2"></v-divider> </template
       ></v-autocomplete>
     </template>
     <template v-slot:item.material="props">
@@ -75,13 +107,39 @@
       <v-btn variant="tonal" color="success" @click="save">Update</v-btn></v-col
     >
   </v-row>
-  {{ consumptions }}
 </template>
 
 <script>
 import axios from "axios";
 import swal from "sweetalert";
 export default {
+  data() {
+    return {
+      data: [],
+      consumptions: [],
+      orgconsumptions: [],
+      itemsPerPage: 5,
+      colors: [],
+      sizes: [],
+      headers: [
+        {
+          title: "Choose material",
+          align: "center",
+          sortable: false,
+          key: "material",
+          width: "30%",
+        },
+
+        { title: "quantity", align: "center", key: "quantity" },
+
+        { title: "colors", width: "20%", align: "center", key: "colors" },
+        { title: "sizes", width: "20%", align: "center", key: "sizes" },
+        { title: "Actions", align: "center", key: "actions" },
+      ],
+      sortBy: [{ key: "priority", order: "asc" }],
+      model: { name: "" },
+    };
+  },
   created() {
     axios
       .get("/api/model/" + this.$route.params.id)
@@ -112,6 +170,14 @@ export default {
       });
   },
   methods: {
+    toggle(selectedArray, dataArray) {
+      if (dataArray.length === selectedArray.length) {
+        selectedArray = [];
+      } else {
+        selectedArray = dataArray.slice();
+      }
+      return selectedArray;
+    },
     deepCloneArray(arr) {
       return arr.map((item) =>
         Array.isArray(item) ? deepCloneArray(item) : { ...item }
@@ -157,9 +223,16 @@ export default {
         }
       });
       if (er === 0) {
+        console.log("imhere");
+        console.log("diff", diff);
         axios
           .patch(`/api/model/consumptions/add/${this.$route.params.id}`, {
-            consumptions: diff,
+            consumptions: diff.map((diff) => ({
+              colors: diff.colors,
+              sizes: diff.sizes,
+              material: diff.material,
+              quantity: diff.quantity,
+            })),
           })
           .then((res) => {
             swal(
@@ -213,34 +286,6 @@ export default {
       const id = Math.random().toString(36).substr(2) + Date.now().toString(36);
       return id;
     },
-  },
-
-  data() {
-    return {
-      data: [],
-      consumptions: [],
-      orgconsumptions: [],
-      itemsPerPage: 5,
-      colors: [],
-      sizes: [],
-      headers: [
-        {
-          title: "Choose material",
-          align: "center",
-          sortable: false,
-          key: "material",
-          width: "30%",
-        },
-
-        { title: "quantity", align: "center", key: "quantity" },
-
-        { title: "colors", width: "20%", align: "center", key: "colors" },
-        { title: "sizes", width: "20%", align: "center", key: "sizes" },
-        { title: "Actions", align: "center", key: "actions" },
-      ],
-      sortBy: [{ key: "priority", order: "asc" }],
-      model: { name: "" },
-    };
   },
 };
 </script>

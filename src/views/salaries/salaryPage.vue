@@ -117,7 +117,7 @@ export default {
                   swal("error", response.data.errors[0].msg, "error");
                 } else {
                   axios
-                    .delete(`/api/salary/${this.id}/done`)
+                    .patch(`/api/salary/${this.id}/done`)
                     .then((response) => {
                       if (response.data.errors) {
                         swal("error", response.data.errors[0].msg, "error");

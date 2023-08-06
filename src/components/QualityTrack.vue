@@ -8,6 +8,7 @@
         return-object
         inputmode="numeric"
         v-model="selectedOrder"
+        @update:modelValue="blurs"
       ></v-autocomplete>
     </v-col>
     <v-col cols="12">
@@ -29,6 +30,7 @@
         item-title="code"
         v-model="selectedCard"
         return-object
+        @update:modelValue="blurs"
       ></v-autocomplete>
     </v-col>
     <v-col cols="12">
@@ -38,6 +40,7 @@
         item-title="name"
         item-value="id"
         v-model="selectQuality"
+        @update:modelValue="blurs"
       ></v-autocomplete>
     </v-col>
 
@@ -50,9 +53,61 @@
     </v-col>
   </v-row>
   <!-- error section -->
-
-  <v-row class="mt-3">
+  <v-row v-if="haveError"
+    ><v-col align="right" cols="6"
+      ><h3>{{ errors.length }} {{ $t(`errors`) }}</h3></v-col
+    >
+    <v-col cols="6" align="right"
+      ><v-btn color="info" variant="tonal" @click="add_error">
+        + {{ $t(`add stage`) }}
+      </v-btn></v-col
+    ></v-row
+  >
+  <v-row
+    class="mt-3"
+    v-if="haveError"
+    v-for="(error, index) in errors"
+    :key="error"
+  >
+    <v-col cols="12" align="center"
+      ><h3>{{ $t("error number") }} {{ index + 1 }}</h3></v-col
+    >
+    <v-col cols="8">
+      <v-autocomplete
+        :error="error.error"
+        :error-messages="error.error === true ? 'please check this stage' : ''"
+        label="stage"
+        :items="availableStages"
+        item-title="name"
+        return-object
+        inputmode="numeric"
+        v-model="error.stage"
+        @update:modelValue="blurs"
+      ></v-autocomplete>
+    </v-col>
+    <v-col cols="4">
+      <v-autocomplete
+        label="description"
+        :items="error.stage !== null ? error.stage.stageErrors : ''"
+        v-model="error.description"
+        @update:modelValue="blurs"
+      ></v-autocomplete
+    ></v-col>
     <v-col cols="12">
+      <v-autocomplete
+        label="pieces"
+        :items="selectedCard.range"
+        clearable
+        multiple
+        chips
+        inputmode="numeric"
+        v-model="error.pieces"
+        return-object
+      ></v-autocomplete>
+    </v-col>
+    <v-divider :thickness="4" color="info"></v-divider>
+
+    <!-- <v-col cols="12">
       <v-data-table
         v-if="haveError"
         :headers="headers"
@@ -114,13 +169,20 @@
             class="ml-2"
           ></v-btn>
         </template> </v-data-table
-    ></v-col>
+    ></v-col> -->
+    <!-- <v-col align="center"
+      ><v-btn color="success" :loading="loading" @click="submit()">{{
+        $t(`submit`)
+      }}</v-btn></v-col
+    > -->
+  </v-row>
+  <v-row>
     <v-col align="center"
       ><v-btn color="success" :loading="loading" @click="submit()">{{
         $t(`submit`)
       }}</v-btn></v-col
-    >
-  </v-row>
+    ></v-row
+  >
 </template>
 
 <script>
@@ -182,6 +244,9 @@ export default {
   },
   methods: {
     //// page logic
+    blurs() {
+      document.activeElement.blur();
+    },
     id() {
       // Create a random ID using Math.random() and Date.now()
       const id = Math.random().toString(36).substr(2) + Date.now().toString(36);
@@ -307,6 +372,7 @@ export default {
             this.load_model_stages();
             //console.log("cards", this.cards);
           });
+        this.blurs();
       }
     },
     load_model_stages() {
@@ -346,14 +412,15 @@ export default {
                 .then(() => {
                   if (this.haveError) {
                     this.submit_errors();
+                  } else {
+                    this.loading = false;
                   }
                 })
                 .catch(() => {
-                  if (this.haveError) {
-                    this.submit_errors();
-                  }
+                  this.loading = false;
                 });
             } else {
+              swal("error", "تم رصد عمل نقطة الجودة من قبل ", "error");
               this.submit_errors();
             }
           });
@@ -384,6 +451,8 @@ export default {
           .catch(() => {
             this.loading = false;
           });
+      } else {
+        this.loading = false;
       }
     },
   },
