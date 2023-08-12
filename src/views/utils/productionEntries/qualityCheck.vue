@@ -41,7 +41,7 @@
           <QualityConfirm v-bind:orders="orders" />
         </v-window-item>
         <v-window-item value="errors">
-          <QualityErrorPage v-bind:orders="orders" />
+          <QualityErrorPage v-bind:orders="orders" v-if="nav === 'errors'" />
         </v-window-item>
         <v-window-item value="global">
           <QualityGlobalAdd v-bind:orders="orders" />
@@ -83,7 +83,7 @@ export default {
           models: order.models
             .filter(
               (person, index, self) =>
-                index === self.findIndex((p) => p.name === person.name)
+                index === self.findIndex((p) => p.id._id === person.id._id)
             )
             .map((model) => ({
               name: model.id.name,

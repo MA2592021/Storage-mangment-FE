@@ -50,12 +50,9 @@ export default {
       this.socket = connectSocket();
       this.socket.on("errors", (message) => {
         console.log("errors", message);
-        toast.error(
-          ` ${message.currentErrorsLength} errors in card ` + message.cardCode,
-          {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          }
-        );
+        toast.error(` some errors in card ` + message.cardCode, {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
         this.error_sound();
       });
       this.socket.on("repairs", (message) => {

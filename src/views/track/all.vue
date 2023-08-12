@@ -27,7 +27,7 @@
           v-model="selectedModel"
           :items="selectedOrder.models"
           item-title="name"
-          item-value="id"
+          return-object
           :label="$t('model')"
           @update:modelValue="loadtrack()"
         ></v-autocomplete> </v-col
@@ -54,11 +54,7 @@
         hover
       >
         <template v-slot:item.piecesGotErrors="{ item }">
-          <v-badge
-            dot
-            inline
-            :color="item.raw.currentErrorsLength > 0 ? 'red' : 'green'"
-          >
+          <v-badge dot inline :color="get_dot_color(item.raw)">
             <v-chip
               class="ma-2"
               :color="item.columns.piecesGotErrors === 0 ? `green` : `red`"
@@ -70,6 +66,16 @@
         </template>
         <template v-slot:item.color="{ item }">
           {{ item.raw.colorName }} ({{ item.raw.colorCode }})
+        </template>
+        <template v-slot:item.trackingLength="{ item }">
+          <v-chip class="ma-2">
+            {{
+              (
+                (+item.raw.trackingLength / this.modelstageslength) *
+                100
+              ).toFixed(2)
+            }}%
+          </v-chip>
         </template>
         <template v-slot:item.code="{ item }">
           <v-chip @click="card(item.raw.cardID)" class="ma-2">
@@ -87,6 +93,11 @@
           </v-chip>
         </template>
       </v-data-table>
+      <div align="center">
+        <v-btn class="mx-auto" color="info" @click="printo()"
+          >{{ $t("print") }}
+        </v-btn>
+      </div>
     </v-col>
     <v-col>
       <!-- <v-checkbox
@@ -110,6 +121,8 @@
 import axios from "axios";
 import moment from "moment";
 import { connectSocket } from "../../socket.js";
+import { usedata } from "../../stores/print_data";
+
 export default {
   data: () => ({
     search: "",
@@ -124,15 +137,22 @@ export default {
       { title: "quantity", align: "center", key: "quantity" },
       { title: "size", key: "size" },
       { title: "color", key: "color" },
+      { title: "Box number", key: "boxNumber" },
       { title: "errors", key: "piecesGotErrors" },
       { title: "last stage", key: "lastStage" },
       { title: "time finished", key: "lastStageDate" },
+      { title: "Progress", key: "trackingLength" },
     ],
     orders: "",
     selectedOrder: "",
     selectedModel: "",
     cards: [],
+    modelstageslength: "",
   }),
+  setup() {
+    const print_data = usedata();
+    return { print_data };
+  },
   methods: {
     getChipColor(type) {
       if (type === "preparations") {
@@ -147,6 +167,13 @@ export default {
         return "red";
       }
     },
+    printo() {
+      this.print_data.title = `${this.selectedModel.name} Production State (stages No. ${this.modelstageslength})`;
+      this.print_data.data = this.cards;
+      this.print_data.header = this.headers;
+      console.log(this.print_data);
+      this.$router.push({ path: "/print" });
+    },
     timeago(time) {
       const currentTime = moment();
       const inputTime = moment(time);
@@ -158,7 +185,13 @@ export default {
       }
       return "red";
     },
-
+    get_dot_color(item) {
+      if (item.currentErrorsLength !== 0 || item.globalErrorLength !== 0) {
+        return "red";
+      } else {
+        return "green";
+      }
+    },
     card(id) {
       this.$router.push({ path: "/utils/cards/" + id });
     },
@@ -166,7 +199,7 @@ export default {
       this.$router.push({ path: "/utils/stage/" + id });
     },
     momentdate(value) {
-      if (value === "not started yet") {
+      if (value === null) {
         return "not started yet";
       } else {
         return moment(value).calendar();
@@ -180,7 +213,7 @@ export default {
           models: order.models
             .filter(
               (person, index, self) =>
-                index === self.findIndex((p) => p.name === person.name)
+                index === self.findIndex((p) => p.id._id === person.id._id)
             )
             .map((model) => ({
               name: model.id.name,
@@ -191,15 +224,26 @@ export default {
       });
     },
     loadtrack() {
-      console.log(this.selectedOrder.id, this.selectedModel);
-      axios
-        .get(
-          `/api/card/order/${this.selectedOrder.id}/model/${this.selectedModel}/production`
-        )
-        .then((res) => {
-          this.cards = res.data.data;
-          console.log(res);
-        });
+      console.log(this.selectedOrder.id, this.selectedModel.id);
+      if (this.selectedModel !== null) {
+        axios
+          .get("/api/model/" + this.selectedModel.id)
+          .then((res) => {
+            console.log(res);
+            this.modelstageslength = res.data.data.stages.length;
+            console.log(this.modelstageslength);
+          })
+          .then(() => {
+            axios
+              .get(
+                `/api/card/order/${this.selectedOrder.id}/model/${this.selectedModel.id}/production`
+              )
+              .then((res) => {
+                this.cards = res.data.data;
+                console.log(res);
+              });
+          });
+      }
     },
   },
   created() {
@@ -208,33 +252,49 @@ export default {
   },
   mounted() {
     const socket = connectSocket();
-    let index = 0;
     socket.on("errors", (message) => {
-      console.log(message);
-      index = this.cards.findIndex((card) => card.cardID === message.cardID);
-      this.cards[index].currentErrorsLength = message.currentErrorsLength;
-      this.cards[index].piecesGotErrors = message.pieceErrors;
-      this.cards[index].lastStageDate = moment(message.date).calendar();
+      setTimeout(() => {
+        console.log(message);
+        const index = this.cards.findIndex(
+          (card) => card.cardID === message.cardID
+        );
+        this.cards[index].currentErrorsLength = message.currentErrorsLength;
+        this.cards[index].globalErrorsLength = message.globalErrorsLength;
+        this.cards[index].piecesGotErrors = message.pieceErrors;
+        this.cards[index].lastStageDate = message.date;
+      }, 1500);
 
       //this.loadtrack();
     });
-    socket.on("repairs", (message) => {
-      console.log(message);
-      // index = this.cards.findIndex((card) => card.cardID === message.cardID);
-      // this.cards[index].lastStageDate = moment(message.date).calendar();
-      this.loadtrack();
-    });
+    // socket.on("repairs", (message) => {
+    //   console.log(message);
+    //   // index = this.cards.findIndex((card) => card.cardID === message.cardID);
+    //   // this.cards[index].lastStageDate = moment(message.date).calendar();
+    //   this.loadtrack();
+    // });
     socket.on("addTracking", (message) => {
-      index = this.cards.findIndex((card) => card.cardID === message.cardID);
-      this.cards[index].lastStage = message.lastStageName;
-      this.cards[index].lastStageType = message.lastStageType;
-      this.cards[index].lastStageDate = message.lastStageDate;
-      this.cards[index].done = message.cardDone;
+      setTimeout(() => {
+        const index = this.cards.findIndex(
+          (card) => card.cardID === message.cardID
+        );
+        this.cards[index].lastStage = message.lastStageName;
+        this.cards[index].lastStageType = message.lastStageType;
+        this.cards[index].lastStageDate = message.lastStageDate;
+        this.cards[index].done = message.cardDone;
+        this.cards[index].trackingLength = message.trackingLength;
+      }, 1500);
     });
     socket.on("errorConfirm", (message) => {
-      index = this.cards.findIndex((card) => card.cardID === message.cardID);
-      this.cards[index].currentErrorsLength = message.currentErrorsLength;
-      this.cards[index].lastStageDate = moment(message.date).calendar();
+      setTimeout(() => {
+        console.log(message);
+        const index = this.cards.findIndex(
+          (card) => card.cardID === message.cardID
+        );
+        this.cards[index].globalErrorsLength = message.globalErrorsLength;
+
+        this.cards[index].currentErrorsLength = message.currentErrorsLength;
+        this.cards[index].lastStageDate = message.date;
+      }, 1500);
     });
   },
 };

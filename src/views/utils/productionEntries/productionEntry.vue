@@ -389,6 +389,7 @@ export default {
     },
     loadorder() {
       axios.get("/api/order").then((res) => {
+        console.log("res", res.data.data);
         res.data.data.forEach((element) => {
           let x = { models: [] };
           x.name = element.name;
@@ -396,7 +397,7 @@ export default {
           (x.models = element.models
             .filter(
               (person, index, self) =>
-                index === self.findIndex((p) => p.name === person.name)
+                index === self.findIndex((p) => p.id._id === person.id._id)
             )
             .map((model) => ({
               name: model.id.name,
@@ -556,7 +557,7 @@ export default {
   computed: {
     displayText() {
       return this.employees
-        .filter((employee) => employee.role.number > 4)
+        .filter((employee) => employee.role.number >= 3)
         .map((employee) => ({
           name: `${employee.name} (${employee.code})`,
           id: employee._id,

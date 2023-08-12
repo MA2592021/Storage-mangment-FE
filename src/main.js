@@ -47,6 +47,7 @@ axios.interceptors.response.use(
           .then((response) => {
             const { accessToken } = response.data;
             console.log("token refresh");
+            console.log(response);
             // Update the stored access token and refresh token
             localStorage.setItem("accessToken", accessToken);
 
@@ -62,6 +63,7 @@ axios.interceptors.response.use(
           .catch((error) => {
             // Handle refresh token request error
             // For example, redirect the user to the login page
+            console.log(error);
             localStorage.clear();
             router.push("/login");
             swal("error", "sorry you have to login again", "error");

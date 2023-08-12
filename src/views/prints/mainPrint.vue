@@ -35,7 +35,7 @@ export default {
   mounted() {
     setTimeout(() => {
       window.print();
-    }, 1000);
+    }, 2000);
   },
 
   setup() {

@@ -93,7 +93,7 @@
         @update:modelValue="blurs"
       ></v-autocomplete
     ></v-col>
-    <v-col cols="12">
+    <v-col cols="8">
       <v-autocomplete
         label="pieces"
         :items="selectedCard.range"
@@ -104,6 +104,14 @@
         v-model="error.pieces"
         return-object
       ></v-autocomplete>
+    </v-col>
+    <v-col cols="4" align="right">
+      <v-btn
+        color="red"
+        @click="delete_error(index)"
+        icon="mdi-delete-circle"
+        class="ml-2"
+      ></v-btn>
     </v-col>
     <v-divider :thickness="4" color="info"></v-divider>
 
@@ -413,6 +421,7 @@ export default {
                   if (this.haveError) {
                     this.submit_errors();
                   } else {
+                    swal("success", "stage successfully added", "success");
                     this.loading = false;
                   }
                 })

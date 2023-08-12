@@ -28,7 +28,7 @@
         label="colors"
         :items="colors"
         item-title="name"
-        item-value="_id"
+        return-object
         chips
         multiple
         v-model="props.item.raw.colors"
@@ -56,7 +56,7 @@
         label="sizes"
         :items="sizes"
         item-title="name"
-        item-value="_id"
+        return-object
         chips
         multiple
         v-model="props.item.raw.sizes"
@@ -161,6 +161,7 @@ export default {
         this.model.name = res.data.data.name;
         //console.log(this.colors);
         //console.log(this.model);
+        console.log(this.colors);
       })
       .then(() => {
         axios.get("/api/material").then((res) => {
@@ -193,6 +194,10 @@ export default {
         id: this.id(),
         //name: "",
         error: false,
+        colors: [],
+        sizes: [],
+        material: null,
+        quantity: null,
       });
     },
     cancel() {
@@ -223,11 +228,29 @@ export default {
         }
       });
       if (er === 0) {
+        let array = [];
         console.log("imhere");
-        console.log("diff", diff);
+        diff.forEach((element) => {
+          let temp_sizes = [];
+          let temp_colors = [];
+          element.sizes.forEach((el) => {
+            temp_sizes.push(el._id);
+          });
+          element.colors.forEach((el) => {
+            temp_colors.push(el._id);
+          });
+          array.push({
+            sizes: temp_sizes,
+            colors: temp_colors,
+            material: element.material,
+            quantity: element.quantity,
+          });
+        });
+        console.log("diff", array);
+
         axios
           .patch(`/api/model/consumptions/add/${this.$route.params.id}`, {
-            consumptions: diff.map((diff) => ({
+            consumptions: array.map((diff) => ({
               colors: diff.colors,
               sizes: diff.sizes,
               material: diff.material,

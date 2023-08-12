@@ -233,6 +233,12 @@ export default {
       ],
       headers1: [
         {
+          title: "code",
+          align: "start",
+          sortable: false,
+          key: "id.code",
+        },
+        {
           title: "name",
           align: "start",
           sortable: false,

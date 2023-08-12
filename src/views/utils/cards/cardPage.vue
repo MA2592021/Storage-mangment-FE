@@ -74,6 +74,36 @@
           variant="underlined"
         ></v-text-field>
       </v-col>
+      <v-col cols="12" sm="6" md="6">
+        <v-text-field
+          required
+          v-model="color"
+          readonly
+          label=" color"
+          hint="Required"
+          variant="underlined"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6" md="6">
+        <v-text-field
+          required
+          v-model="size"
+          readonly
+          label="size"
+          hint="Required"
+          variant="underlined"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6" md="6">
+        <v-text-field
+          required
+          v-model="card.boxNumber"
+          readonly
+          label="box Number"
+          hint="Required"
+          variant="underlined"
+        ></v-text-field>
+      </v-col>
       <v-col cols="12"
         ><v-timeline side="start" align="start">
           <v-timeline-item
@@ -216,6 +246,16 @@ export default {
     },
     modelname() {
       return this.card.model ? this.card.model.name : null;
+    },
+    color() {
+      return this.card.color
+        ? `${this.card.color.name} ( ${this.card.color.code})`
+        : null;
+    },
+    size() {
+      return this.card.size
+        ? `${this.card.size.name} ( ${this.card.size.code})`
+        : null;
     },
   },
 };
