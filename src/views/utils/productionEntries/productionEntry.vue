@@ -319,7 +319,7 @@ export default {
         model = this.selected_model._id;
       }
       axios
-        .get(`/api/card/order/${order}/model/${model}`)
+        .get(`/api/card/order/${order}/model/${model}/codes`)
         .then((res) => {
           this.assist_card = res.data.data;
           console.log(res.data.data);

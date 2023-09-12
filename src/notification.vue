@@ -9,6 +9,7 @@ import notifySound from "./assets/notify.mp3";
 import warningSound from "./assets/simplewarning.mp3";
 import repairSound from "./assets/repair.mp3";
 import successSound from "./assets/success.mp3";
+import dangerwarning from "./assets/dangerWarning.mp3";
 export default {
   data() {
     return {
@@ -39,6 +40,10 @@ export default {
     },
     repair_sound() {
       const audio = new Audio(successSound);
+      audio.play();
+    },
+    danger_sound() {
+      const audio = new Audio(dangerwarning);
       audio.play();
     },
     emit_test() {
@@ -78,6 +83,16 @@ export default {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
         this.success_sound();
+      });
+      this.socket.on("error_late", (message) => {
+        console.log("error_late", message);
+        toast.error(
+          ` ${message.code} card has been late For Too long please Check it (last stage checked ${message.lastStage})   `,
+          {
+            position: toast.POSITION.BOTTOM_RIGHT,
+          }
+        );
+        this.danger_sound();
       });
       this.socket.on("message", (message) => {
         console.log("Received message:", message);

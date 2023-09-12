@@ -33,7 +33,7 @@
     ><v-col cols="12">
       <v-autocomplete
         :label="$t(`description`)"
-        :items="['استعواض', 'قطعة مفقودة ', 'خطا في الترقيم']"
+        :items="['استعواض', 'قطعة مفقودة ', 'خطا في الترقيم', 'خطا في المقاس ']"
         v-model="selecteddesc"
         return-object
       ></v-autocomplete>
