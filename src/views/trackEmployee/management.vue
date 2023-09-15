@@ -25,7 +25,7 @@
 
         <v-card-text class="py-0">
           <v-row align="center" no-gutters>
-            <v-col cols="6">
+            <v-col cols="6" align="center">
               <v-progress-circular
                 :model-value="employee.monthWorkRate"
                 :size="70"
@@ -35,7 +35,7 @@
               <p>Month Work Rate</p>
             </v-col>
 
-            <v-col cols="6">
+            <v-col cols="6" align="center">
               <v-progress-circular
                 :model-value="employee.monthErrorRate"
                 :size="70"
