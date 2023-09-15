@@ -88,11 +88,9 @@
             <v-col cols="12">
               <v-autocomplete
                 v-model="selected_stage"
-                :items="
-                  verify === false ? stageerror : selected_card.currentErrors
-                "
+                :items="stageerror"
                 return-object
-                :item-title="verify === false ? `name` : `name`"
+                :item-title="`name`"
                 inputmode="numeric"
                 :label="$t('stage code')"
                 @update:modelValue="blurs"
@@ -250,7 +248,7 @@
 <script>
 import axios from "axios";
 import swal from "sweetalert";
-import { connectSocket } from "../../../socket.js";
+import { socket } from "../../../socket.js";
 export default {
   data() {
     return {
@@ -319,7 +317,7 @@ export default {
         model = this.selected_model._id;
       }
       axios
-        .get(`/api/card/order/${order}/model/${model}/codes`)
+        .get(`/api/card/order/${order}/model/${model}`)
         .then((res) => {
           this.assist_card = res.data.data;
           console.log(res.data.data);
@@ -535,9 +533,7 @@ export default {
           .then((res) => {
             console.log(res);
             this.loading = false;
-            swal("success", "تم رصد الاصلاحات بنجاح", "success").then(() => {
-              this.$router.go(0);
-            });
+            swal("success", "تم رصد الاصلاحات بنجاح", "success");
           })
           .catch((err) => {
             this.loading = false;
@@ -577,7 +573,6 @@ export default {
     this.loademployee();
   },
   mounted() {
-    const socket = connectSocket();
     socket.on("errors", (message) => {
       //console.log(message);
       this.errorbadge++;

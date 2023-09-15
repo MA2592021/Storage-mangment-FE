@@ -55,7 +55,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import { socket } from "../socket";
+import { socket } from "../../socket";
 export default {
   data() {
     return {
@@ -69,7 +69,10 @@ export default {
       TotalErrorPages: 1,
       totalPages: 1,
       data: [],
-      errors: [],
+      errors:
+        JSON.parse(localStorage.getItem("errors")) === null
+          ? []
+          : JSON.parse(localStorage.getItem("errors")),
       sortBy: [
         {
           order: "desc",
@@ -195,12 +198,22 @@ export default {
       },
       1500
     );
+    socket.on(
+      "errorConfirm",
+      (message) => {
+        this.errors = this.errors.filter(
+          (obj) => obj.cardID !== message.cardID
+        );
+        this.TotalErrorPages = Math.ceil(this.errors.length / 10);
+      },
+      1500
+    );
   },
   mounted() {
     if (this.maininterval === null) {
       this.maininterval = setInterval(() => {
         const minute = new Date().getMinutes();
-        if (minute > 1) {
+        if (minute === 1) {
           console.log("yeaa");
           this.workview();
         } else {
@@ -214,6 +227,15 @@ export default {
     clearInterval(this.maininterval);
     clearInterval(this.interval);
     clearInterval(this.errorinterval);
+  },
+  watch: {
+    errors: {
+      handler(newValue, oldValue) {
+        console.log("sheaaa working");
+        localStorage.setItem("errors", JSON.stringify(this.errors));
+      },
+      deep: true,
+    },
   },
 };
 </script>

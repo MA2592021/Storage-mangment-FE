@@ -470,24 +470,65 @@ const router = createRouter({
 
           component: () => import("../views/track/dashboard.vue"),
         },
-        {
-          path: "add",
-          name: "track-add",
+        // {
+        //   path: "add",
+        //   name: "track-add",
 
-          component: () => import("../views/track/add.vue"),
-        },
+        //   component: () => import("../views/track/add.vue"),
+        // },
         {
           path: "all",
           name: "track-all",
 
           component: () => import("../views/track/all.vue"),
         },
-        {
-          path: ":id",
-          name: "track-page",
+        // {
+        //   path: ":id",
+        //   name: "track-page",
 
-          component: () => import("../views/track/trackPage.vue"),
+        //   component: () => import("../views/track/trackPage.vue"),
+        // },
+      ],
+    },
+    //employee track routes
+    {
+      path: "/emptrack/",
+      name: "employee_track",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/trackEmployee/landPage.vue"),
+      children: [
+        {
+          path: "dashboard",
+          name: "employee_track-dash",
+
+          component: () => import("../views/trackEmployee/dashboard.vue"),
         },
+        // {
+        //   path: "add",
+        //   name: "emptrack-add",
+
+        //   component: () => import("../views/track/add.vue"),
+        // },
+        {
+          path: "hall",
+          name: "employee_track-hall",
+
+          component: () => import("../views/trackEmployee/hall.vue"),
+        },
+        {
+          path: "management",
+          name: "employee_track-management",
+
+          component: () => import("../views/trackEmployee/management.vue"),
+        },
+        // {
+        //   path: ":id",
+        //   name: "track-page",
+
+        //   component: () => import("../views/track/trackPage.vue"),
+        // },
       ],
     },
     //color routes
@@ -930,7 +971,7 @@ router.beforeEach((to, from, next) => {
         : false;
       if (to.meta.requiresAuth && !isLoggedIn) {
         // User is not logged in and the route requires authentication
-
+        localStorage.clear();
         swal("error", "you have to login ", "error");
 
         next("/login"); // Redirect the user to the login page or another appropriate route

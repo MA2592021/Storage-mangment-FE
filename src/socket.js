@@ -9,9 +9,9 @@ export const state = reactive({
 
 // "undefined" means the URL will be computed from the `window.location` object
 const URL = import.meta.env.VITE_SOCKET_URL;
-
+export let socket = null;
 export function connectSocket() {
-  const socket = io(URL);
+  socket = io(URL);
 
   // socket.on("message", (message) => {
   //   console.log("Received message:", message);

@@ -56,7 +56,7 @@ import QualityTrack from "../../../components/QualityTrack.vue";
 import QualityErrorPage from "../../../components/QualityErrorPage.vue";
 import QualityConfirm from "../../../components/QualityConfirm.vue";
 import QualityGlobalAdd from "../../../components/QualityGlobalAdd.vue";
-import { connectSocket } from "../../../socket.js";
+import { socket } from "../../../socket.js";
 import axios from "axios";
 export default {
   components: {
@@ -110,7 +110,6 @@ export default {
     this.load_order();
   },
   mounted() {
-    const socket = connectSocket();
     socket.on("errors", (message) => {
       console.log("im here");
       this.errorBadge++;

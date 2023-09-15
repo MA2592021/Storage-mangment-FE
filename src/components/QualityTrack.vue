@@ -362,6 +362,7 @@ export default {
 
     load_cards() {
       if (this.selectedModel !== "") {
+        console.log("getting cards");
         axios
           .get(
             `/api/card/order/${this.selectedOrder.id}/model/${this.selectedModel}`
@@ -378,7 +379,7 @@ export default {
                 id: card._id,
               }));
             this.load_model_stages();
-            //console.log("cards", this.cards);
+            console.log("cards", this.cards);
           });
         this.blurs();
       }

@@ -2,7 +2,9 @@
   "tabs": {
     "dashboard": "لوحة الاحصائيات",
     "all": "الكل",
-    "add": "اضافة"
+    "add": "اضافة",
+    "hall": "الصالة",
+    "management": "الادارة"
   },
   "navbar": {
     "user_role": "مناصب المستخدمين",
@@ -32,7 +34,8 @@
     "roles": "المناصب",
     "types": "انواع الخامات",
     "stages": "المراحل",
-    "machinetypes": "أنواع الماكينات"
+    "machinetypes": "أنواع الماكينات",
+    "employees follow-up": "متابعة العمال"
   },
   "password": "الرقم السري",
   "replace": "تبديل",

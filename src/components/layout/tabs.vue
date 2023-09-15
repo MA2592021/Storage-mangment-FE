@@ -4,12 +4,26 @@
       <v-tab :value="1" router :to="`${parentPath}dashboard`">{{
         $t("tabs.dashboard")
       }}</v-tab>
-      <v-tab :value="2" router :to="`${parentPath}all`">{{
+      <v-tab :value="2" router :to="`${parentPath}all`" v-if="checkAllPath">{{
         $t("tabs.all")
       }}</v-tab>
-      <v-tab :value="3" router :to="`${parentPath}add`" v-if="checkpath">{{
+      <v-tab :value="3" router :to="`${parentPath}add`" v-if="checkAddPath">{{
         $t("tabs.add")
       }}</v-tab>
+      <v-tab
+        :value="3"
+        router
+        :to="`${parentPath}hall`"
+        v-if="checkEmployeeFollowUpPath"
+        >{{ $t("tabs.hall") }}</v-tab
+      >
+      <v-tab
+        :value="3"
+        router
+        :to="`${parentPath}management`"
+        v-if="checkEmployeeFollowUpPath"
+        >{{ $t("tabs.management") }}</v-tab
+      >
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item v-for="n in 3" :key="n" :value="n" disabled>
@@ -28,15 +42,29 @@ export default {
     parentPath() {
       return this.$route.matched[0].path;
     },
-    checkpath() {
+    checkAddPath() {
       if (this.parentPath === "/utils/assist/") {
         return false;
       } else if (this.parentPath === "/track/") {
         return false;
       } else if (this.parentPath === "/salary/") {
         return false;
+      } else if (this.parentPath === "/emptrack/") {
+        return false;
       }
       return true;
+    },
+    checkAllPath() {
+      if (this.parentPath === "/emptrack/") {
+        return false;
+      }
+      return true;
+    },
+    checkEmployeeFollowUpPath() {
+      if (this.parentPath === "/emptrack/") {
+        return true;
+      }
+      return false;
     },
   },
 };

@@ -208,6 +208,12 @@ export default {
           route: "/track/dashboard",
           view: "track",
         },
+        {
+          icon: "mdi-chart-donut-variant",
+          text: this.$t("navbar.employees follow-up"),
+          route: "/emptrack/dashboard",
+          view: "track",
+        },
       ],
 
       storagelinks: [
@@ -354,6 +360,7 @@ export default {
       this.links[8].text = this.$t("navbar.shipments");
       this.links[9].text = this.$t("navbar.requests");
       this.links[10].text = this.$t("navbar.track");
+      this.links[11].text = this.$t("navbar.employees follow-up");
       this.storagelinks[0].text = this.$t("navbar.properties");
       this.storagelinks[1].text = this.$t("navbar.materials");
       this.storagelinks[2].text = this.$t("navbar.cartons");

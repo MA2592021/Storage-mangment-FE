@@ -158,11 +158,7 @@ export default {
             })
             .then(() => {
               this.loading = false;
-              swal("success", "Errors Confirmed successfully", "success").then(
-                () => {
-                  this.restart();
-                }
-              );
+              swal("success", "Errors Confirmed successfully", "success");
             })
 
             .catch(() => (this.loading = false));
@@ -192,9 +188,6 @@ export default {
           });
         }
       }
-    },
-    restart() {
-      this.$router.go(0);
     },
   },
   props: {

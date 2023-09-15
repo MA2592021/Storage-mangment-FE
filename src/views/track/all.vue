@@ -120,7 +120,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import { connectSocket } from "../../socket.js";
+import { socket } from "../../socket.js";
 import { usedata } from "../../stores/print_data";
 
 export default {
@@ -251,7 +251,6 @@ export default {
     this.load_order();
   },
   mounted() {
-    const socket = connectSocket();
     socket.on("errors", (message) => {
       setTimeout(() => {
         console.log(message);

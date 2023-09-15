@@ -2,7 +2,9 @@
   "tabs": {
     "dashboard": "Dashboard",
     "all": "All",
-    "add": "Add"
+    "add": "Add",
+    "hall": "Hall",
+    "management": "Management"
   },
   "navbar": {
     "user_role": "User Roles",
@@ -32,7 +34,8 @@
     "roles": "Roles",
     "types": "Material Types",
     "stages": "Stages",
-    "machinetypes": "Machine types"
+    "machinetypes": "Machine types",
+    "employees follow-up": "Employees follow-up"
   },
   "password": "Password",
   "print": "print",
