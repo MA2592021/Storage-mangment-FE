@@ -11,14 +11,14 @@
         $t("tabs.add")
       }}</v-tab>
       <v-tab
-        :value="3"
+        :value="4"
         router
         :to="`${parentPath}hall`"
         v-if="checkEmployeeFollowUpPath"
         >{{ $t("tabs.hall") }}</v-tab
       >
       <v-tab
-        :value="3"
+        :value="5"
         router
         :to="`${parentPath}management`"
         v-if="checkEmployeeFollowUpPath"
@@ -26,7 +26,7 @@
       >
     </v-tabs>
     <v-window v-model="tab">
-      <v-window-item v-for="n in 3" :key="n" :value="n" disabled>
+      <v-window-item v-for="n in 5" :key="n" :value="n" disabled>
         <router-view />
       </v-window-item>
     </v-window>

@@ -1,23 +1,42 @@
 <template>
-  <v-text-field
-    v-model="search"
-    label="Search"
-    single-line
-    hide-details
-    Append-inner-icon="mdi-magnify"
-    class="mt-5 mb-4"
-  ></v-text-field>
   <v-row>
-    <v-col cols="6" v-for="employee in data"
-      ><v-card class="mx-auto" max-width="368">
+    <v-col cols="9">
+      <v-text-field
+        v-model="search"
+        label="Search"
+        single-line
+        append-inner-icon="mdi-magnify"
+        class="mt-5 mb-4 ml-2"
+        @update:modelValue="searchpls()"
+      ></v-text-field>
+    </v-col>
+    <v-col cols="3"
+      ><v-select
+        class="mt-5 mb-4"
+        label="sort"
+        clearable
+        v-model="sort"
+        :items="selectSort"
+        item-title="title"
+        return-object
+        @update:modelValue="sortpls()"
+      ></v-select
+    ></v-col>
+  </v-row>
+
+  <v-row>
+    <v-col
+      xs="12"
+      sm="6"
+      md="4"
+      lg="3"
+      xl="3"
+      xxl="2"
+      v-for="employee in showdata"
+      ><v-card class="mx-auto" max-width="400">
         <v-card-item :title="employee.employeeName">
           <template v-slot:subtitle>
-            <v-icon
-              icon="mdi-barcode"
-              size="18"
-              color="error"
-              class="me-1 pb-1"
-            ></v-icon>
+            <v-icon icon="mdi-barcode" size="18" class="me-1 pb-1"></v-icon>
 
             {{ employee.employeeCode }}
           </template>
@@ -114,6 +133,7 @@
                 v-for="item in employee.todayDetails"
                 :key="item.stage._id"
                 :title="item.stage.name"
+                :subtitle="`quantity: ${item.quantity} -- NO.Errors: ${item.noOfErrors}`"
               >
                 <v-progress-linear
                   :model-value="item.quantity / (+item.stage.rate * 8)"
@@ -139,45 +159,140 @@
       </v-card></v-col
     >
   </v-row>
+  <v-pagination
+    v-model="page"
+    class="my-4"
+    :length="totalPages"
+    :total-visible="7"
+  ></v-pagination>
 </template>
 <script>
 import axios from "axios";
+import { socket } from "../../socket";
 export default {
   data: () => ({
     data: [],
-    value: 10,
-    labels: { 0: "SU", 1: "MO", 2: "TU", 3: "WED", 4: "TH", 5: "FR", 6: "SA" },
-    time: 0,
-    forecast: [
-      {
-        day: "Tuesday",
-        icon: "mdi-white-balance-sunny",
-        temp: "24\xB0/12\xB0",
-      },
-      {
-        day: "Wednesday",
-        icon: "mdi-white-balance-sunny",
-        temp: "22\xB0/14\xB0",
-      },
-      { day: "Thursday", icon: "mdi-cloud", temp: "25\xB0/15\xB0" },
+    page: 1,
+    sort: "",
+    totalPages: 0,
+    showdata: [],
+    searchresult: [],
+    selectSort: [
+      { title: "month work rate (asc)", key: "monthWorkRate", sort: "asc" },
+      { title: "month work rate (desc)", key: "monthWorkRate", sort: "desc" },
+      { title: "month error rate (asc)", key: "monthErrorRate", sort: "asc" },
+      { title: "month error rate (desc)", key: "monthErrorRate", sort: "desc" },
+      { title: "today work rate (asc)", key: "todayWorkRate", sort: "asc" },
+      { title: "today work rate (desc)", key: "todayWorkRate", sort: "desc" },
+      { title: "today error rate (asc)", key: "todayErrorRate", sort: "asc" },
+      { title: "today error rate (desc)", key: "todayErrorRate", sort: "desc" },
     ],
+    search: "",
+    test: "monthErrorRate",
   }),
   methods: {
     loadsalaries() {
       axios.get("/api/Salary/summary").then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         this.data = res.data.data;
         this.data.forEach((obj) => {
           obj.expand = false;
         });
-
-        console.log(this.data);
-        this.totalPages = Math.ceil(res.data.data.length / 10);
+        this.showdata = this.data.slice((+this.page - 1) * 8, +this.page * 8);
+        console.log(this.showdata);
+        this.totalPages = Math.ceil(res.data.data.length / 8);
       });
+    },
+    searchpls() {
+      if (this.search !== null || this.search !== "") {
+        this.searchresult = this.data.filter((employee) => {
+          return employee.employeeName
+            .toLowerCase()
+            .includes(this.search.toLowerCase());
+        });
+        console.log(this.searchresult.slice(0, 8));
+        this.showdata = this.searchresult.slice(0, 8);
+        this.totalPages = Math.ceil(this.searchresult.length / 8);
+      } else {
+        this.searchresult = [];
+        this.showdata = this.data.slice(0, 8);
+        this.totalPages = Math.ceil(this.data.length / 8);
+      }
+      this.page = 1;
+    },
+    sortpls() {
+      if (this.sort.sort === "asc") {
+        this.data.sort((a, b) => {
+          if (+a[this.sort.key] < +b[this.sort.key]) {
+            return -1; // a should come before b in the sorted order
+          }
+          if (+a[this.sort.key] > +b[this.sort.key]) {
+            return 1; // a should come after b in the sorted order
+          }
+          return 0; // a and b are equal, no change in order
+        });
+      } else {
+        this.data.sort((a, b) => {
+          if (+a[this.sort.key] < +b[this.sort.key]) {
+            return 1; // a should come before b in the sorted order
+          }
+          if (+a[this.sort.key] > +b[this.sort.key]) {
+            return -1; // a should come after b in the sorted order
+          }
+          return 0; // a and b are equal, no change in order
+        });
+      }
+      if (this.search !== "") {
+        console.log(this.search);
+        this.searchpls();
+      } else {
+        this.showdata = this.data.slice((+this.page - 1) * 8, +this.page * 8);
+        //this.page = 1;
+      }
     },
   },
   created() {
     this.loadsalaries();
+  },
+  mounted() {
+    socket.on("errorConfirm", (message) => {
+      setTimeout(() => {
+        this.loadsalaries();
+      }, 500);
+      if (this.sort.length !== 0) {
+        this.sortpls();
+      }
+    });
+    socket.on("addTracking", (message) => {
+      this.loadsalaries();
+      setTimeout(() => {
+        if (this.sort.length !== 0) {
+          this.sortpls();
+        }
+      }, 500);
+    });
+    socket.on("errors", (message) => {
+      setTimeout(() => {
+        this.loadsalaries();
+      }, 500);
+      if (this.sort.length !== 0) {
+        this.sortpls();
+      }
+    });
+  },
+  watch: {
+    page: {
+      handler(newValue) {
+        if (this.search === null || this.search === "") {
+          this.showdata = this.data.slice((+newValue - 1) * 8, +newValue * 8);
+        } else {
+          this.showdata = this.searchresult.slice(
+            (+newValue - 1) * 8,
+            +newValue * 8
+          );
+        }
+      },
+    },
   },
 };
 </script>

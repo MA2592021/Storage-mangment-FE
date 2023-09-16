@@ -190,24 +190,21 @@ export default {
   },
   created() {
     this.loadsalaries();
-    socket.on(
-      "errors",
-      (message) => {
+
+    socket.on("errors", (message) => {
+      setTimeout(() => {
         this.errors.push(message);
         this.TotalErrorPages = Math.ceil(this.errors.length / 10);
-      },
-      1500
-    );
-    socket.on(
-      "errorConfirm",
-      (message) => {
+      }, 1500);
+    });
+    socket.on("errorConfirm", (message) => {
+      setTimeout(() => {
         this.errors = this.errors.filter(
           (obj) => obj.cardID !== message.cardID
         );
         this.TotalErrorPages = Math.ceil(this.errors.length / 10);
-      },
-      1500
-    );
+      }, 1500);
+    });
   },
   mounted() {
     if (this.maininterval === null) {
