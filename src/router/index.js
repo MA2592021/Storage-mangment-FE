@@ -813,6 +813,15 @@ const router = createRouter({
         },
       ],
     },
+    //public card path
+    {
+      path: "/card/public/:id",
+      name: "card-public",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/cards/publicCard.vue"),
+    },
     //print routes
     {
       path: "/print",
@@ -945,7 +954,8 @@ router.beforeEach((to, from, next) => {
       to.name === "consumptionPrint" ||
       to.name === "orderMPrint" ||
       to.name === "orderPrint" ||
-      to.name === "credits"
+      to.name === "credits" ||
+      to.name === "card-public"
     ) {
       next();
     } else {

@@ -50,14 +50,12 @@
 
 <script>
 import axios from "axios";
-import swal from "sweetalert";
 export default {
   data() {
     return {
       //logic
       assist: false,
-      loading: false,
-      found: false,
+      search: "",
 
       rolenum: localStorage.getItem("rolenum"),
       headers: [
@@ -74,21 +72,14 @@ export default {
         },
       ],
       // arrays and selects
-      employees: [],
       orders: [],
       model_errors: [],
-      selectedStages: [],
       selected_order: localStorage.getItem("savedOrder")
         ? JSON.parse(localStorage.getItem("savedOrder"))
         : "",
       selected_model: localStorage.getItem("savedModel")
         ? JSON.parse(localStorage.getItem("savedModel"))
         : "",
-      selected_stage: "",
-      selected_employee: "",
-      card_code: "",
-      card: "",
-      model_stages: "",
     };
   },
   methods: {
@@ -96,85 +87,6 @@ export default {
       document.activeElement.blur();
     },
     //loaders
-    loademployee() {
-      axios.get("/api/employee").then((res) => {
-        this.employees = res.data.data
-          .filter((employee) => employee.role.number >= 3)
-          .map((employee) => ({
-            name: `${employee.name} (${employee.code})`,
-            id: employee._id,
-          }));
-      });
-    },
-    loadorders() {
-      axios.get("/api/order").then((res) => {
-        console.log("res", res.data.data);
-        res.data.data.forEach((element) => {
-          let x = { models: [] };
-          x.name = element.name;
-          x._id = element._id;
-          (x.models = element.models
-            .filter(
-              (person, index, self) =>
-                index === self.findIndex((p) => p.id._id === person.id._id)
-            )
-            .map((model) => ({
-              name: model.id.name,
-              _id: model.id._id,
-            }))),
-            // element.models.forEach((el) => {
-            //   let y = {};
-            //   y.name = el.id.name + ` (${el.code})`;
-            //   y._id = el.id._id;
-            //   x.models.push(y);
-            // });
-            this.orders.push(x);
-        });
-      });
-    },
-
-    loadCard() {
-      this.loading = true;
-      console.log(this.selected_model._id);
-      axios
-        .post(`/api/card/code/${this.card_code}`, {
-          model: this.selected_model._id,
-          order: this.selected_order._id,
-        })
-        .then((res) => {
-          this.card = res.data.data._id;
-          this.loadRepairCards();
-          this.loading = false;
-          this.found = true;
-        })
-        .catch((err) => {
-          this.loading = false;
-          console.log(this.selected_model._id);
-        });
-    },
-    loadRepairCards() {
-      axios.get(`/api/card/${this.card}/errors/repair`).then((res) => {
-        console.log(res.data.data);
-        this.repiarstages = [];
-        res.data.data.forEach((element) => {
-          const x = {};
-          element.employee
-            ? (x.employee = {
-                name:
-                  `${element.employee.name} ` + ` ( ${element.employee.code} )`,
-                _id: element.employee._id,
-              })
-            : "";
-          x.stage = {
-            name: `${element.stage.name} ` + ` ( ${element.stage.code} )`,
-            _id: element.stage._id,
-          };
-          x.check = false;
-          this.repiarstages.push(x);
-        });
-        console.log(this.repiarstages);
-      });
-    },
     loadModelErrors() {
       axios
         .get(
@@ -205,31 +117,17 @@ export default {
         });
     },
     //logic
-    start() {
-      this.selected_employee = "";
-      this.selected_stage = "";
-      this.card_code = "";
-      this.card = "";
-      this.found = false;
-    },
-    viewCard() {
-      if (this.card !== "") {
-        this.$router.push({
-          path: `/card/public/${this.card}`,
-        });
-      } else {
-        swal("error", "please enter card code", "error");
-      }
-    },
   },
   created() {
     if (localStorage.getItem("order") !== null) {
       this.assist = true;
       this.selected_order = { _id: localStorage.getItem("order") };
       this.selected_model = { _id: localStorage.getItem("model") };
+      this.loadModelErrors();
     }
-    this.loademployee();
-    this.loadorders();
+  },
+  props: {
+    orders: Array,
   },
 };
 </script>

@@ -19,18 +19,7 @@
         item-value="id"
         inputmode="numeric"
         v-model="selectedModel"
-        @update:modelValue="load_cards"
-      ></v-autocomplete>
-    </v-col>
-    <v-col cols="12">
-      <v-autocomplete
-        :label="$t(`card code`)"
-        :items="cards"
-        inputmode="numeric"
-        item-title="code"
-        v-model="selectedCard"
-        return-object
-        @update:modelValue="blurs"
+        @update:modelValue="load_model_stages()"
       ></v-autocomplete>
     </v-col>
     <v-col cols="12">
@@ -43,8 +32,39 @@
         @update:modelValue="blurs"
       ></v-autocomplete>
     </v-col>
+    <v-col cols="8">
+      <v-text-field
+        v-model="card_code"
+        clearable
+        label="card code"
+        inputmode="numeric"
+        variant="outlined"
+        @update:modelValue="found = false"
+      >
+        <template v-slot:append-inner>
+          <v-fade-transition leave-absolute>
+            <v-progress-circular
+              v-if="loading"
+              color="info"
+              indeterminate
+              size="24"
+            ></v-progress-circular>
 
-    <v-col cols="12">
+            <v-icon v-if="found" color="green" icon="mdi-check-bold"></v-icon>
+          </v-fade-transition>
+        </template>
+      </v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-btn class="mt-2" color="success" block @click="loadCard()"
+        >Check</v-btn
+      >
+    </v-col>
+    <v-col cols="2">
+      <v-btn class="mt-2" color="info" block @click="viewCard">view</v-btn>
+    </v-col>
+
+    <v-col cols="4">
       <v-checkbox
         @update:modelValue="have_error_check"
         :label="$t(`have errors`)"
@@ -203,6 +223,7 @@ export default {
       errorBadge: 0,
       haveError: false,
       loading: false,
+      found: false,
       ///
       selectedOrder: localStorage.getItem("quality_order")
         ? JSON.parse(localStorage.getItem("quality_order"))
@@ -214,6 +235,8 @@ export default {
       selectQuality: localStorage.getItem("quality_stage")
         ? localStorage.getItem("quality_stage")
         : "",
+
+      card_code: "",
       selectedCard: "",
       ///
       headers: [
@@ -355,34 +378,56 @@ export default {
     },
     restart() {
       this.selectedCard = "";
+      this.found = false;
+      this.card_code = "";
       this.errors = [];
       this.haveError = false;
     },
+    viewCard() {
+      if (this.card !== "") {
+        this.$router.push({
+          path: `/card/public/${this.card}`,
+        });
+      } else {
+        swal("error", "please enter card code", "error");
+      }
+    },
     //// Loaders
 
-    load_cards() {
-      if (this.selectedModel !== "") {
-        console.log("getting cards");
-        axios
-          .get(
-            `/api/card/order/${this.selectedOrder.id}/model/${this.selectedModel}`
-          )
-          .then((res) => {
-            this.cards = res.data.data
-              .filter((card) => !card.done)
-              .map((card) => ({
-                code: card.code + ` (box '${card.boxNumber}' )`,
-                tracking: card.tracking,
-                start: card.startRange,
-                end: card.endRange,
-                range: this.card_piece_range(card.startRange, card.endRange),
-                id: card._id,
-              }));
-            this.load_model_stages();
-            console.log("cards", this.cards);
-          });
-        this.blurs();
-      }
+    loadCard() {
+      this.loading = true;
+      console.log(this.selectedOrder);
+      axios
+        .post(`/api/card/code/${this.card_code}`, {
+          model: this.selectedModel,
+          order: this.selectedOrder.id,
+        })
+        .then((res) => {
+          this.found = true;
+          console.log(res.data.data);
+          if (res.data.data.done === true) {
+            swal("error", "this card is Finished", "error");
+          } else {
+            this.selectedCard = {};
+            this.selectedCard.code =
+              res.data.data.code + ` (box '${res.data.data.boxNumber}' )`;
+            this.selectedCard.tracking = res.data.data.tracking;
+            this.selectedCard.start = res.data.data.startRange;
+            this.selectedCard.end = res.data.data.endRange;
+            this.selectedCard.range = this.card_piece_range(
+              this.selectedCard.start,
+              this.selectedCard.end
+            );
+            this.selectedCard.id = res.data.data._id;
+          }
+
+          this.loading = false;
+
+          console.log(this.selectedCard);
+        })
+        .catch((err) => {
+          this.loading = false;
+        });
     },
     load_model_stages() {
       if (this.selectedModel !== null) {
@@ -473,7 +518,6 @@ export default {
     if (this.selectedModel !== "") {
       console.log(this.selectedModel);
       this.load_model_stages();
-      this.load_cards();
     }
   },
   computed: {

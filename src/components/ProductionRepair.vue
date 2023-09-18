@@ -1,27 +1,63 @@
 <template>
-  <v-row
-    ><v-col cols="12">
+  <v-row>
+    <v-col cols="12">
       <v-autocomplete
         v-model="selected_order"
         :items="orders"
         item-title="name"
         return-object
-        inputmode="numeric"
         :label="$t('order')"
         v-if="!assist"
         @update:modelValue="blurs"
-      ></v-autocomplete> </v-col
-    ><v-col cols="12">
+      ></v-autocomplete>
+    </v-col>
+    <v-col cols="12">
       <v-autocomplete
         v-model="selected_model"
-        :items="selected_order === null ? '' : selected_order.models"
+        :items="selected_order.models"
         item-title="name"
         return-object
-        inputmode="numeric"
         :label="$t('model')"
         v-if="!assist"
-        @update:modelValue="loadModelErrors"
+        @update:modelValue="blurs()"
       ></v-autocomplete>
+    </v-col>
+    <v-col cols="8">
+      <v-text-field
+        v-model="card_code"
+        clearable
+        label="card code"
+        inputmode="numeric"
+        variant="outlined"
+        @update:modelValue="(found = false), (repiarstages = [])"
+        :disabled="selectedStages.length !== 0"
+      >
+        <template v-slot:append-inner>
+          <v-fade-transition leave-absolute>
+            <v-progress-circular
+              v-if="loading"
+              color="info"
+              indeterminate
+              size="24"
+            ></v-progress-circular>
+
+            <v-icon v-if="found" color="green" icon="mdi-check-bold"></v-icon>
+          </v-fade-transition>
+        </template>
+      </v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-btn
+        class="mt-2"
+        color="success"
+        :disabled="selectedStages.length !== 0"
+        block
+        @click="loadCard()"
+        >Check</v-btn
+      >
+    </v-col>
+    <v-col cols="2">
+      <v-btn class="mt-2" color="info" block @click="viewCard">view</v-btn>
     </v-col>
   </v-row>
   <v-text-field
@@ -33,19 +69,36 @@
   ></v-text-field>
   <v-data-table
     :headers="headers"
-    :items="model_errors"
-    :group-by="groupBy"
+    :items="repiarstages"
     :search="search"
+    :loading="loading"
+    show-select
     class="elevation-1"
+    v-model="selectedStages"
+    return-object
   >
-    <template v-slot:item.global="{ item }">
-      <v-checkbox
-        readonly
-        color="red"
-        class="ml-4"
-        v-model="item.raw.global"
-      ></v-checkbox> </template
-  ></v-data-table>
+    <template v-slot:item.check="{ item, index }">
+      <v-checkbox class="ml-4" v-model="item.raw.check"></v-checkbox>
+    </template>
+    <template v-slot:item.employee[name]="props">
+      <v-autocomplete
+        label="employee"
+        :items="employees"
+        item-title="name"
+        return-object
+        v-model="props.item.raw.employee"
+        :readonly="props.item.raw.check === false"
+        @update:modelValue="blurs"
+      ></v-autocomplete>
+    </template>
+  </v-data-table>
+  <v-row
+    ><v-col align="center" class="mt-4"
+      ><v-btn color="success" :loading="loading" @click="repiar()">{{
+        $t("submit")
+      }}</v-btn></v-col
+    ></v-row
+  >
 </template>
 
 <script>
@@ -58,25 +111,20 @@ export default {
       assist: false,
       loading: false,
       found: false,
-
+      search: "",
       rolenum: localStorage.getItem("rolenum"),
       headers: [
-        { title: "المرحلة", key: "stage" },
-        { title: "رقم القطعة", key: "piece" },
-        { title: "مشكلة عامة", key: "global" },
-      ],
-      groupBy: [
+        { title: "المرحلة", key: "stage[name]" },
         {
-          title: "card",
-          align: "start",
-          sortable: false,
-          key: "card",
+          title: "العامل",
+          key: "employee[name]",
         },
+        { title: "عامل اخر", key: "check" },
       ],
       // arrays and selects
       employees: [],
       orders: [],
-      model_errors: [],
+      repiarstages: [],
       selectedStages: [],
       selected_order: localStorage.getItem("savedOrder")
         ? JSON.parse(localStorage.getItem("savedOrder"))
@@ -96,42 +144,6 @@ export default {
       document.activeElement.blur();
     },
     //loaders
-    loademployee() {
-      axios.get("/api/employee").then((res) => {
-        this.employees = res.data.data
-          .filter((employee) => employee.role.number >= 3)
-          .map((employee) => ({
-            name: `${employee.name} (${employee.code})`,
-            id: employee._id,
-          }));
-      });
-    },
-    loadorders() {
-      axios.get("/api/order").then((res) => {
-        console.log("res", res.data.data);
-        res.data.data.forEach((element) => {
-          let x = { models: [] };
-          x.name = element.name;
-          x._id = element._id;
-          (x.models = element.models
-            .filter(
-              (person, index, self) =>
-                index === self.findIndex((p) => p.id._id === person.id._id)
-            )
-            .map((model) => ({
-              name: model.id.name,
-              _id: model.id._id,
-            }))),
-            // element.models.forEach((el) => {
-            //   let y = {};
-            //   y.name = el.id.name + ` (${el.code})`;
-            //   y._id = el.id._id;
-            //   x.models.push(y);
-            // });
-            this.orders.push(x);
-        });
-      });
-    },
 
     loadCard() {
       this.loading = true;
@@ -175,34 +187,40 @@ export default {
         console.log(this.repiarstages);
       });
     },
-    loadModelErrors() {
-      axios
-        .get(
-          `/api/card/order/${this.selected_order._id}/model/${this.selected_model._id}/errors`
-        )
-        .then((res) => {
-          console.log("res", res);
-          res.data.data.forEach((element) => {
-            element.currentErrors.forEach((el) => {
-              let x = {};
-              x.card = element.code;
-              x.stage = el.name;
-              this.model_errors.push(x);
-            });
-            element.globalErrors.forEach((el) => {
-              if (!el.verifiedBy) {
-                const x = {};
-                x.stage = el.description;
-                x.card = element.code;
-                x.piece = el.pieceNo;
-                x.global = true;
-                this.model_errors.push(x);
-              }
-            });
-          });
-          console.log(this.model_errors);
-          this.blurs();
+    //submits
+    repiar() {
+      if (this.selectedStages.length === 0) {
+        swal("error", "برجاء اختيار مراحل للاصلاح", "error");
+      } else {
+        this.loading = true;
+        const data = [];
+        this.selectedStages.forEach((element) => {
+          const x = {};
+          x.stage = element.stage._id;
+          if (element.employee) {
+            x.employee = element.employee._id;
+          } else {
+            return;
+          }
+          data.push(x);
         });
+        console.log(data);
+        axios
+          .patch(`/api/card/${this.card}/errors/repair/all`, {
+            enteredBy: localStorage.getItem("employee"),
+            repairs: data,
+          })
+          .then((res) => {
+            console.log(res);
+            this.loading = false;
+            swal("success", "تم رصد الاصلاحات بنجاح", "success").then(() => {
+              this.start();
+            });
+          })
+          .catch((err) => {
+            this.loading = false;
+          });
+      }
     },
     //logic
     start() {
@@ -211,6 +229,7 @@ export default {
       this.card_code = "";
       this.card = "";
       this.found = false;
+      this.repiarstages = [];
     },
     viewCard() {
       if (this.card !== "") {
@@ -228,8 +247,10 @@ export default {
       this.selected_order = { _id: localStorage.getItem("order") };
       this.selected_model = { _id: localStorage.getItem("model") };
     }
-    this.loademployee();
-    this.loadorders();
+  },
+  props: {
+    orders: Array,
+    employees: Array,
   },
 };
 </script>

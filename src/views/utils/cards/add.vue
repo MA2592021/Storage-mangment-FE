@@ -135,7 +135,7 @@ export default {
         });
     },
     loadorder() {
-      axios.get("/api/order").then((res) => {
+      axios.post("/api/order").then((res) => {
         console.log(res.data.data);
         res.data.data.forEach((element) => {
           let x = { models: [] };

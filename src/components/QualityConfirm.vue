@@ -19,17 +19,42 @@
         @update:modelValue="load_cards()"
       ></v-autocomplete>
     </v-col>
-    <v-col cols="12">
-      <v-autocomplete
+    <v-col cols="8">
+      <v-text-field
         v-model="selectedCard"
-        :items="cards"
-        item-title="code"
+        clearable
+        label="card code"
         inputmode="numeric"
-        return-object
-        :label="$t('card code')"
+        variant="outlined"
         :disabled="selected_confirm.length !== 0"
-        @update:modelValue="load_card_Errors"
-      ></v-autocomplete>
+        @update:modelValue="found = false"
+      >
+        <template v-slot:append-inner>
+          <v-fade-transition leave-absolute>
+            <v-progress-circular
+              v-if="loading"
+              color="info"
+              indeterminate
+              size="24"
+            ></v-progress-circular>
+
+            <v-icon v-if="found" color="green" icon="mdi-check-bold"></v-icon>
+          </v-fade-transition>
+        </template>
+      </v-text-field>
+    </v-col>
+    <v-col cols="2">
+      <v-btn
+        class="mt-2"
+        color="success"
+        :disabled="selected_confirm.length !== 0"
+        block
+        @click="loadCard()"
+        >Check</v-btn
+      >
+    </v-col>
+    <v-col cols="2">
+      <v-btn class="mt-2" color="info" block @click="viewCard">view</v-btn>
     </v-col>
   </v-row>
 
@@ -69,6 +94,8 @@ import swal from "sweetalert";
 export default {
   data() {
     return {
+      card: "",
+      found: false,
       selectedOrder: localStorage.getItem("quality_order")
         ? JSON.parse(localStorage.getItem("quality_order"))
         : "",
@@ -76,7 +103,6 @@ export default {
         ? localStorage.getItem("quality_model")
         : "",
       selected_confirm: [],
-      cards: [],
       selectedCard: "",
       stages: [],
       headers1: [
@@ -112,29 +138,54 @@ export default {
           });
       }
     },
+    loadCard() {
+      console.log(this.selectedModel, "---", this.selectedOrder);
+      axios
+        .post(`/api/card/code/${this.selectedCard}`, {
+          model: this.selectedModel,
+          order: this.selectedOrder.id,
+        })
+        .then((res) => {
+          this.loading = false;
+          this.found = true;
+          this.card = res.data.data;
+          this.load_card_Errors();
+        })
+        .catch((err) => {
+          this.loading = false;
+        });
+    },
     load_card_Errors() {
-      if (this.selectedCard !== null) {
-        axios
-          .get(`/api/card/${this.selectedCard.id}/errors/repair`)
-          .then((res) => {
-            this.stages = res.data.data.map((stage) => ({
-              name: stage.stage.name + `( ${stage.stage.code})`,
-              id: stage.stage._id,
-            }));
-            this.selectedCard.global.forEach((el) => {
-              console.log(el);
-              if (!el.verifiedBy) {
-                const x = {};
-                x.name = el.description;
-                x.id = el._id;
-                x.piece = el.pieceNo;
-                x.global = true;
-                this.stages.push(x);
-              }
-            });
+      if (this.card !== "") {
+        console.log(this.card);
+        axios.get(`/api/card/${this.card._id}/errors/repair`).then((res) => {
+          this.stages = res.data.data.map((stage) => ({
+            name: stage.stage.name + `( ${stage.stage.code})`,
+            id: stage.stage._id,
+          }));
+          this.card.globalErrors.forEach((el) => {
+            console.log(el);
+            if (!el.verifiedBy) {
+              const x = {};
+              x.name = el.description;
+              x.id = el._id;
+              x.piece = el.pieceNo;
+              x.global = true;
+              this.stages.push(x);
+            }
           });
+        });
         console.log("here bbe", this.stages);
         this.blurs();
+      }
+    },
+    viewCard() {
+      if (this.card !== "") {
+        this.$router.push({
+          path: `/card/public/${this.card}`,
+        });
+      } else {
+        swal("error", "please enter card code", "error");
       }
     },
     submit() {
@@ -152,13 +203,17 @@ export default {
         });
         if (stages.length !== 0) {
           axios
-            .patch(`/api/card/${this.selectedCard.id}/errors/confirm/all`, {
+            .patch(`/api/card/${this.card._id}/errors/confirm/all`, {
               verifiedBy: localStorage.getItem("employee"),
               stages: stages,
             })
             .then(() => {
               this.loading = false;
-              swal("success", "Errors Confirmed successfully", "success");
+              swal("success", "Errors Confirmed successfully", "success").then(
+                () => {
+                  this.restart();
+                }
+              );
             })
 
             .catch(() => (this.loading = false));
@@ -166,13 +221,10 @@ export default {
         if (globalErrors.length !== 0) {
           globalErrors.forEach((element) => {
             axios
-              .patch(
-                `/api/card/${this.selectedCard.id}/errors/global/confirm`,
-                {
-                  verifyBy: localStorage.getItem("employee"),
-                  globalErrorIndex: element,
-                }
-              )
+              .patch(`/api/card/${this.card._id}/errors/global/confirm`, {
+                verifyBy: localStorage.getItem("employee"),
+                globalErrorIndex: element,
+              })
               .then(() => {
                 this.loading = false;
                 swal(
@@ -188,6 +240,13 @@ export default {
           });
         }
       }
+    },
+    restart() {
+      this.selected_confirm = [];
+      this.card = "";
+      this.found = false;
+      this.selectedCard = "";
+      this.stages = [];
     },
   },
   props: {
