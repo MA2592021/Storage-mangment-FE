@@ -386,7 +386,7 @@ export default {
     viewCard() {
       if (this.card !== "") {
         this.$router.push({
-          path: `/card/public/${this.card}`,
+          path: `/card/public/${this.selectedCard.id}`,
         });
       } else {
         swal("error", "please enter card code", "error");

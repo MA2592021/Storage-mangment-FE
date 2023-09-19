@@ -60,7 +60,7 @@
       <v-btn class="mt-2" color="info" block @click="viewCard">view</v-btn>
     </v-col>
   </v-row>
-  <v-text-field
+  <!-- <v-text-field
     v-model="search"
     append-icon="mdi-magnify"
     label="Search"
@@ -91,7 +91,38 @@
         @update:modelValue="blurs"
       ></v-autocomplete>
     </template>
-  </v-data-table>
+  </v-data-table> -->
+  <v-row v-for="(stage, index) in repiarstages" :key="stage">
+    <v-divider :thickness="2"></v-divider>
+    <v-col cols="3">
+      <v-checkbox
+        class="ml-4"
+        v-model="stage.select"
+        @update:modelValue="stagesSelect(index)"
+      ></v-checkbox>
+    </v-col>
+    <v-col cols="6" class="mt-4">
+      <h2>{{ stage.stage.name }}</h2>
+    </v-col>
+    <v-col cols="10" class="mt-4">
+      <v-autocomplete
+        label="employee"
+        :items="employees"
+        item-title="name"
+        return-object
+        v-model="stage.employee"
+        :readonly="stage.check === false"
+        @update:modelValue="blurs"
+      ></v-autocomplete>
+    </v-col>
+    <v-col cols="2"
+      ><v-checkbox class="mt-3 ml-4" v-model="stage.check"
+        >عامل اخر</v-checkbox
+      ></v-col
+    >
+  </v-row>
+  <v-divider :thickness="2"></v-divider>
+  {{ selectedStages }}
   <v-row
     ><v-col align="center" class="mt-4"
       ><v-btn color="success" :loading="loading" @click="repiar()">{{
@@ -111,16 +142,16 @@ export default {
       assist: false,
       loading: false,
       found: false,
-      search: "",
+      // search: "",
       rolenum: localStorage.getItem("rolenum"),
-      headers: [
-        { title: "المرحلة", key: "stage[name]" },
-        {
-          title: "العامل",
-          key: "employee[name]",
-        },
-        { title: "عامل اخر", key: "check" },
-      ],
+      // headers: [
+      //   { title: "المرحلة", key: "stage[name]" },
+      //   {
+      //     title: "العامل",
+      //     key: "employee[name]",
+      //   },
+      //   { title: "عامل اخر", key: "check" },
+      // ],
       // arrays and selects
       employees: [],
       orders: [],
@@ -155,9 +186,10 @@ export default {
         })
         .then((res) => {
           this.card = res.data.data._id;
-          this.loadRepairCards();
+
           this.loading = false;
           this.found = true;
+          this.loadRepairCards();
         })
         .catch((err) => {
           this.loading = false;
@@ -182,6 +214,7 @@ export default {
             _id: element.stage._id,
           };
           x.check = false;
+          x.select = false;
           this.repiarstages.push(x);
         });
         console.log(this.repiarstages);
@@ -238,6 +271,17 @@ export default {
         });
       } else {
         swal("error", "please enter card code", "error");
+      }
+    },
+    stagesSelect(index) {
+      console.log("index", index);
+      if (this.repiarstages[index].select === true) {
+        this.selectedStages.push(this.repiarstages[index]);
+      } else {
+        const Newindex = this.selectedStages.findIndex((obj) => {
+          return obj.stage._id === this.repiarstages[index].stage._id;
+        });
+        this.selectedStages.splice(Newindex, 1);
       }
     },
   },
