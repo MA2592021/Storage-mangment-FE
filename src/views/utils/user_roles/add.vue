@@ -63,6 +63,8 @@ export default {
       { name: "Storage", key: "storage" },
       { name: "Users", key: "users" },
       { name: "Orders", key: "orders" },
+      { name: "Salary", key: "salary" },
+      { name: "Employee Follow-up ", key: "employee_track" },
       { name: "Shipments", key: "shipments" },
       { name: "Models", key: "models" },
       { name: "Employees", key: "employees" },

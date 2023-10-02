@@ -18,7 +18,6 @@
         item-value="id"
         inputmode="numeric"
         v-model="selectedModel"
-        @update:modelValue="load_cards"
       ></v-autocomplete>
     </v-col>
     <v-col cols="8">
