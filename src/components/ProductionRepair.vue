@@ -122,7 +122,6 @@
     >
   </v-row>
   <v-divider :thickness="2"></v-divider>
-  {{ selectedStages }}
   <v-row
     ><v-col align="center" class="mt-4"
       ><v-btn color="success" :loading="loading" @click="repiar()">{{

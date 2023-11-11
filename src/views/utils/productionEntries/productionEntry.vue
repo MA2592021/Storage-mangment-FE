@@ -25,6 +25,12 @@
       <v-icon v-if="errorbadge === 0">mdi-alert-circle-outline</v-icon>
       {{ $t("errors") }}
     </v-btn>
+
+    <v-btn value="hold_up_time">
+      <v-icon>mdi-clock-time-eight</v-icon>
+
+      {{ $t("hold_up_time") }}
+    </v-btn>
   </v-bottom-navigation>
   <v-card style="width: 100%" class="mt-5">
     <v-card-text>
@@ -44,6 +50,9 @@
         <v-window-item value="errors">
           <ProductionErrorPage v-bind:orders="orders" />
         </v-window-item>
+        <v-window-item value="hold_up_time">
+          <hold_up_time />
+        </v-window-item>
       </v-window>
     </v-card-text>
   </v-card>
@@ -54,11 +63,13 @@ import { socket } from "../../../socket.js";
 import ProductionAddTracking from "../../../components/ProductionAddTracking.vue";
 import ProductionRepair from "../../../components/ProductionRepair.vue";
 import ProductionErrorPage from "../../../components/ProductionErrorPage.vue";
+import hold_up_time from "../../../components/hold_up_time.vue";
 export default {
   components: {
     ProductionAddTracking,
     ProductionRepair,
     ProductionErrorPage,
+    hold_up_time,
   },
   data() {
     return {
@@ -110,6 +121,8 @@ export default {
         return "success";
       } else if (this.nav === "repair") {
         return "info";
+      } else if (this.nav === "hold_up_time") {
+        return "warning";
       } else {
         return "red";
       }

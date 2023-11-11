@@ -778,6 +778,24 @@ const router = createRouter({
         },
       ],
     },
+
+    //stage workers routes
+    {
+      path: "/utils/stage_workers/",
+      name: "stageWorkers",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/stageWorkers/index.vue"),
+    },
+    {
+      path: "/utils/stage_workers/:orderId/:modelId/:stageId",
+      name: "stageWorkersPage",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/stageWorkers/stagePage.vue"),
+    },
     //card routes
     {
       path: "/utils/cards/",
@@ -936,6 +954,12 @@ const router = createRouter({
       component: () => import("../views/testo.vue"),
     },
     {
+      path: "/testo2",
+      name: "testo2",
+
+      component: () => import("../views/testo2.vue"),
+    },
+    {
       path: "/:catchAll(.*)",
       name: "NotFound",
       component: notFound,
@@ -992,7 +1016,13 @@ router.beforeEach((to, from, next) => {
         // User is logged in or the route does not require authentication
         let privs = JSON.parse(localStorage.getItem("privileges"));
         const parentRouteName = to.matched[0].name;
-        if ((privs === null && to.path === "/login") || to.path === "/testo") {
+        if (
+          (privs === null && to.path === "/login") ||
+          to.path === "/testo" ||
+          to.path === "/testo2" ||
+          to.name === "stageWorkers" ||
+          to.name === "stageWorkersPage"
+        ) {
           next();
         } else {
           if (privs.includes(parentRouteName)) {

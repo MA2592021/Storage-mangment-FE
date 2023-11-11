@@ -35,7 +35,8 @@
     "types": "Material Types",
     "stages": "Stages",
     "machinetypes": "Machine types",
-    "employees follow-up": "Employees follow-up"
+    "employees follow-up": "Employees follow-up",
+    "stage_work": "Stage Workers"
   },
   "password": "Password",
   "print": "print",
@@ -71,6 +72,9 @@
   "close": "close",
   "quantity": "Quantity",
   "client": "Client",
+  "hold_up_time": "Hold Up Time",
+  "start_hold_up_time": "Start Hold Up Time",
+  "end_hold_up_time": "End Hold Up Time",
   "employees": {
     "employees": "Employees",
     "all": "All Employees",

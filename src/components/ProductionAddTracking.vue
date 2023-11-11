@@ -50,7 +50,7 @@
         :items="model_stages"
         return-object
         :item-title="`name`"
-        :label="$t('stage ')"
+        :label="$t('stage')"
         @update:modelValue="blurs"
       ></v-autocomplete></v-col
     ><v-col cols="8">

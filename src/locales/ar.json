@@ -35,7 +35,8 @@
     "types": "انواع الخامات",
     "stages": "المراحل",
     "machinetypes": "أنواع الماكينات",
-    "employees follow-up": "متابعة العمال"
+    "employees follow-up": "متابعة العمال",
+    "stage_work": "عمال المراحل"
   },
   "password": "الرقم السري",
   "replace": "تبديل",
@@ -59,7 +60,9 @@
   "all_props": "كل العهد ",
   "all_mats": "كل الخامات",
   "model": "الموديل",
-
+  "hold_up_time": "وقت عطلة",
+  "start_hold_up_time": "بدأ وقت عطلة",
+  "end_hold_up_time": "انهاء وقت عطلة",
   "note": "مذكرة",
   "properties": "عهد",
   "materials": "خامات",

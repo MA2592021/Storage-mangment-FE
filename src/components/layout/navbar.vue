@@ -298,6 +298,12 @@ export default {
           view: "assistant",
         },
         {
+          icon: "mdi-account-hard-hat",
+          text: this.$t("navbar.stage_work"),
+          route: "/utils/stage_workers",
+          view: "assistant",
+        },
+        {
           icon: "mdi-card-bulleted-settings-outline",
           text: this.$t("navbar.cards"),
           route: "/utils/cards/dashboard",
