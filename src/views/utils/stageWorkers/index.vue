@@ -152,6 +152,7 @@ export default {
           `/api/stageEmployee/details/order/${this.selectedOrder.id}/model/${this.selectedModel.id}/stage/${stage}`
         )
         .then((res) => {
+          console.log("res", res);
           this.stage = res.data.data?.employees?.filter(
             (obj) => !obj.hasOwnProperty("out") || obj["out"] === undefined
           );
@@ -208,12 +209,12 @@ export default {
       });
     },
     clicked(item) {
-      this.selectedStage = item;
-      this.load_stage_details(item.id._id);
-      this.dialog = true;
-      //   this.$router.push({
-      //     path: `/utils/stage_workers/${this.selectedOrder.id}/${this.selectedModel.id}/${item.id._id}`,
-      //   });
+      // this.selectedStage = item;
+      // this.load_stage_details(item.id._id);
+      // this.dialog = true;
+      this.$router.push({
+        path: `/utils/stage_workers/${this.selectedOrder.id}/${this.selectedModel.id}/${item.id._id}`,
+      });
     },
   },
   created() {

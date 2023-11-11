@@ -1,235 +1,157 @@
 <template>
-  <v-row
-    ><v-col cols="12">
-      <v-autocomplete
-        v-model="selected_order"
-        :items="orders"
-        item-title="name"
-        return-object
-        inputmode="numeric"
-        :label="$t('order')"
-        v-if="!assist"
-        @update:modelValue="blurs"
-      ></v-autocomplete> </v-col
-    ><v-col cols="12">
-      <v-autocomplete
-        v-model="selected_model"
-        :items="selected_order === null ? '' : selected_order.models"
-        item-title="name"
-        return-object
-        inputmode="numeric"
-        :label="$t('model')"
-        v-if="!assist"
-        @update:modelValue="loadModelErrors"
-      ></v-autocomplete>
-    </v-col>
-  </v-row>
-  <v-text-field
-    v-model="search"
-    append-icon="mdi-magnify"
-    label="Search"
-    single-line
-    hide-details
-  ></v-text-field>
-  <v-data-table
-    :headers="headers"
-    :items="model_errors"
-    :group-by="groupBy"
-    :search="search"
-    class="elevation-1"
-  >
-    <template v-slot:item.global="{ item }">
-      <v-checkbox
-        readonly
-        color="red"
-        class="ml-4"
-        v-model="item.raw.global"
-      ></v-checkbox> </template
-  ></v-data-table>
+  <v-container class="fill-height">
+    <v-row
+      ><v-col>
+        <v-card flat rounded="0">
+          <v-card-title class="text-center mb-5"
+            >Arkan Reports Center</v-card-title
+          >
+          <v-window v-model="onboarding">
+            <v-window-item :value="1">
+              <DynamicCardButtons
+                v-bind:col="4"
+                v-bind:data="MainButtons"
+                @clicked="magic"
+              />
+            </v-window-item>
+            <v-window-item :value="2"
+              ><DynamicCardButtons
+                v-bind:col="6"
+                v-bind:data="Selected2ndData"
+                @clicked="magic"
+            /></v-window-item>
+            <v-window-item :value="3"
+              ><DynamicCardButtons
+                v-bind:col="6"
+                v-bind:data="Selected3rdData"
+                @clicked="magic"
+            /></v-window-item>
+            <v-window-item :value="4"
+              ><v-card-text>
+                <v-row
+                  ><v-col cols="4"></v-col
+                  ><v-col cols="2"
+                    ><v-progress-circular
+                      color="green"
+                      indeterminate
+                      :size="71"
+                      :width="5" /></v-col
+                  ><v-divider vertical></v-divider
+                  ><v-col cols="4" class="mt-4"
+                    ><h3 class="gradient-text">let the magic happen</h3></v-col
+                  >
+                </v-row>
+              </v-card-text></v-window-item
+            >
+          </v-window>
+
+          <v-card-actions class="justify-space-between" v-if="onboarding !== 4">
+            <v-btn
+              variant="plain"
+              icon="mdi-chevron-left"
+              @click="prev"
+            ></v-btn>
+
+            <v-item-group v-model="onboarding" mandatory>
+              <v-item
+                v-for="n in length"
+                :key="`btn-${n}`"
+                v-slot="{ isSelected }"
+                :value="n"
+              >
+                <v-btn
+                  :variant="isSelected ? 'outlined' : 'text'"
+                  :color="isSelected ? 'green' : ''"
+                  icon="mdi-record"
+                ></v-btn>
+              </v-item>
+            </v-item-group>
+            <v-btn @click="next()" icon="mdi-chevron-right"></v-btn>
+          </v-card-actions> </v-card></v-col></v-row
+  ></v-container>
 </template>
 
 <script>
-import axios from "axios";
-import swal from "sweetalert";
+import DynamicCardButtons from "@/components/DynamicCardButtons.vue";
+import { GetAll } from "@/services/Employees.js";
+import * as Buttons from "@/services/ReportButtons.js";
+import { usedata } from "@/stores/print_data";
+import { useheaders } from "@/stores/headers";
 export default {
-  data() {
-    return {
-      //logic
-      assist: false,
-      loading: false,
-      found: false,
+  setup() {
+    const print_data = usedata();
+    const headers = useheaders();
 
-      rolenum: localStorage.getItem("rolenum"),
-      headers: [
-        { title: "المرحلة", key: "stage" },
-        { title: "رقم القطعة", key: "piece" },
-        { title: "مشكلة عامة", key: "global" },
-      ],
-      groupBy: [
-        {
-          title: "card",
-          align: "start",
-          sortable: false,
-          key: "card",
-        },
-      ],
-      // arrays and selects
-      employees: [],
-      orders: [],
-      model_errors: [],
-      selectedStages: [],
-      selected_order: localStorage.getItem("savedOrder")
-        ? JSON.parse(localStorage.getItem("savedOrder"))
-        : "",
-      selected_model: localStorage.getItem("savedModel")
-        ? JSON.parse(localStorage.getItem("savedModel"))
-        : "",
-      selected_stage: "",
-      selected_employee: "",
-      card_code: "",
-      card: "",
-      model_stages: "",
-    };
+    return { print_data, headers };
   },
-  methods: {
-    blurs() {
-      document.activeElement.blur();
-    },
-    //loaders
-    loademployee() {
-      axios.get("/api/employee").then((res) => {
-        this.employees = res.data.data
-          .filter((employee) => employee.role.number >= 3)
-          .map((employee) => ({
-            name: `${employee.name} (${employee.code})`,
-            id: employee._id,
-          }));
-      });
-    },
-    loadorders() {
-      axios.get("/api/order").then((res) => {
-        console.log("res", res.data.data);
-        res.data.data.forEach((element) => {
-          let x = { models: [] };
-          x.name = element.name;
-          x._id = element._id;
-          (x.models = element.models
-            .filter(
-              (person, index, self) =>
-                index === self.findIndex((p) => p.id._id === person.id._id)
-            )
-            .map((model) => ({
-              name: model.id.name,
-              _id: model.id._id,
-            }))),
-            // element.models.forEach((el) => {
-            //   let y = {};
-            //   y.name = el.id.name + ` (${el.code})`;
-            //   y._id = el.id._id;
-            //   x.models.push(y);
-            // });
-            this.orders.push(x);
-        });
-      });
-    },
+  components: { DynamicCardButtons },
+  data: () => ({
+    length: 3,
+    MainButtons: Buttons.MainButtons,
+    onboarding: 1,
+    Selected2ndData: "",
+    Selected3rdData: "",
+  }),
 
-    loadCard() {
-      this.loading = true;
-      console.log(this.selected_model._id);
-      axios
-        .post(`/api/card/code/${this.card_code}`, {
-          model: this.selected_model._id,
-          order: this.selected_order._id,
-        })
-        .then((res) => {
-          this.card = res.data.data._id;
-          this.loadRepairCards();
-          this.loading = false;
-          this.found = true;
-        })
-        .catch((err) => {
-          this.loading = false;
-          console.log(this.selected_model._id);
-        });
-    },
-    loadRepairCards() {
-      axios.get(`/api/card/${this.card}/errors/repair`).then((res) => {
-        console.log(res.data.data);
-        this.repiarstages = [];
-        res.data.data.forEach((element) => {
-          const x = {};
-          element.employee
-            ? (x.employee = {
-                name:
-                  `${element.employee.name} ` + ` ( ${element.employee.code} )`,
-                _id: element.employee._id,
-              })
-            : "";
-          x.stage = {
-            name: `${element.stage.name} ` + ` ( ${element.stage.code} )`,
-            _id: element.stage._id,
-          };
-          x.check = false;
-          this.repiarstages.push(x);
-        });
-        console.log(this.repiarstages);
-      });
-    },
-    loadModelErrors() {
-      axios
-        .get(
-          `/api/card/order/${this.selected_order._id}/model/${this.selected_model._id}/errors`
-        )
-        .then((res) => {
-          console.log("res", res);
-          res.data.data.forEach((element) => {
-            element.currentErrors.forEach((el) => {
-              let x = {};
-              x.card = element.code;
-              x.stage = el.name;
-              this.model_errors.push(x);
-            });
-            element.globalErrors.forEach((el) => {
-              if (!el.verifiedBy) {
-                const x = {};
-                x.stage = el.description;
-                x.card = element.code;
-                x.piece = el.pieceNo;
-                x.global = true;
-                this.model_errors.push(x);
-              }
-            });
-          });
-          console.log(this.model_errors);
-          this.blurs();
-        });
-    },
-    //logic
-    start() {
-      this.selected_employee = "";
-      this.selected_stage = "";
-      this.card_code = "";
-      this.card = "";
-      this.found = false;
-    },
-    viewCard() {
-      if (this.card !== "") {
-        this.$router.push({
-          path: `/card/public/${this.card}`,
-        });
+  methods: {
+    magic(data) {
+      if (data.end) {
+        console.log("end point");
+        this.onboarding = 4;
+        const methodToCall = this[data.data];
+        methodToCall();
       } else {
-        swal("error", "please enter card code", "error");
+        if (this.onboarding === 1) {
+          this.Selected2ndData = Buttons[data.data];
+          console.log(this.Selected2ndData);
+        } else if (this.onboarding === 2) {
+          this.Selected3rdData = Buttons[data.data];
+        }
+
+        this.next();
       }
     },
-  },
-  created() {
-    if (localStorage.getItem("order") !== null) {
-      this.assist = true;
-      this.selected_order = { _id: localStorage.getItem("order") };
-      this.selected_model = { _id: localStorage.getItem("model") };
-    }
-    this.loademployee();
-    this.loadorders();
+    next() {
+      this.onboarding =
+        this.onboarding + 1 > this.length ? 1 : this.onboarding + 1;
+    },
+    prev() {
+      this.onboarding =
+        this.onboarding - 1 <= 0 ? this.length : this.onboarding - 1;
+    },
+    allEmployees() {
+      const data = [];
+      const header = this.headers.employee_header;
+      const title = this.$t(`employees.all`);
+      GetAll().then((response) => {
+        console.log(response);
+        response.forEach((element) => {
+          const x = {};
+          x._id = element._id;
+          x.code = element.code;
+          x.name = element.name;
+          x.role = element.role.title;
+          data.push(x);
+        });
+      });
+      this.printo(data, header, title);
+    },
+    printo(data, header, title) {
+      this.print_data.title = title;
+      this.print_data.data = data;
+      this.print_data.header = header;
+      setTimeout(() => {
+        this.$router.push({ path: "/print" });
+      }, 1000);
+    },
   },
 };
 </script>
+<style>
+.gradient-text {
+  background: linear-gradient(45deg, red, blue);
+  -webkit-background-clip: text; /* Clip text to the gradient */
+  color: transparent; /* Hide the original text color */
+  display: inline-block; /* Ensure the gradient spans the text */
+}
+</style>

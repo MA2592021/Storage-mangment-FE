@@ -210,11 +210,9 @@ export default {
     if (this.maininterval === null) {
       this.maininterval = setInterval(() => {
         const minute = new Date().getMinutes();
-        if (minute === 1) {
-          console.log("yeaa");
+        if (minute > 50 && minute < 60) {
           this.workview();
         } else {
-          console.log("nooo");
           this.errorview();
         }
       }, 5000);

@@ -195,6 +195,8 @@ export default {
       axios.get("/api/Salary/summary").then((res) => {
         //console.log(res.data);
         this.data = res.data.data;
+
+        console.log(this.data);
         this.data.forEach((obj) => {
           obj.expand = false;
         });

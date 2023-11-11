@@ -13,7 +13,30 @@
           item-title="name"
           return-object
           :label="$t('employees.employees')"
-        ></v-autocomplete>
+          @update:modelValue="detectEmployee"
+        >
+          <template v-slot:append-inner>
+            <v-fade-transition leave-absolute>
+              <v-progress-circular
+                v-if="loading1"
+                color="info"
+                indeterminate
+                size="24"
+              ></v-progress-circular>
+
+              <v-icon
+                v-if="selectedEmployeeDetails.idle"
+                color="green"
+                icon="mdi-check-bold"
+              ></v-icon>
+              <v-icon
+                v-if="!selectedEmployeeDetails.idle"
+                color="red"
+                icon="mdi-close-thick"
+              ></v-icon>
+            </v-fade-transition>
+          </template>
+        </v-autocomplete>
       </v-col>
       <v-col cols="12" v-if="type === 'start'">
         <v-select
@@ -55,12 +78,14 @@ export default {
   data() {
     return {
       loading: false,
+      loading1: false,
       type: null,
       selectedEmployee: "",
       selectedReason: "",
       typedReason: "",
       employees: [],
       selectedDate: "",
+      selectedEmployeeDetails: "",
     };
   },
   methods: {
@@ -87,7 +112,21 @@ export default {
           }
         } else if (this.type === "end") {
           if (this.selectedDate !== "") {
-            this.submitEnd();
+            if (
+              moment(this.selectedDate).isBefore(
+                this.selectedEmployeeDetails.start
+              )
+            ) {
+              swal(
+                "error",
+                `end Date cant be before Start Date ${moment(
+                  this.selectedEmployeeDetails.start
+                ).calendar()}`,
+                "error"
+              );
+            } else {
+              this.submitEnd();
+            }
           } else {
             this.errormsg();
           }
@@ -156,6 +195,16 @@ export default {
             this.loading = false;
           });
       }
+    },
+    detectEmployee() {
+      this.loading1 = true;
+      axios
+        .get(`/api/salary/idle/check/${this.selectedEmployee._id}`)
+        .then((res) => {
+          this.selectedEmployeeDetails = res.data;
+          console.log(res);
+          this.loading1 = false;
+        });
     },
   },
 

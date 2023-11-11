@@ -108,6 +108,50 @@
         </v-row>
       </v-expansion-panel-text>
     </v-expansion-panel>
+    <v-expansion-panel>
+      <v-expansion-panel-title>
+        <template v-slot:default="{ expanded }">
+          <v-row no-gutters>
+            <v-col cols="4" class="d-flex justify-start">
+              Month Idle History
+            </v-col>
+            <v-col cols="8" class="text-grey">
+              <v-fade-transition leave-absolute>
+                <span v-if="expanded" key="0"> </span>
+                <span v-else key="1"> Work Idle Details </span>
+              </v-fade-transition>
+            </v-col>
+          </v-row>
+        </template>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-row>
+          <v-col col="6" xs="12" align="center">
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-data-table
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers3"
+              :search="search"
+              :items="idles"
+              :group-by="groupBy2"
+              class="elevation-1"
+            >
+            </v-data-table>
+            <div align="center" class="ma-2">
+              <v-btn class="mx-auto" color="info" @click="printo()"
+                >print
+              </v-btn>
+            </div></v-col
+          >
+        </v-row>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
   </v-expansion-panels>
 </template>
 
@@ -184,8 +228,47 @@ export default {
           key: "date",
         },
       ],
+      groupBy2: [
+        { key: "month", order: "asc" },
+        { key: "day", order: "asc" },
+      ],
+      headers3: [
+        {
+          title: "Added By",
+          align: "start",
+          key: "addedByName",
+        },
+
+        {
+          title: "Done By",
+          align: "start",
+          key: "doneByName",
+        },
+
+        {
+          title: "reason",
+          align: "start",
+          key: "reason",
+        },
+        {
+          title: "start Date",
+          align: "start",
+          key: "start",
+        },
+        {
+          title: "End Date",
+          align: "start",
+          key: "end",
+        },
+        {
+          title: "minutes",
+          align: "start",
+          key: "duration",
+        },
+      ],
       salary: [],
       work: [],
+      idles: [],
     };
   },
 
@@ -215,6 +298,30 @@ export default {
             x.workEff = (+x.workRate - +x.errorRate).toFixed(2);
             this.salary.push(x);
           });
+          element.idleDetails.forEach((el) => {
+            el.idles.forEach((item) => {
+              const x = {};
+              console.log(item);
+              x.month = "month " + element.date.month;
+              x.day = "day " + el.day;
+              x.addedByName = item?.addedBy?.name;
+              x.doneByName = item?.doneBy?.name;
+              x.reason = item?.reason;
+              x.start = moment(item?.start).calendar();
+              x.end = moment(item?.end).calendar();
+              x.duration =
+                item?.minus < 60
+                  ? item?.minus + " minutes"
+                  : moment
+                      .duration(item?.minus, "minutes")
+                      .asHours()
+                      .toFixed(2) + " Hours";
+              x.id = item?._id;
+              this.idles.push(x);
+              console.log(x);
+            });
+          });
+
           // element.workDetails.forEach((el) => {
           //   el.work.forEach((e) => {
           //     const x = {};
@@ -228,6 +335,7 @@ export default {
           //   });
           // });
         });
+        console.log("idles", this.idles);
         axios.get(`/api/work/employee/${this.$route.params.id}`).then((res) => {
           console.log(res);
           res.data.data.forEach((element) => {

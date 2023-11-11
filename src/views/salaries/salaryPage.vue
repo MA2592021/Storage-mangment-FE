@@ -23,6 +23,33 @@
           </v-col>
           <v-col cols="12" class="ma-4">
             <v-text-field
+              :label="$t('idle')"
+              required
+              readonly
+              :value="idle.idle ? 'idle' : 'Not Idle'"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" class="ma-4">
+            <v-text-field
+              :label="$t('Today Idle minutes')"
+              required
+              readonly
+              v-model="idle.todayIdle"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" class="ma-4">
+            <v-text-field
+              :label="$t('Month Idle minutes')"
+              required
+              readonly
+              v-model="idle.totalIdle"
+              variant="underlined"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" class="ma-4">
+            <v-text-field
               :label="$t(`employees.month_salary`)"
               required
               readonly
@@ -68,6 +95,7 @@ export default {
     return {
       employee: {},
       salarymonth: { totalCost: "", state: "" },
+      idle: { total: "", idle: "", today: "" },
       id: "",
     };
   },
@@ -82,6 +110,11 @@ export default {
         this.loademployee();
         this.salarymonth.totalCost =
           response.data.data[response.data.data.length - 1].totalCost;
+        this.idle.todayIdle =
+          response.data.data[response.data.data.length - 1].todayIdle;
+        this.idle.totalIdle =
+          response.data.data[response.data.data.length - 1].totalIdle;
+        this.idle.idle = response.data.data[response.data.data.length - 1].idle;
         this.salarymonth.state =
           response.data.data[response.data.data.length - 1].state === true
             ? "Paid"
@@ -93,7 +126,7 @@ export default {
     loademployee() {
       axios.get("/api/employee/" + this.$route.params.id).then((res) => {
         this.employee = res.data.data;
-        console.log(this.employee);
+        // console.log(this.employee);
       });
     },
     pay() {
