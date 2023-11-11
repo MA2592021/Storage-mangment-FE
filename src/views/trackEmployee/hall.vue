@@ -31,7 +31,7 @@
   </div>
 
   <div v-if="view === 0">
-    error
+    <h2 style="text-align: center; margin-top: 10px">الاخطاء</h2>
     <v-data-table
       v-model:items-per-page="itemsPerPage"
       :headers="headerError"

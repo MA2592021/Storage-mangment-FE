@@ -27,9 +27,9 @@
   <v-row>
     <v-col
       xs="12"
-      sm="6"
-      md="4"
-      lg="3"
+      sm="12"
+      md="6"
+      lg="4"
       xl="3"
       xxl="2"
       v-for="employee in showdata"
@@ -39,6 +39,7 @@
             <v-icon icon="mdi-barcode" size="18" class="me-1 pb-1"></v-icon>
 
             {{ employee.employeeCode }}
+            {{ employee.idle ? "Idle" : "Not Idle" }}
           </template>
         </v-card-item>
 
@@ -67,20 +68,41 @@
         </v-card-text>
 
         <div class="d-flex py-3 justify-space-between">
-          <v-list-item density="compact" prepend-icon="mdi-cash">
+          <v-list-item
+            density="compact"
+            style="margin-right: -10px"
+            prepend-icon="mdi-cash"
+          >
             <v-list-item-subtitle>{{
               employee.totalCost
             }}</v-list-item-subtitle>
           </v-list-item>
 
-          <v-list-item density="compact" prepend-icon="mdi-tshirt-crew">
+          <v-list-item
+            style="margin-right: -10px"
+            density="compact"
+            prepend-icon="mdi-tshirt-crew"
+          >
             <v-list-item-subtitle>{{
               employee.totalPieces
             }}</v-list-item-subtitle>
           </v-list-item>
-          <v-list-item density="compact" prepend-icon="mdi-alert-circle">
+          <v-list-item
+            style="margin-right: -10px"
+            density="compact"
+            prepend-icon="mdi-alert-circle"
+          >
             <v-list-item-subtitle>{{
               employee.totalErrors
+            }}</v-list-item-subtitle>
+          </v-list-item>
+          <v-list-item
+            style="margin-right: -10px"
+            density="compact"
+            prepend-icon="mdi-clock-time-eight-outline"
+          >
+            <v-list-item-subtitle>{{
+              employee.totalIdle
             }}</v-list-item-subtitle>
           </v-list-item>
         </div>
@@ -89,20 +111,41 @@
           <div v-if="employee.expand">
             <p class="mx-2">Today</p>
             <div class="d-flex py-3 justify-space-between">
-              <v-list-item density="compact" prepend-icon="mdi-cash">
+              <v-list-item
+                style="margin-right: -10px"
+                density="compact"
+                prepend-icon="mdi-cash"
+              >
                 <v-list-item-subtitle>{{
                   employee.todayCost
                 }}</v-list-item-subtitle>
               </v-list-item>
 
-              <v-list-item density="compact" prepend-icon="mdi-tshirt-crew">
+              <v-list-item
+                style="margin-right: -10px"
+                density="compact"
+                prepend-icon="mdi-tshirt-crew"
+              >
                 <v-list-item-subtitle>{{
                   employee.todayPieces
                 }}</v-list-item-subtitle>
               </v-list-item>
-              <v-list-item density="compact" prepend-icon="mdi-alert-circle">
+              <v-list-item
+                style="margin-right: -10px"
+                density="compact"
+                prepend-icon="mdi-alert-circle"
+              >
                 <v-list-item-subtitle>{{
                   employee.todayErrors
+                }}</v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item
+                style="margin-right: -10px"
+                density="compact"
+                prepend-icon="mdi-clock-time-eight-outline"
+              >
+                <v-list-item-subtitle>{{
+                  employee.todayIdle
                 }}</v-list-item-subtitle>
               </v-list-item>
             </div>
