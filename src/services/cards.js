@@ -11,126 +11,227 @@ async function Create(
   CutNumber,
   BoxNumber
 ) {
-  const res = await axios.post(`/api/card/`, {
-    code: CardCode,
-    order: OrderId,
-    modelIndex: ModelIndex,
-    quantity: Quantity,
-    startRange: StartRange,
-    endRange: EndRange,
-    cutNumber: CutNumber,
-    boxNumber: BoxNumber,
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`/api/card/`, {
+        code: CardCode,
+        order: OrderId,
+        modelIndex: ModelIndex,
+        quantity: Quantity,
+        startRange: StartRange,
+        endRange: EndRange,
+        cutNumber: CutNumber,
+        boxNumber: BoxNumber,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
+
 async function Delete(CardId) {
-  const res = await axios.delete(`/api/card/${CardId}`);
-  return res.msg;
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`/api/card/${CardId}`)
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
+  });
 }
+
 async function Update(CardId, DataToSend) {
-  const res = await axios.patch(`/api/card/${CardId}`, DataToSend);
-  return res.msg;
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}`, DataToSend)
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetAll() {
-  const res = await axios.get("/api/card");
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get("/api/card")
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
 async function GetAllForOrderAndModel(OrderId, ModelId) {
-  const res = await axios.get(
-    `/api/card/order/${OrderId}/model/${ModelId}/codes`
-  );
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/order/${OrderId}/model/${ModelId}`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetLastNumber(number) {
-  const res = await axios.get(`/api/card/last/${number}`);
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/last/${number}`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetOne(id) {
-  const res = await axios.get(`/api/card/${id}`);
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/${id}`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetStagesNeedRepair(CardId) {
-  const res = await axios.get(`/api/card/${CardId}/errors/repair`);
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/${CardId}/errors/repair`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetWithOrderAndModel(OrderId, ModelId) {
-  const res = await axios.get(`/api/card/order/${OrderId}/model/${ModelId}`);
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/order/${OrderId}/model/${ModelId}`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetErrorsWithOrderAndModel(OrderId, ModelId) {
-  const res = await axios.get(
-    `/api/card/order/${OrderId}/model/${ModelId}/errors`
-  );
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/order/${OrderId}/model/${ModelId}/errors`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetProductionFollowUp(OrderId, ModelId) {
-  const res = await axios.get(
-    `/api/card/order/${OrderId}/model/${ModelId}/production`
-  );
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/order/${OrderId}/model/${ModelId}/production`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
+}
+async function GetStats(OrderId, ModelId, Date) {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(
+        `http://localhost:5000/api/card/order/${OrderId}/model/${ModelId}/date/${Date}`
+      )
+      .then((res) => resolve(res.data.result))
+      .catch((err) => reject(err));
+  });
 }
 async function GetStageIsTracked(CardId, StageId) {
-  const res = await axios.get(`/api/card/${CardId}/stage/${StageId}/isTracked`);
-  return res.data.data;
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/${CardId}/stage/${StageId}/isTracked`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
+
 async function GetByCodeAndModelAndOrder(CardCode, OrderId, ModelId) {
-  const res = await axios.post(`/api/card/code/${CardCode}`, {
-    model: ModelId,
-    order: OrderId,
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`/api/card/code/${CardCode}`, {
+        model: ModelId,
+        order: OrderId,
+      })
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
   });
-  return res.data.data;
 }
+
 async function AddTracking(CardId, Employee, EnteredBy, StageId) {
-  const res = await axios.patch(`/api/card/${CardId}/tracking/add`, {
-    stage: StageId,
-    employee: Employee,
-    enteredby: EnteredBy,
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}/tracking/add`, {
+        stage: StageId,
+        employee: Employee,
+        enteredby: EnteredBy,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
+
 async function ReplaceTracking(CardId, Employee, EnteredBy, StageId) {
-  const res = await axios.patch(`/api/card/${CardId}/tracking/replace`, {
-    stage: StageId,
-    employee: Employee,
-    enteredby: EnteredBy,
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}/tracking/replace`, {
+        stage: StageId,
+        employee: Employee,
+        enteredby: EnteredBy,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
+
 async function AddError(CardId, EnteredBy, CardErrors) {
-  const res = await axios.patch(`/api/card/${CardId}/errors/add`, {
-    cardErrors: CardErrors,
-    employee: EnteredBy,
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}/errors/add`, {
+        cardErrors: CardErrors,
+        employee: EnteredBy,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
+
 async function RepairAll(CardId, EnteredBy, Repairs) {
-  const res = await axios.patch(`/api/card/${CardId}/errors/repair/all`, {
-    repairs: Repairs,
-    enteredby: EnteredBy,
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}/errors/repair/all`, {
+        repairs: Repairs,
+        enteredby: EnteredBy,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
+
 async function ConfirmAll(CardId, VerifiedBy, Stages) {
-  const res = await axios.patch(`/api/card/${CardId}/errors/confirm/all`, {
-    stages: Stages,
-    verifiedBy: VerifiedBy,
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}/errors/confirm/all`, {
+        stages: Stages,
+        verifiedBy: VerifiedBy,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
+
 async function AddGlobalError(CardId, Desc, PieceNo, AddedBy) {
-  const res = await axios.patch(`/api/card/${CardId}/errors/global/add`, {
-    description: Desc,
-    addedBy: AddedBy,
-    pieceNo: PieceNo,
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}/errors/global/add`, {
+        description: Desc,
+        addedBy: AddedBy,
+        pieceNo: PieceNo,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
+
 async function ConfirmGlobalError(CardId, GlobalErrorIndex, VerifyBy) {
-  const res = await axios.patch(`/api/card/${CardId}/errors/global/confirm`, {
-    globalErrorIndex: GlobalErrorIndex,
-    verifyBy: VerifyBy,
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/card/${CardId}/errors/global/confirm`, {
+        globalErrorIndex: GlobalErrorIndex,
+        verifyBy: VerifyBy,
+      })
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
   });
-  return res.msg;
 }
 export {
   GetByCodeAndModelAndOrder,
@@ -141,6 +242,7 @@ export {
   GetStagesNeedRepair,
   GetOne,
   GetLastNumber,
+  GetStats,
   GetAllForOrderAndModel,
   GetAll,
   Create,

@@ -176,6 +176,12 @@ export default {
           route: "/order/dashboard",
           view: "orders",
         },
+        {
+          icon: "mdi-file-chart",
+          text: this.$t("navbar.report_center"),
+          route: "/report-center/",
+          view: "report_center",
+        },
 
         {
           icon: "mdi-ticket-account",
@@ -361,12 +367,13 @@ export default {
       this.links[3].text = this.$t("navbar.salary");
       this.links[4].text = this.$t("navbar.models");
       this.links[5].text = this.$t("navbar.orders");
-      this.links[6].text = this.$t("navbar.suppliers");
-      this.links[7].text = this.$t("navbar.clients");
-      this.links[8].text = this.$t("navbar.shipments");
-      this.links[9].text = this.$t("navbar.requests");
-      this.links[10].text = this.$t("navbar.track");
-      this.links[11].text = this.$t("navbar.employees follow-up");
+      this.links[6].text = this.$t("navbar.report_center");
+      this.links[7].text = this.$t("navbar.suppliers");
+      this.links[8].text = this.$t("navbar.clients");
+      this.links[9].text = this.$t("navbar.shipments");
+      this.links[10].text = this.$t("navbar.requests");
+      this.links[11].text = this.$t("navbar.track");
+      this.links[12].text = this.$t("navbar.employees follow-up");
       this.storagelinks[0].text = this.$t("navbar.properties");
       this.storagelinks[1].text = this.$t("navbar.materials");
       this.storagelinks[2].text = this.$t("navbar.cartons");

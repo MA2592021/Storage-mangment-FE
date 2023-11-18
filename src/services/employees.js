@@ -1,29 +1,65 @@
-//employees.js
-
 import axios from "axios";
 
-async function Create(DataToSend) {
-  const res = await axios.post(`/api/employee/`, DataToSend);
-  return res.msg;
+function Create(DataToSend) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`/api/employee/`, DataToSend)
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
+  });
 }
-async function GetById(Id) {
-  const res = await axios.get(`/api/employee/${Id}`);
-  return res.data.data;
+
+function GetById(Id) {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/employee/${Id}`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
-async function GetAll() {
-  const res = await axios.get(`/api/employee/`);
-  return res.data.data;
+
+function GetAll() {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/employee/`)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
-async function GetByCode(Code) {
-  const res = await axios.post(`/api/employee/code/`, { code: Code });
-  return res.data.data;
+
+function GetByCode(Code) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`/api/employee/code/`, { code: Code })
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
-async function Update(Id, DataToSend) {
-  const res = await axios.patch(`/api/employee/${Id}`, DataToSend);
-  return res.msg;
+function GetSalary(id) {
+  return new Promise((resolve, reject) => {
+    axios
+      .get("/api/salary/employee/" + id)
+      .then((res) => resolve(res.data.data))
+      .catch((err) => reject(err));
+  });
 }
-async function Delete(Id) {
-  const res = await axios.delete(`/api/employee/${Id}`);
-  return res.msg;
+
+function Update(Id, DataToSend) {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/api/employee/${Id}`, DataToSend)
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
+  });
 }
-export { Create, GetById, GetAll, GetByCode, Update, Delete };
+
+function Delete(Id) {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`/api/employee/${Id}`)
+      .then((res) => resolve(res.data.msg))
+      .catch((err) => reject(err));
+  });
+}
+
+export { Create, GetById, GetAll, GetByCode, GetSalary, Update, Delete };

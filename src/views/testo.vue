@@ -142,7 +142,7 @@ export default {
       this.print_data.header = header;
       setTimeout(() => {
         this.$router.push({ path: "/print" });
-      }, 1000);
+      }, 500);
     },
   },
 };

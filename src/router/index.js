@@ -531,6 +531,47 @@ const router = createRouter({
         // },
       ],
     },
+    //report Center routes
+    {
+      path: "/report-center/",
+      name: "report_center",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/reportCenter/index.vue"),
+      // children: [
+      //   {
+      //     path: "dashboard",
+      //     name: "employee_track-dash",
+
+      //     component: () => import("../views/trackEmployee/dashboard.vue"),
+      //   },
+      //   // {
+      //   //   path: "add",
+      //   //   name: "emptrack-add",
+
+      //   //   component: () => import("../views/track/add.vue"),
+      //   // },
+      //   {
+      //     path: "hall",
+      //     name: "employee_track-hall",
+
+      //     component: () => import("../views/trackEmployee/hall.vue"),
+      //   },
+      //   {
+      //     path: "management",
+      //     name: "employee_track-management",
+
+      //     component: () => import("../views/trackEmployee/management.vue"),
+      //   },
+      //   // {
+      //   //   path: ":id",
+      //   //   name: "track-page",
+
+      //   //   component: () => import("../views/track/trackPage.vue"),
+      //   // },
+      // ],
+    },
     //color routes
     {
       path: "/utils/color/",

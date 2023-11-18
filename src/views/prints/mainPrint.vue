@@ -56,6 +56,7 @@ export default {
   @page {
     size: auto;
     margin: 0;
+    size: A4 landscape;
   }
 }
 </style>
