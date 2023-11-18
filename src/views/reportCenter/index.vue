@@ -13,14 +13,14 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
 
-          <v-expansion-panel>
+          <v-expansion-panel disabled>
             <v-expansion-panel-title>
               <v-icon class="me-2">mdi-badge-account</v-icon>Users
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <users />
             </v-expansion-panel-text> </v-expansion-panel
-          ><v-expansion-panel>
+          ><v-expansion-panel disabled>
             <v-expansion-panel-title>
               <v-icon class="me-2">mdi-cart</v-icon>Orders
             </v-expansion-panel-title>
@@ -49,7 +49,7 @@
             <v-expansion-panel-text>
               <workflow />
             </v-expansion-panel-text> </v-expansion-panel
-          ><v-expansion-panel
+          ><v-expansion-panel disabled
             ><v-expansion-panel-title>
               <v-icon class="me-2">mdi-warehouse</v-icon>Storage
             </v-expansion-panel-title>
