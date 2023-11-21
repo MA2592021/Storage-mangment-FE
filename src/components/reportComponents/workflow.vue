@@ -76,7 +76,7 @@ export default {
         { title: "stage name", align: "start", key: "stageName" },
         { title: "stage type", align: "center", key: "stageType" },
         { title: "total Production", key: "totalTrack" },
-        { title: "total Errors", key: "totalErrors" },
+        { title: "total Errors", key: "totalError" },
       ],
       headerAllStagesDetailStats: [
         { title: "stage name", align: "start", key: "stageName" },
@@ -105,6 +105,7 @@ export default {
               data,
               this.headerAllStagesMainStats
             );
+            this.loading = false;
           });
         } else if (data.value === 1) {
           this.getWorkFlow(true).then((data) => {
@@ -112,54 +113,102 @@ export default {
             this.printo(
               `Order ${this.selectedOrder.name} - Model ${this.selectedModel.name} - Date ${this.date}`,
               data,
-              this.headerAllStagesDetailStats
+              this.headerAllStagesDetailStats,
+              "Production | Error"
             );
+            this.loading = false;
           });
         }
-        this.loading=false
       }
     },
     getWorkFlow(detailed) {
-      return new Promise((resolve, reject) => {
-        GetStats(this.selectedOrder.id, this.selectedModel.id, this.date)
-          .then((res) => {
-            if (detailed === true) {
-              console.log("test");
-              const data = res.map((data) => ({
-                stageID: data.stageID,
-                stageName: data.stageName,
-                stageType: data.stageType,
-                totalTrack: data.totalTrack,
-                totalError: data.totalError,
-                track: data.track.map((value) => (value === null ? 0 : value)),
-              }));
-              const maxTrackLength = Math.max(
-                ...res.map((item) => item.track.length)
-              );
+      return GetStats(this.selectedOrder.id, this.selectedModel.id, this.date)
+        .then((res) => {
+          if (detailed === true) {
+            console.log("test");
+            const data = res.map((data) => ({
+              stageID: data.stageID,
+              stageName: data.stageName,
+              stageType: data.stageType,
+              totalTrack: data.totalTrack,
+              totalError: data.totalError,
+              track: data.track.map((value) => (value === null ? 0 : value)),
+              error: data.error.map((value) => (value === null ? 0 : value)),
+              combine: this.combineArrays(data.track, data.error),
+            }));
 
-              // Generate header columns for each hour
-              const hourColumns = Array.from(
-                { length: maxTrackLength },
-                (_, index) => ({
-                  title: `Hour ${index + 8}`,
-                  key: `track[${index}]`,
-                })
-              );
-              const header = [
-                ...this.headerAllStagesDetailStats,
-                ...hourColumns,
-              ];
-              this.headerAllStagesDetailStats = header;
-              resolve(data);
-            } else {
-              resolve(res);
-            }
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+            const maxTrackLength = Math.max(
+              ...res.map((item) => item.track.length)
+            );
+
+            // Generate header columns for each hour
+            const hourColumns = Array.from(
+              { length: maxTrackLength },
+              (_, index) => ({
+                title: `Hour ${index + 8}`,
+                key: `combine[${index}]`,
+              })
+            );
+            const header = [...this.headerAllStagesDetailStats, ...hourColumns];
+            this.headerAllStagesDetailStats = header;
+            return data;
+          } else {
+            return res;
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          throw error; // Rethrow the error to propagate it down the chain
+        });
     },
+    combineArrays(array1, array2) {
+      const combinedArray = [];
+      const min_length = Math.min(array1.length, array2.length);
+
+      for (let i = 0; i < min_length; i++) {
+        console.log("2");
+        const value1 =
+          array1[i] !== null && array1[i] !== undefined ? array1[i] : 0;
+        const value2 =
+          array2[i] !== null && array2[i] !== undefined ? array2[i] : 0;
+        combinedArray.push(`${value1} | ${value2}`);
+      }
+
+      if (array1.length > min_length) {
+        console.log("1");
+        combinedArray.push(
+          ...array1
+            .slice(min_length)
+            .map(
+              (value) =>
+                `${value !== null && value !== undefined ? value : 0} | ${
+                  array2[array2.length - 1] !== null &&
+                  array2[array2.length - 1] !== undefined
+                    ? array2[array2.length - 1]
+                    : 0
+                }`
+            )
+        );
+      } else if (array2.length > min_length) {
+        console.log(3);
+        combinedArray.push(
+          ...array2
+            .slice(min_length)
+            .map(
+              (value) =>
+                `${
+                  array1[array1.length - 1] !== null &&
+                  array1[array1.length - 1] !== undefined
+                    ? array1[array1.length - 1]
+                    : 0
+                } | ${value !== null && value !== undefined ? value : 0}`
+            )
+        );
+      }
+
+      return combinedArray;
+    },
+
     load_order() {
       axios.get("/api/order").then((res) => {
         this.orders = res.data.data.map((order) => ({
@@ -177,8 +226,9 @@ export default {
         }));
       });
     },
-    printo(title, data, header) {
+    printo(title, data, header, subtitle) {
       this.print_data.title = title;
+      this.print_data.subtitle = subtitle;
       this.print_data.data = data;
       this.print_data.header = header;
       setTimeout(() => {

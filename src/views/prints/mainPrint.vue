@@ -14,6 +14,7 @@
     </v-col>
   </v-row>
   <h1 align="center">{{ print_data.title }}</h1>
+  <p align="center">{{ print_data.subtitle }}</p>
 
   <br />
   <v-data-table

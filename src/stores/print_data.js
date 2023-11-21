@@ -5,6 +5,7 @@ export const usedata = defineStore("data", {
     data: [],
     header: [],
     title: "",
+    subtitle:''
   }),
   getters: {},
 });

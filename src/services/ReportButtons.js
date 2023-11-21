@@ -85,7 +85,7 @@ const AllCardsButtons = [
     value: 1,
   },
   {
-    name: "unFinished Employees",
+    name: "unFinished Cards",
     icon: "mdi-card-text-outline",
     value: 2,
   },
@@ -94,6 +94,30 @@ const modelsButtons = [
   {
     name: "All Orders Requested This Model",
     icon: "mdi-order-bool-ascending-variant",
+    value: 0,
+  },
+  {
+    name: "model Consumptions",
+    icon: "mdi mdi-chart-sankey",
+    value: 1,
+  },
+  {
+    name: "Consumptions Calculator",
+    icon: "mdi mdi-calculator",
+    value: 2,
+  },
+];
+const orderButtons = [
+  {
+    name: "All Models in Order",
+    icon: "mdi-order-bool-ascending-variant",
+    value: 0,
+  },
+];
+const userButtons = [
+  {
+    name: "All users in Arakn",
+    icon: "mdi mdi-account-group",
     value: 0,
   },
 ];
@@ -147,6 +171,7 @@ export {
   EmployeeButtons,
   MainButtons,
   modelsButtons,
+  orderButtons,
   WorkFLowButtons,
   AllCardsButtons,
 };

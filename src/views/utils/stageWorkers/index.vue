@@ -46,6 +46,7 @@
       <v-data-table :headers="headers1" :items="stage" class="mt-1">
         <template v-slot:top>
           <v-toolbar flat>
+            <v-btn color="info" :disabled="!viewHistory">View History</v-btn>
             <v-toolbar-title align="center">Employees</v-toolbar-title>
             <v-toolbar-actions
               ><v-btn color="success" @click="dialog1 = true"
@@ -99,6 +100,7 @@ export default {
   },
   data() {
     return {
+      viewHistory: false,
       orders: [],
       selectedOrder: "",
       selectedModel: "",
@@ -156,7 +158,9 @@ export default {
           this.stage = res.data.data?.employees?.filter(
             (obj) => !obj.hasOwnProperty("out") || obj["out"] === undefined
           );
-
+          if (!res.data.errors) {
+            this.viewHistory = true;
+          }
           console.log(this.stage);
         });
     },
@@ -209,12 +213,12 @@ export default {
       });
     },
     clicked(item) {
-      // this.selectedStage = item;
-      // this.load_stage_details(item.id._id);
-      // this.dialog = true;
-      this.$router.push({
-        path: `/utils/stage_workers/${this.selectedOrder.id}/${this.selectedModel.id}/${item.id._id}`,
-      });
+      this.selectedStage = item;
+      this.load_stage_details(item.id._id);
+      this.dialog = true;
+      // this.$router.push({
+      //   path: `/utils/stage_workers/${this.selectedOrder.id}/${this.selectedModel.id}/${item.id._id}`,
+      // });
     },
   },
   created() {

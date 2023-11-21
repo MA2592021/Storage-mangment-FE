@@ -119,9 +119,7 @@ async function GetProductionFollowUp(OrderId, ModelId) {
 async function GetStats(OrderId, ModelId, Date) {
   return new Promise((resolve, reject) => {
     axios
-      .get(
-        `http://localhost:5000/api/card/order/${OrderId}/model/${ModelId}/date/${Date}`
-      )
+      .get(`/api/card/order/${OrderId}/model/${ModelId}/date/${Date}`)
       .then((res) => resolve(res.data.result))
       .catch((err) => reject(err));
   });

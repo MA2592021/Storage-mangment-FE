@@ -122,6 +122,7 @@ export default {
           boxNumber: parseInt(this.card.boxNumber),
         })
         .then((response) => {
+          console.log(response);
           if (response.data.errors) {
             console.log(response);
             swal("error", response.data.errors[0].msg, "error");
