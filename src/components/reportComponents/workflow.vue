@@ -27,7 +27,9 @@
         type="date"
         id="dateInput"
         name="dateInput"
-    /></v-col>
+      />
+      <p style="font-size: 12px">for Main and Detailed Stats</p></v-col
+    >
     <v-col cols="12">
       <DynamicCardButtons :data="allCardButtons" @clicked="workflow"
     /></v-col>
@@ -49,11 +51,12 @@
 <script>
 import DynamicCardButtons from "../DynamicCardButtons.vue";
 import * as Button from "../../services/ReportButtons";
-import { GetStats } from "../../services/cards";
+import { GetStats, GetDateBounds } from "../../services/cards";
 import { usedata } from "@/stores/print_data";
 import { useheaders } from "@/stores/headers";
 import axios from "axios";
 import swal from "sweetalert";
+import moment from "moment";
 export default {
   setup() {
     const print_data = usedata();
@@ -81,6 +84,16 @@ export default {
       headerAllStagesDetailStats: [
         { title: "stage name", align: "start", key: "stageName" },
       ],
+      DateBoundHeaders: [
+        { title: "size", align: "start", key: "size" },
+        { title: "color", align: "start", key: "color" },
+        { title: "group 1 Start", align: "start", key: "g1Start" },
+        { title: "group 1 End", align: "start", key: "g1End" },
+        { title: "group 2 Start", align: "start", key: "g2Start" },
+        { title: "group 2 End", align: "start", key: "g2End" },
+        { title: "group 3 Start", align: "start", key: "g3Start" },
+        { title: "group 3 End", align: "start", key: "g3End" },
+      ],
     };
   },
 
@@ -89,37 +102,86 @@ export default {
   },
   methods: {
     workflow(data) {
-      if (
-        this.selectedModel === "" ||
-        this.selectedOrder === "" ||
-        this.date === ""
-      ) {
-        swal("error", "please select order and model and date", "error");
+      if (this.selectedModel === "" || this.selectedOrder === "") {
+        swal("error", "please select order and model ", "error");
       } else {
         this.loading = true;
         if (data.value === 0) {
-          this.getWorkFlow(false).then((data) => {
-            console.log(data);
-            this.printo(
-              `Order ${this.selectedOrder.name} - Model ${this.selectedModel.name} - Date ${this.date}`,
-              data,
-              this.headerAllStagesMainStats
-            );
-            this.loading = false;
-          });
+          if (this.date === "") {
+            swal("error", "please select Date ", "error");
+          } else {
+            this.getWorkFlow(false).then((data) => {
+              console.log(data);
+              this.printo(
+                `Order ${this.selectedOrder.name} - Model ${this.selectedModel.name} - Date ${this.date}`,
+                data,
+                this.headerAllStagesMainStats
+              );
+              this.loading = false;
+            });
+          }
         } else if (data.value === 1) {
-          this.getWorkFlow(true).then((data) => {
+          if (this.date === "") {
+            swal("error", "please select Date ", "error");
+          } else {
+            this.getWorkFlow(true).then((data) => {
+              console.log(data);
+              this.printo(
+                `Order ${this.selectedOrder.name} - Model ${this.selectedModel.name} - Date ${this.date}`,
+                data,
+                this.headerAllStagesDetailStats,
+                "Production | Error"
+              );
+              this.loading = false;
+            });
+          }
+        } else if (data.value === 2) {
+          this.getDateBoundries().then((data) => {
             console.log(data);
             this.printo(
-              `Order ${this.selectedOrder.name} - Model ${this.selectedModel.name} - Date ${this.date}`,
+              `Order ${this.selectedOrder.name} - Model ${this.selectedModel.name} Sizes In/Out Dates`,
               data,
-              this.headerAllStagesDetailStats,
-              "Production | Error"
+              this.DateBoundHeaders
             );
-            this.loading = false;
           });
         }
       }
+    },
+    getDateBoundries() {
+      return GetDateBounds(this.selectedOrder.id, this.selectedModel.id).then(
+        (res) => {
+          console.log(res);
+          const data = res.map((element) => ({
+            color: element.model.color.name,
+            size: element.model.size.name,
+            g1Start:
+              element.group1.start === null
+                ? "not Started Yet"
+                : moment(element.group1.start).format("YYYY-MM-DD HH:mm"),
+            g1End:
+              element.group1.end === null
+                ? "not Finished Yet"
+                : moment(element.group1.end).format("YYYY-MM-DD HH:mm"),
+            g2Start:
+              element.group2.start === null
+                ? "not Started Yet"
+                : moment(element.group2.start).format("YYYY-MM-DD HH:mm"),
+            g2End:
+              element.group2.end === null
+                ? "not Finished Yet"
+                : moment(element.group2.end).format("YYYY-MM-DD HH:mm"),
+            g3Start:
+              element.group3.start === null
+                ? "not Started Yet"
+                : moment(element.group3.start).format("YYYY-MM-DD HH:mm"),
+            g3End:
+              element.group3.end === null
+                ? "not Finished Yet"
+                : moment(element.group3.end).format("YYYY-MM-DD HH:mm"),
+          }));
+          return data;
+        }
+      );
     },
     getWorkFlow(detailed) {
       return GetStats(this.selectedOrder.id, this.selectedModel.id, this.date)

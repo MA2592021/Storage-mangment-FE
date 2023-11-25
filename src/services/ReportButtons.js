@@ -132,6 +132,11 @@ const WorkFLowButtons = [
     icon: "mdi-state-machine",
     value: 1,
   },
+  {
+    name: "entry, exit sizes timeline from groups",
+    icon: "mdi-timeline-clock-outline",
+    value: 2,
+  },
 ];
 const OneEmployeeButtons = [
   {

@@ -124,6 +124,14 @@ async function GetStats(OrderId, ModelId, Date) {
       .catch((err) => reject(err));
   });
 }
+async function GetDateBounds(OrderId, ModelId) {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/api/card/order/${OrderId}/model/${ModelId}/dateBounds`)
+      .then((res) => resolve(res.data.result))
+      .catch((err) => reject(err));
+  });
+}
 async function GetStageIsTracked(CardId, StageId) {
   return new Promise((resolve, reject) => {
     axios
@@ -241,6 +249,7 @@ export {
   GetOne,
   GetLastNumber,
   GetStats,
+  GetDateBounds,
   GetAllForOrderAndModel,
   GetAll,
   Create,
