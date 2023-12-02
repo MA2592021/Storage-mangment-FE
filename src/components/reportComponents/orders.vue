@@ -148,7 +148,11 @@ export default {
         console.log(this.headerDetailedModelStatus);
 
         // Now that the forEach loop has completed, call the printo method
-        this.printo("test", data, this.headerDetailedModelStatus);
+        this.printo(
+          `order ${this.selectedOrder.name} models Detailed Status`,
+          data,
+          this.headerDetailedModelStatus
+        );
       } catch (error) {
         // Handle errors here
         console.error(error);
@@ -191,7 +195,11 @@ export default {
         console.log(this.headerMainModelStatus);
 
         // Now that the forEach loop has completed, call the printo method
-        this.printo("test", data, this.headerMainModelStatus);
+        this.printo(
+          `order ${this.selectedOrder.name} models Main Status`,
+          data,
+          this.headerMainModelStatus
+        );
       } catch (error) {
         // Handle errors here
         console.error(error);
