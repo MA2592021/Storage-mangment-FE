@@ -63,6 +63,19 @@ export default {
         { title: "quantity", align: "center", key: "quantity" },
         { title: "produced", key: "produced" },
       ],
+      headerDetailedModelStatus: [
+        { title: "Code", align: "start", key: "model[code]" },
+        { title: "size", key: "model.size[name]" },
+        { title: "color", key: "model.color[name]" },
+        { title: "Cut", key: "cut" },
+      ],
+      headerMainModelStatus: [
+        { title: "Code", align: "start", key: "model[code]" },
+        { title: "name", key: "model[name]" },
+        { title: "quantity", key: "model[quantity]" },
+        { title: "Cut", key: "cut" },
+        { title: "produced", key: "model[produced]" },
+      ],
     };
   },
   created() {
@@ -83,8 +96,12 @@ export default {
               res.data.data.models,
               this.headerAllOrderForModel
             );
+            this.loading = false;
           });
-          this.loading = false;
+        } else if (data.value === 1) {
+          this.loadMainModel();
+        } else if (data.value === 2) {
+          this.loadDetailModel();
         }
       }
     },
@@ -94,7 +111,92 @@ export default {
         this.orders = res.data.data;
       });
     },
+    async loadDetailModel() {
+      try {
+        const res = await axios.get(
+          `/api/card/order/${this.selectedOrder._id}/groupsProduction`
+        );
+        console.log(res);
 
+        const data = res.data.result;
+        let count = 1;
+        this.loading = false;
+
+        // Use Promise.all to wait for all asynchronous operations to complete
+        await Promise.all(
+          data[0].stages.map(async (element, index) => {
+            if (element.group) {
+              this.headerDetailedModelStatus.push({
+                title: `Group ${count}`,
+                key: `stages[${index}].done`,
+              });
+              count++;
+            } else {
+              this.headerDetailedModelStatus.push({
+                title:
+                  element.stage.type === "preparations"
+                    ? element.stage.type
+                    : element.stage.type === "quality"
+                    ? element.stage.type
+                    : element.stage.name,
+                key: `stages[${index}].done`,
+              });
+            }
+          })
+        );
+
+        console.log(this.headerDetailedModelStatus);
+
+        // Now that the forEach loop has completed, call the printo method
+        this.printo("test", data, this.headerDetailedModelStatus);
+      } catch (error) {
+        // Handle errors here
+        console.error(error);
+      }
+    },
+    async loadMainModel() {
+      try {
+        const res = await axios.get(
+          `/api/card/order/${this.selectedOrder._id}/orderProduction`
+        );
+        console.log(res);
+
+        const data = res.data.result;
+        let count = 1;
+        this.loading = false;
+
+        // Use Promise.all to wait for all asynchronous operations to complete
+        await Promise.all(
+          data[0].stages.map(async (element, index) => {
+            if (element.group) {
+              this.headerMainModelStatus.push({
+                title: `Group ${count}`,
+                key: `stages[${index}].done`,
+              });
+              count++;
+            } else {
+              this.headerMainModelStatus.push({
+                title:
+                  element.stage.type === "preparations"
+                    ? element.stage.type
+                    : element.stage.type === "quality"
+                    ? element.stage.type
+                    : element.stage.name,
+                key: `stages[${index}].done`,
+              });
+            }
+          })
+        );
+
+        console.log(this.headerMainModelStatus);
+
+        // Now that the forEach loop has completed, call the printo method
+        this.printo("test", data, this.headerMainModelStatus);
+      } catch (error) {
+        // Handle errors here
+        console.error(error);
+      }
+    },
     printo(title, data, header) {
       this.print_data.title = title;
       this.print_data.data = data;

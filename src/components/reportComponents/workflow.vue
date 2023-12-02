@@ -80,6 +80,7 @@ export default {
         { title: "stage type", align: "center", key: "stageType" },
         { title: "total Production", key: "totalTrack" },
         { title: "total Errors", key: "totalError" },
+        { title: "Day Rate", key: "required" },
       ],
       headerAllStagesDetailStats: [
         { title: "stage name", align: "start", key: "stageName" },
@@ -194,9 +195,13 @@ export default {
               stageType: data.stageType,
               totalTrack: data.totalTrack,
               totalError: data.totalError,
+              required: data.required / 8,
               track: data.track.map((value) => (value === null ? 0 : value)),
               error: data.error.map((value) => (value === null ? 0 : value)),
-              combine: this.combineArrays(data.track, data.error),
+              combine: this.combineArrays(
+                data.track.splice(9),
+                data.error.splice(9)
+              ),
             }));
 
             const maxTrackLength = Math.max(
@@ -211,7 +216,12 @@ export default {
                 key: `combine[${index}]`,
               })
             );
-            const header = [...this.headerAllStagesDetailStats, ...hourColumns];
+            const required = { title: "Hour Rate", key: "required" };
+            const header = [
+              ...this.headerAllStagesDetailStats,
+              ...hourColumns,
+              required,
+            ];
             this.headerAllStagesDetailStats = header;
             return data;
           } else {

@@ -113,6 +113,16 @@ const orderButtons = [
     icon: "mdi-order-bool-ascending-variant",
     value: 0,
   },
+  {
+    name: "main models status",
+    icon: "mdi-tshirt-crew",
+    value: 1,
+  },
+  {
+    name: "Detailed models status",
+    icon: "mdi-tshirt-crew-outline",
+    value: 2,
+  },
 ];
 const userButtons = [
   {
