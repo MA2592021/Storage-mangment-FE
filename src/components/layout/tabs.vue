@@ -24,9 +24,16 @@
         v-if="checkEmployeeFollowUpPath"
         >{{ $t("tabs.management") }}</v-tab
       >
+      <v-tab
+        :value="6"
+        router
+        :to="`${parentPath}supervisor`"
+        v-if="checkEmployeeFollowUpPath"
+        >{{ $t("navbar.superVisors") }}</v-tab
+      >
     </v-tabs>
     <v-window v-model="tab">
-      <v-window-item v-for="n in 5" :key="n" :value="n" disabled>
+      <v-window-item v-for="n in 6" :key="n" :value="n" disabled>
         <router-view />
       </v-window-item>
     </v-window>

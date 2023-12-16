@@ -315,6 +315,12 @@ export default {
           route: "/utils/cards/dashboard",
           view: "cards",
         },
+        {
+          icon: "mdi-card-bulleted-settings-outline",
+          text: this.$t("navbar.superVisors"),
+          route: "/utils/super_visors",
+          view: "cards",
+        },
       ],
       image: null,
       priv: localStorage.getItem("privileges")
@@ -387,6 +393,7 @@ export default {
       this.Utils[6].text = this.$t("navbar.machinetypes");
       this.Utils[7].text = this.$t("navbar.assistants");
       this.Utils[8].text = this.$t("navbar.cards");
+      this.Utils[8].text = this.$t("navbar.superVisors");
       this.productionlinks[0].text = this.$t("navbar.stage");
       this.productionlinks[1].text = this.$t("navbar.quality");
     },

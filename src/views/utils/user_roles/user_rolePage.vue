@@ -94,6 +94,7 @@ export default {
         { name: "Production Follow-up ", key: "track" },
         { name: "Production Entry ", key: "prodEntry" },
         { name: "Quality Check ", key: "quality" },
+        { name: "Super Visors ", key: "superVisors" },
         { name: "cards ", key: "cards" },
       ],
     };

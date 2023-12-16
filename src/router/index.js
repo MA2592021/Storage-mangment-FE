@@ -523,6 +523,12 @@ const router = createRouter({
 
           component: () => import("../views/trackEmployee/management.vue"),
         },
+        {
+          path: "supervisor",
+          name: "employee_track-supervisor",
+
+          component: () => import("../views/trackEmployee/supervisor.vue"),
+        },
         // {
         //   path: ":id",
         //   name: "track-page",
@@ -828,6 +834,24 @@ const router = createRouter({
         requiresAuth: true,
       },
       component: () => import("../views/utils/stageWorkers/index.vue"),
+    },
+    {
+      path: "/utils/stage_workers/:orderId/:modelId/:stageId",
+      name: "stageWorkersPage",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/stageWorkers/stagePage.vue"),
+    },
+
+    //stage workers routes
+    {
+      path: "/utils/super_visors",
+      name: "superVisors",
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import("../views/utils/supervisors/index.vue"),
     },
     {
       path: "/utils/stage_workers/:orderId/:modelId/:stageId",

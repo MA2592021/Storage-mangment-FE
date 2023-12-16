@@ -83,6 +83,7 @@ export default {
       { name: "Production Entry ", key: "prodEntry" },
       { name: "Quality Check ", key: "quality" },
       { name: "cards ", key: "cards" },
+      { name: "Super Visors ", key: "superVisors" },
     ],
   }),
 
