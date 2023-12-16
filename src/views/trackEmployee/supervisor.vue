@@ -37,12 +37,12 @@
       xl="3"
       xxl="2"
       v-for="group in showdata"
-      ><v-card class="mx-auto" max-width="400">
+      ><v-card class="mx-auto" max-width="300">
         <v-card-item :title="group.groupAdminName" />
 
         <v-card-text class="py-0">
           <v-row align="center" no-gutters>
-            <v-col cols="6" align="center">
+            <v-col cols="12" align="center">
               <v-progress-circular
                 :model-value="group.workRate"
                 :size="70"
@@ -52,7 +52,7 @@
               <p>Today Work Rate</p>
             </v-col>
 
-            <v-col cols="6" align="center">
+            <!-- <v-col cols="6" align="center">
               <v-progress-circular
                 :model-value="group.errorRate"
                 :size="70"
@@ -60,7 +60,7 @@
                 ><p>{{ group.errorRate }}%</p>
               </v-progress-circular>
               <p>today Error Rate</p>
-            </v-col>
+            </v-col> -->
           </v-row>
         </v-card-text>
 
@@ -72,13 +72,13 @@
           >
             <v-list-item-subtitle>{{ group.totalTrack }}</v-list-item-subtitle>
           </v-list-item>
-          <v-list-item
+          <!-- <v-list-item
             style="margin-right: -10px"
             density="compact"
             prepend-icon="mdi-alert-circle"
           >
             <v-list-item-subtitle>{{ group.totalError }}</v-list-item-subtitle>
-          </v-list-item>
+          </v-list-item> -->
         </div>
 
         <v-expand-transition>
@@ -98,7 +98,7 @@
                     stream
                   ></v-progress-linear>
                 </v-list-item>
-                <v-list-item
+                <!-- <v-list-item
                   title="Error Rate"
                   :subtitle="`${group.error[index] ? group.error[index] : 0}%`"
                 >
@@ -109,7 +109,7 @@
                     "
                     stream
                   ></v-progress-linear>
-                </v-list-item>
+                </v-list-item> -->
               </div>
             </div>
           </div>
@@ -312,6 +312,20 @@ export default {
           this.data[index].totalTrack += message.quantity;
           this.data[index].workRate = (
             (this.data[index].totalTrack / this.data[index].required) *
+            100
+          ).toFixed(2);
+        }
+        console.log(this.data[index]);
+      });
+    });
+    socket.on("errors", (message) => {
+      message.groups.forEach((obj) => {
+        const index = this.data.findIndex((el) => el.groupID === obj);
+        console.log(index);
+        if (index !== -1) {
+          this.data[index].totalError += message.quantity;
+          this.data[index].workRate = (
+            (this.data[index].totalError / this.data[index].totalTrack) *
             100
           ).toFixed(2);
         }
