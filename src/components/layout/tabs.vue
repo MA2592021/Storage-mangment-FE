@@ -18,6 +18,13 @@
         >{{ $t("tabs.hall") }}</v-tab
       >
       <v-tab
+        :value="7"
+        router
+        :to="`${parentPath}hallV1`"
+        v-if="checkEmployeeFollowUpPath"
+        >{{ $t("tabs.hall") }}V1</v-tab
+      >
+      <v-tab
         :value="5"
         router
         :to="`${parentPath}management`"
@@ -33,7 +40,7 @@
       >
     </v-tabs>
     <v-window v-model="tab">
-      <v-window-item v-for="n in 6" :key="n" :value="n" disabled>
+      <v-window-item v-for="n in 7" :key="n" :value="n" disabled>
         <router-view />
       </v-window-item>
     </v-window>

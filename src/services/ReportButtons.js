@@ -143,9 +143,14 @@ const WorkFLowButtons = [
     value: 1,
   },
   {
-    name: "entry, exit sizes timeline from groups",
+    name: "entry, exit timeline from groups",
     icon: "mdi-timeline-clock-outline",
     value: 2,
+  },
+  {
+    name: "supervisors work",
+    icon: "mdi mdi-account-supervisor-circle",
+    value: 3,
   },
 ];
 const OneEmployeeButtons = [

@@ -518,6 +518,12 @@ const router = createRouter({
           component: () => import("../views/trackEmployee/hall.vue"),
         },
         {
+          path: "hallV1",
+          name: "employee_track-hallV1",
+
+          component: () => import("../views/trackEmployee/hallV1.vue"),
+        },
+        {
           path: "management",
           name: "employee_track-management",
 

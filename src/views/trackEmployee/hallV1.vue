@@ -29,33 +29,11 @@
       </template>
     </v-data-table>
   </div>
-
-  <div v-if="view === 0">
-    <h2 style="text-align: center; margin-top: 10px">الاخطاء</h2>
-    <v-data-table
-      v-model:items-per-page="itemsPerPage"
-      :headers="headerError"
-      :items="errors"
-      :page="currentPage"
-      class="elevation-1"
-      multi-sort
-    >
-      <template v-slot:bottom="">
-        <div align="center" class="ma-2">Page Number {{ currentPage }}</div>
-      </template>
-      <template v-slot:item.fromnow="{ item }">
-        <v-chip :color="timeago(item.raw.date)">
-          {{ momentdate(item.raw.date) }}
-        </v-chip>
-      </template>
-    </v-data-table>
-  </div>
 </template>
 
 <script>
 import axios from "axios";
-import moment from "moment";
-import { socket } from "../../socket";
+
 export default {
   data() {
     return {
@@ -89,38 +67,6 @@ export default {
           title: "معدل انتاج اليوم",
           align: "start",
           key: "todayWorkRate",
-        },
-        {
-          title: "معدل اخطاء اليوم",
-          align: "start",
-          key: "todayErrorRate",
-        },
-        {
-          title: "انتاجية اليوم",
-          align: "start",
-          key: "todayPieces",
-        },
-        {
-          title: "معدل انتاج الشهر",
-          align: "start",
-          key: "monthWorkRate",
-        },
-      ],
-      headerError: [
-        {
-          title: "كود الكارتة",
-          align: "start",
-          key: "cardCode",
-        },
-        {
-          title: "عدد الاخطاء",
-          align: "start",
-          key: "currentErrorsLength",
-        },
-        {
-          title: "الوقت",
-          align: "start",
-          key: "fromnow",
         },
       ],
     };
@@ -169,69 +115,21 @@ export default {
         }, 5000);
       }
     },
-    timeago(time) {
-      const currentTime = moment();
-      const inputTime = moment(time);
-      const duration = moment.duration(currentTime.diff(inputTime));
-      const minutesDifference = duration.asMinutes();
-
-      if (minutesDifference < 30) {
-        return "green";
-      }
-      return "red";
-    },
-    momentdate(value) {
-      if (value === null) {
-        return "not started yet";
-      } else {
-        return moment(value).calendar();
-      }
-    },
   },
   created() {
     this.loadsalaries();
-
-    socket.on("errors", (message) => {
-      setTimeout(() => {
-        this.errors.push(message);
-        this.TotalErrorPages = Math.ceil(this.errors.length / 10);
-      }, 1500);
-    });
-    socket.on("errorConfirm", (message) => {
-      setTimeout(() => {
-        this.errors = this.errors.filter(
-          (obj) => obj.cardID !== message.cardID
-        );
-        this.TotalErrorPages = Math.ceil(this.errors.length / 10);
-      }, 1500);
-    });
+    this.workview();
   },
   mounted() {
     if (this.maininterval === null) {
       this.maininterval = setInterval(() => {
-        const minute = new Date().getMinutes();
-        // if (minute > 50 && minute < 60) {
-        if (true) {
-          this.workview();
-        } else {
-          this.errorview();
-        }
-      }, 5000);
+        this.loadsalaries();
+      }, 60000);
     }
   },
   beforeUnmount() {
     clearInterval(this.maininterval);
     clearInterval(this.interval);
-    clearInterval(this.errorinterval);
-  },
-  watch: {
-    errors: {
-      handler(newValue, oldValue) {
-        console.log("sheaaa working");
-        localStorage.setItem("errors", JSON.stringify(this.errors));
-      },
-      deep: true,
-    },
   },
 };
 </script>

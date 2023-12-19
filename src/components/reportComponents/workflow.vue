@@ -95,6 +95,16 @@ export default {
         { title: "group 3 Start", align: "start", key: "g3Start" },
         { title: "group 3 End", align: "start", key: "g3End" },
       ],
+      supervisorsHeaders: [
+        { title: "supervisor", align: "start", key: "groupAdminName" },
+        { title: "Start Stage", align: "start", key: "startStageName" },
+        { title: "end Stage", align: "start", key: "endStageName" },
+        { title: " Day Work", align: "start", key: "totalTrack" },
+        { title: " Day Rate", align: "start", key: "workRate" },
+        { title: " Day Error ", align: "start", key: "totalError" },
+        { title: " Day Rate ", align: "start", key: "errorRate" },
+        { title: "Day Required Production ", align: "start", key: "required" },
+      ],
     };
   },
 
@@ -145,6 +155,34 @@ export default {
               this.DateBoundHeaders
             );
           });
+        } else if (data.value === 3) {
+          let data = "";
+          axios
+            .get(
+              `/api/group/production/order/${this.selectedOrder.id}/model/${this.selectedModel.id}/date/${this.date}`
+            )
+            .then((res) => {
+              console.log(res.data);
+              data = res.data.result;
+              data.forEach((obj) => {
+                obj.workRate = `${(
+                  (obj.totalTrack / obj.required) *
+                  100
+                ).toFixed(2)}%`;
+
+                obj.errorRate = `${(
+                  (obj.totalError / obj.totalTrack) *
+                  100
+                ).toFixed(2)}%`;
+              });
+              console.log(data);
+              this.printo(
+                `Order ${this.selectedOrder.name} - Model ${this.selectedModel.name} supervisors work`,
+                data,
+                this.supervisorsHeaders,
+                "Day Records from Day start untill the moment of report creation"
+              );
+            });
         }
       }
     },

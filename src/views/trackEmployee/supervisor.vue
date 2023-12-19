@@ -88,7 +88,7 @@
             <div v-for="(hour, index) in group.track">
               <div v-if="hour">
                 <v-divider></v-divider>
-                <p class="mx-2">hour {{ index - 12 }}</p>
+                <p class="mx-2">hour {{ index }}</p>
                 <v-list-item title="Work Rate" :subtitle="`${hour} pieces`">
                   <v-progress-linear
                     :model-value="(hour / (group.required / 8)) * 100"

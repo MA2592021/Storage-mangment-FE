@@ -12,7 +12,8 @@
         {{ datalength }}
       </v-progress-circular>
       <p class="text-h5">
-        {{ $t("arkan have") }} {{ datalength }} {{ $t("employees") }}
+        {{ $t("arkan have") }} {{ datalength }} {{ $t("employees") }} Tracked
+        Work Today
       </p>
     </v-col>
   </v-row>
